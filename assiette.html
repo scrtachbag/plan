@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#C97416">
+<title>Mon assiette</title>
+<style>
+  :root{
+    --ink:#16222B; --mut:#5B6B75; --line:#E4EBEF;
+    --teal:#0E8B84; --tealsoft:#E1F4F2;
+    --amber:#C97416; --ambersoft:#FCF0E1;
+    --coral:#C4503C; --coralsoft:#FAEAE6;
+    --surf:#F4F8F9;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    font-size:18px; line-height:1.55; color:var(--ink); background:#fff;
+    padding-bottom:40px;
+  }
+  header{
+    background:var(--amber); color:#fff;
+    padding:22px 20px 18px; padding-top:calc(22px + env(safe-area-inset-top));
+  }
+  header .k{font-size:14px; font-weight:700; opacity:.85; letter-spacing:.4px;}
+  header h1{font-size:30px; line-height:1.12; margin:4px 0 0; letter-spacing:-.6px;}
+
+  nav{
+    display:flex; gap:8px; padding:12px 16px; background:#fff;
+    position:sticky; top:0; z-index:10; border-bottom:1px solid var(--line);
+    overflow-x:auto; -webkit-overflow-scrolling:touch;
+  }
+  nav button{
+    flex:0 0 auto; font:inherit; font-size:16px; font-weight:700;
+    border:1px solid var(--line); background:#fff; color:var(--mut);
+    border-radius:999px; padding:10px 18px; min-height:44px; cursor:pointer;
+  }
+  nav button.on{background:var(--ink); border-color:var(--ink); color:#fff;}
+
+  main{padding:18px 16px 0;}
+  section{display:none;} section.on{display:block;}
+
+  h2{font-size:23px; letter-spacing:-.4px; margin:26px 0 12px;}
+  h2:first-child{margin-top:6px;}
+  p{margin:0 0 14px;}
+  .mut{color:var(--mut);}
+  .sm{font-size:16px;}
+
+  .card{border-radius:16px; padding:18px; margin-bottom:14px;}
+  .surf{background:var(--surf);} .am{background:var(--ambersoft);}
+  .tl{background:var(--tealsoft);} .co{background:var(--coralsoft);}
+  .card h3{font-size:20px; margin:0 0 8px; letter-spacing:-.3px;}
+
+  /* hand cards */
+  .hand{display:flex; align-items:flex-start; gap:16px; padding:16px;
+        border:1px solid var(--line); border-radius:16px; margin-bottom:12px;}
+  .hand .ico{flex:0 0 62px; height:62px; border-radius:14px; background:var(--ambersoft);
+             display:flex; align-items:center; justify-content:center;}
+  .hand .ico svg{width:38px; height:38px;}
+  .hand .t{font-size:19px; font-weight:700; margin-bottom:2px;}
+  .hand .u{font-size:15px; color:var(--amber); font-weight:700; margin-bottom:6px;}
+  .hand .d{font-size:16px; line-height:1.45;}
+
+  /* plate */
+  .plate{display:block; margin:0 auto 14px; max-width:280px; width:100%;}
+
+  /* target toggle */
+  .seg{display:flex; border:1px solid var(--line); border-radius:999px; overflow:hidden; margin-bottom:16px;}
+  .seg button{flex:1; font:inherit; font-size:16px; font-weight:700; border:0; background:#fff;
+              color:var(--mut); padding:13px 8px; min-height:48px; cursor:pointer;}
+  .seg button.on{background:var(--amber); color:#fff;}
+
+  .target{display:flex; gap:10px; flex-wrap:wrap;}
+  .target div{flex:1 1 130px; background:#fff; border:1px solid var(--line);
+              border-radius:14px; padding:14px;}
+  .target .n{font-size:26px; font-weight:800; letter-spacing:-.8px; line-height:1;}
+  .target .l{font-size:15px; color:var(--mut); margin-top:5px;}
+
+  /* meals */
+  .meal{border:1px solid var(--line); border-radius:16px; margin-bottom:12px; overflow:hidden;}
+  .meal > button{
+    width:100%; text-align:left; font:inherit; background:#fff; border:0;
+    padding:16px 18px; min-height:56px; cursor:pointer; display:flex;
+    justify-content:space-between; align-items:center; gap:12px;
+  }
+  .meal .name{font-size:18px; font-weight:700; line-height:1.3;}
+  .meal .chev{flex:0 0 auto; font-size:22px; color:var(--mut); transition:transform .15s;}
+  .meal.open .chev{transform:rotate(90deg);}
+  .meal .body{display:none; padding:0 18px 18px; border-top:1px solid var(--line);}
+  .meal.open .body{display:block;}
+  .por{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 10px;}
+  .por span{background:var(--ambersoft); color:#8B4F0B; font-weight:700; font-size:15px;
+            border-radius:999px; padding:7px 13px;}
+  .prot{font-size:16px; color:var(--mut);}
+
+  .lbl{font-size:14px; font-weight:700; color:var(--mut); letter-spacing:.3px; margin-bottom:6px;}
+  ul{margin:0 0 12px; padding-left:22px;} li{margin-bottom:8px;}
+  .vs{display:flex; gap:12px; flex-wrap:wrap;}
+  .vs > div{flex:1 1 150px; border-radius:16px; padding:16px;}
+  .big{font-size:30px; font-weight:800; letter-spacing:-1px; line-height:1.1;}
+  .big small{font-size:16px; font-weight:600;}
+  footer{padding:26px 16px 10px; color:var(--mut); font-size:15px; border-top:1px solid var(--line); margin-top:30px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="k">Mon assiette</div>
+  <h1>Aucune balance,<br>juste ta main</h1>
+</header>
+
+<nav>
+  <button class="on" data-t="portions">Les portions</button>
+  <button data-t="repas">Les repas</button>
+  <button data-t="sandwich">Le sandwich</button>
+</nav>
+
+<main>
+
+<!-- ============ PORTIONS ============ -->
+<section id="portions" class="on">
+
+  <p>Ta main est proportionnée à ton corps. C'est pour ça qu'elle marche comme unité de mesure : elle s'ajuste toute seule, et elle est toujours avec toi.</p>
+
+  <div class="hand">
+    <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#C97416" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11V5.5a1.5 1.5 0 0 1 3 0V11"/><path d="M10 11V4.5a1.5 1.5 0 0 1 3 0V11"/><path d="M13 11V5.5a1.5 1.5 0 0 1 3 0V12"/><path d="M16 8.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-1a7 7 0 0 1-7-7v-1a1.5 1.5 0 0 1 3 0"/></svg></div>
+    <div>
+      <div class="t">Protéines</div>
+      <div class="u">1 paume, doigts non compris</div>
+      <div class="d">L'épaisseur et la largeur de ta paume. Un blanc de poulet, un pavé de poisson, un steak, trois œufs, ou 200 g de skyr.</div>
+    </div>
+  </div>
+
+  <div class="hand">
+    <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#C97416" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="11" rx="4"/><path d="M8 8V6.5a1.5 1.5 0 0 1 3 0V8M11 8V6a1.5 1.5 0 0 1 3 0v2M14 8V6.5a1.5 1.5 0 0 1 3 0V8"/></svg></div>
+    <div>
+      <div class="t">Légumes</div>
+      <div class="u">1 poing fermé</div>
+      <div class="d">Le volume de ton poing. Vise deux poings par repas — c'est le seul poste où tu peux te resservir sans y penser.</div>
+    </div>
+  </div>
+
+  <div class="hand">
+    <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#C97416" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 5 0 0 0 18 0"/><path d="M3 12c0-1 1-2 2-2M21 12c0-1-1-2-2-2"/><path d="M7 10c1.5-2 8.5-2 10 0"/></svg></div>
+    <div>
+      <div class="t">Féculents</div>
+      <div class="u">1 main en coupe</div>
+      <div class="d">Ce que ta main en creux peut contenir. Riz ou pâtes cuits, pommes de terre, lentilles, deux tranches de pain.</div>
+    </div>
+  </div>
+
+  <div class="hand">
+    <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#C97416" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20V9a3 3 0 0 1 6 0v11"/><rect x="9" y="14" width="6" height="7" rx="2"/></svg></div>
+    <div>
+      <div class="t">Matières grasses</div>
+      <div class="u">1 pouce entier</div>
+      <div class="d">Longueur et épaisseur de ton pouce. Une cuillère à soupe d'huile, une noix de beurre, un quart d'avocat, une petite poignée d'amandes.</div>
+    </div>
+  </div>
+
+  <h2>Ce que ça donne par repas</h2>
+
+  <div class="seg">
+    <button class="on" data-mode="deficit">Jour normal</button>
+    <button data-mode="sport">Jour de sport</button>
+  </div>
+
+  <div class="target" id="tgt"></div>
+  <p class="sm mut" id="tgtnote" style="margin-top:12px"></p>
+
+  <h2>Et dans l'assiette, visuellement</h2>
+
+  <svg class="plate" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="100" r="96" fill="#F4F8F9"/>
+    <path d="M100 8a92 92 0 0 0 0 184z" fill="#E1F4F2"/>
+    <path d="M100 8a92 92 0 0 1 92 92h-92z" fill="#FCF0E1"/>
+    <path d="M100 100h92a92 92 0 0 1-92 92z" fill="#EFE7DA"/>
+    <circle cx="100" cy="100" r="96" fill="none" stroke="#16222B" stroke-width="2.5"/>
+    <line x1="100" y1="4" x2="100" y2="196" stroke="#16222B" stroke-width="2"/>
+    <line x1="100" y1="100" x2="196" y2="100" stroke="#16222B" stroke-width="2"/>
+    <text x="52" y="98" font-size="13" font-weight="700" fill="#0E8B84" text-anchor="middle" font-family="sans-serif">Légumes</text>
+    <text x="52" y="114" font-size="12" fill="#5B6B75" text-anchor="middle" font-family="sans-serif">la moitié</text>
+    <text x="148" y="56" font-size="13" font-weight="700" fill="#C97416" text-anchor="middle" font-family="sans-serif">Protéines</text>
+    <text x="148" y="150" font-size="13" font-weight="700" fill="#7A6A52" text-anchor="middle" font-family="sans-serif">Féculents</text>
+  </svg>
+
+  <div class="card co">
+    <h3>Le seul repère à ne pas lâcher</h3>
+    <p style="margin:0">Une protéine à chaque repas, sans exception — y compris au petit-déjeuner. Si tu ne devais retenir qu'une chose de tout le plan, c'est celle-là.</p>
+  </div>
+
+</section>
+
+<!-- ============ REPAS ============ -->
+<section id="repas">
+  <p class="mut sm">Touche un repas pour voir ses portions. Aucune quantité à peser.</p>
+  <div id="mealwrap"></div>
+</section>
+
+<!-- ============ SANDWICH ============ -->
+<section id="sandwich">
+
+  <div class="vs">
+    <div class="surf">
+      <div class="lbl">Le réflexe actuel</div>
+      <div class="sm" style="margin-bottom:10px">Baguette jambon-beurre, chips, soda.</div>
+      <div class="big">1 000 <small>kcal</small></div>
+      <div class="big" style="font-size:22px">25 g <small>de protéines</small></div>
+    </div>
+    <div class="tl">
+      <div class="lbl">Le sandwich qui marche</div>
+      <div class="sm" style="margin-bottom:10px">Pain complet, 2 paumes de poulet ou thon, crudités, moutarde. Salade à côté, eau.</div>
+      <div class="big">550 <small>kcal</small></div>
+      <div class="big" style="font-size:22px">35 g <small>de protéines</small></div>
+    </div>
+  </div>
+
+  <h2>Les cinq réglages, du plus au moins rentable</h2>
+  <div class="card surf"><h3>1. L'accompagnement décide</h3><p style="margin:0">Salade ou crudités à la place des chips. À lui seul, ce changement retire plus de calories que tout le reste réuni.</p></div>
+  <div class="card surf"><h3>2. De l'eau, rien d'autre</h3><p style="margin:0">Un soda ajoute l'équivalent d'un tiers de sandwich sans rassasier une seconde.</p></div>
+  <div class="card surf"><h3>3. Une protéine franche, doublée</h3><p style="margin:0">Deux paumes de poulet, thon, œuf ou rosbif. Fuis les sandwichs dont la garniture est surtout du fromage et de la sauce.</p></div>
+  <div class="card surf"><h3>4. Pain complet ou aux céréales</h3><p style="margin:0">Plus de fibres, satiété plus longue. Si seule la baguette blanche est là, ce n'est pas grave : les quatre autres points comptent davantage.</p></div>
+  <div class="card surf"><h3>5. Moutarde plutôt que mayonnaise</h3><p style="margin:0">Ou sauce à part. Une dose de mayo, c'est un pouce et demi de gras invisible.</p></div>
+
+  <h2>Le rythme de la semaine</h2>
+  <div class="card am"><h3>2 jours de sandwich acheté</h3><p style="margin:0">Avec les cinq réglages. C'est la solution pratique, elle a le droit d'exister.</p></div>
+  <div class="card surf"><h3>3 jours de boîte préparée</h3><p style="margin:0">Tu cuisines en double le dimanche et un soir en semaine : le déjeuner du lendemain est réglé sans effort.</p></div>
+  <div class="card tl"><h3>Le meilleur rapport : le sandwich maison</h3><p style="margin:0">Pain complet, deux paumes de blanc de poulet, crudités, moutarde. Trois minutes le matin, deux fois moins cher, contrôle total.</p></div>
+
+</section>
+
+</main>
+
+<footer>Plan d'hygiène de vie générale, pas un avis médical. Les portions à la main sont un repère, pas une règle : si tu as encore faim après un repas complet, ajoute des légumes.</footer>
+
+<script>
+/* ---------- navigation ---------- */
+document.querySelectorAll('nav button').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('nav button').forEach(function(x){x.classList.remove('on');});
+    document.querySelectorAll('section').forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on');
+    document.getElementById(b.dataset.t).classList.add('on');
+    window.scrollTo(0,0);
+  });
+});
+
+/* ---------- portions par repas ---------- */
+var TARGETS = {
+  deficit: {
+    v:[['2','paumes de protéines'],['2','poings de légumes'],['1','main en coupe de féculents'],['1','pouce de gras']],
+    note:"Trois repas construits comme ça t'amènent autour de 130 g de protéines sur la journée, sans rien compter."
+  },
+  sport: {
+    v:[['2','paumes de protéines'],['2','poings de légumes'],['2','mains en coupe de féculents'],['1','pouce de gras']],
+    note:"Les jours de padel, de vélo long ou de natation, la main en coupe de féculents supplémentaire va au repas qui suit la séance."
+  }
+};
+function renderTarget(mode){
+  var t = TARGETS[mode];
+  document.getElementById('tgt').innerHTML = t.v.map(function(x){
+    return '<div><div class="n">'+x[0]+'</div><div class="l">'+x[1]+'</div></div>';
+  }).join('');
+  document.getElementById('tgtnote').textContent = t.note;
+}
+document.querySelectorAll('.seg button').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('.seg button').forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on');
+    renderTarget(b.dataset.mode);
+  });
+});
+renderTarget('deficit');
+
+/* ---------- repas ---------- */
+var MEALS = [
+  {g:"Petit-déjeuner", note:"Le repas le plus souvent raté côté protéines. Viennoiserie et jus : beaucoup de calories, presque pas de protéines, faim à 10 h 30.", items:[
+    {n:"Œufs brouillés, pain complet, un fruit", p:["1 paume d'œufs (3)","1 main en coupe de pain","1 fruit"], k:"30 g de protéines"},
+    {n:"Skyr, flocons d'avoine, fruits rouges, amandes", p:["1 paume de skyr","1 main en coupe d'avoine","1 poing de fruits rouges","1 pouce d'amandes"], k:"30 g de protéines"},
+    {n:"Omelette au jambon et aux tomates", p:["1 paume d'œufs et de jambon","1 poing de tomates","½ main en coupe de pain"], k:"32 g de protéines"},
+    {n:"Fromage blanc, banane, miel, noix", p:["1 paume de fromage blanc","1 fruit","1 pouce de noix"], k:"28 g de protéines"},
+    {n:"Pain complet, œufs durs, avocat écrasé", p:["1 paume d'œufs (2)","1 main en coupe de pain","1 pouce d'avocat"], k:"20 g de protéines"}
+  ]},
+  {g:"Déjeuner", note:"Deux jours de sandwich, trois jours de boîte préparée.", items:[
+    {n:"Sandwich maison ou acheté", p:["2 paumes de poulet ou thon","1 main en coupe de pain","1 poing de crudités","salade à côté"], k:"35 g de protéines"},
+    {n:"Lentilles, thon, tomates, oignon rouge", p:["1 paume de thon","1 main en coupe de lentilles","2 poings de légumes","1 pouce de vinaigrette"], k:"40 g de protéines"},
+    {n:"Poulet rôti, riz complet, légumes rôtis", p:["2 paumes de poulet","1 main en coupe de riz","2 poings de légumes"], k:"40 g de protéines"},
+    {n:"Poke bowl maison au saumon", p:["2 paumes de saumon","1 main en coupe de riz","2 poings de légumes","1 pouce d'avocat"], k:"35 g de protéines"},
+    {n:"Salade de pâtes complètes, œufs, mozzarella", p:["1 paume d'œufs et de mozzarella","1 main en coupe de pâtes","2 poings de tomates"], k:"30 g de protéines"},
+    {n:"Wrap de blé complet au poulet", p:["2 paumes de poulet","1 main en coupe (la galette)","1 poing de crudités"], k:"32 g de protéines"},
+    {n:"Les restes du dîner de la veille", p:["mêmes portions que le dîner","double les quantités à la cuisson"], k:"—"}
+  ]},
+  {g:"Dîner", note:"C'est le repas que tu contrôles entièrement.", items:[
+    {n:"Poisson blanc, patate douce au four, brocolis", p:["2 paumes de poisson","1 main en coupe de patate douce","2 poings de brocolis"], k:"35 g de protéines"},
+    {n:"Poulet, ratatouille, quinoa", p:["2 paumes de poulet","1 main en coupe de quinoa","2 poings de ratatouille"], k:"40 g de protéines"},
+    {n:"Steak haché, haricots verts, pommes de terre", p:["2 paumes de steak","1 main en coupe de pommes de terre","2 poings de haricots"], k:"38 g de protéines"},
+    {n:"Chili con carne et riz", p:["2 paumes de haché et haricots rouges","1 main en coupe de riz","1 poing de légumes"], k:"40 g de protéines"},
+    {n:"Saumon, poêlée de légumes, boulgour", p:["2 paumes de saumon","1 main en coupe de boulgour","2 poings de légumes"], k:"35 g de protéines"},
+    {n:"Curry de pois chiches aux épinards, riz", p:["1 main en coupe de pois chiches","1 main en coupe de riz","2 poings d'épinards","1 pouce d'huile"], k:"22 g de protéines"},
+    {n:"Soir léger : omelette et grande salade", p:["1 paume d'œufs","2 poings de salade","½ main en coupe de pain"], k:"25 g de protéines"}
+  ]},
+  {g:"Si tu as faim entre les repas", note:"Une place prévue vaut mieux qu'une envie subie.", items:[
+    {n:"Un skyr ou un fromage blanc", p:["1 paume"], k:"20 g de protéines"},
+    {n:"Une poignée d'amandes", p:["1 pouce"], k:"6 g de protéines"},
+    {n:"Un œuf dur", p:["½ paume"], k:"6 g de protéines"},
+    {n:"Deux carrés de chocolat noir prévus à l'avance", p:["1 pouce"], k:"—"}
+  ]}
+];
+
+var wrap = document.getElementById('mealwrap');
+MEALS.forEach(function(g){
+  var h = document.createElement('h2'); h.textContent = g.g; wrap.appendChild(h);
+  var n = document.createElement('p'); n.className='sm mut'; n.textContent = g.note; wrap.appendChild(n);
+  g.items.forEach(function(m){
+    var d = document.createElement('div'); d.className='meal';
+    d.innerHTML =
+      '<button type="button"><span class="name">'+m.n+'</span><span class="chev">›</span></button>'+
+      '<div class="body"><div class="por">'+m.p.map(function(x){return '<span>'+x+'</span>';}).join('')+
+      '</div><div class="prot">'+m.k+'</div></div>';
+    d.querySelector('button').addEventListener('click', function(){ d.classList.toggle('open'); });
+    wrap.appendChild(d);
+  });
+});
+</script>
+</body>
+</html>
