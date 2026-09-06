@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#16222B">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%2316222B%22/%3E%3Ccircle%20cx%3D%2223%22%20cy%3D%2232%22%20r%3D%2211%22%20fill%3D%22%23C97416%22/%3E%3Ccircle%20cx%3D%2241%22%20cy%3D%2232%22%20r%3D%2211%22%20fill%3D%22%230E8B84%22%20opacity%3D%22.9%22/%3E%3C/svg%3E">
+<title>Mon plan</title>
+<style>
+:root{--ink:#16222B;--mut:#5B6B75;--line:#E4EBEF;--teal:#0E8B84;--tealsoft:#E1F4F2;
+      --amber:#C97416;--ambersoft:#FCF0E1;--coral:#C4503C;--coralsoft:#FAEAE6;--surf:#F4F8F9;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:18px;
+     line-height:1.55;color:var(--ink);background:#fff;padding-bottom:calc(78px + env(safe-area-inset-bottom));}
+
+header{color:#fff;padding:24px 20px 20px;padding-top:calc(24px + env(safe-area-inset-top));background:var(--ink);}
+header.a{background:var(--amber);} header.t{background:var(--teal);}
+header .k{font-size:14px;font-weight:700;opacity:.8;letter-spacing:.4px;}
+header h1{font-size:29px;line-height:1.12;margin:5px 0 0;letter-spacing:-.6px;}
+header p{margin:8px 0 0;font-size:16.5px;opacity:.85;}
+
+.pills{display:flex;gap:8px;padding:12px 16px;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto;}
+.pills button{flex:0 0 auto;font:inherit;font-size:16px;font-weight:700;border:1px solid var(--line);
+  background:#fff;color:var(--mut);border-radius:999px;padding:10px 18px;min-height:44px;cursor:pointer;}
+.pills button.on{background:var(--ink);border-color:var(--ink);color:#fff;}
+
+main{padding:18px 16px 0;}
+.view{display:none;} .view.on{display:block;}
+.sub{display:none;} .sub.on{display:block;}
+
+h2{font-size:22px;letter-spacing:-.4px;margin:26px 0 12px;} h2:first-child{margin-top:4px;}
+h3{font-size:19px;margin:0 0 8px;letter-spacing:-.3px;}
+p{margin:0 0 14px;} .mut{color:var(--mut);} .sm{font-size:16px;}
+ul{margin:0 0 12px;padding-left:22px;} li{margin-bottom:7px;}
+ol.steps{margin:0 0 4px;padding-left:22px;} ol.steps li{margin-bottom:8px;}
+
+.card{border-radius:16px;padding:18px;margin-bottom:14px;}
+.surf{background:var(--surf);} .tl{background:var(--tealsoft);}
+.am{background:var(--ambersoft);} .co{background:var(--coralsoft);}
+.line{background:#fff;border:1px solid var(--line);}
+.lbl{font-size:14px;font-weight:700;color:var(--mut);letter-spacing:.3px;margin:14px 0 6px;}
+
+.rowlist{border:1px solid var(--line);border-radius:16px;padding:2px 18px;margin-bottom:14px;}
+.rowlist > div{padding:14px 0;border-bottom:1px solid var(--line);}
+.rowlist > div:last-child{border-bottom:0;}
+.rowlist b{display:block;font-size:18px;} .rowlist span{color:var(--mut);font-size:16px;}
+
+.acc{border:1px solid var(--line);border-radius:16px;margin-bottom:12px;overflow:hidden;}
+.acc > button{width:100%;text-align:left;font:inherit;background:#fff;border:0;padding:16px 18px;
+  min-height:56px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.acc .name{font-size:18px;font-weight:700;line-height:1.3;}
+.acc .chev{font-size:22px;color:var(--mut);transition:transform .15s;}
+.acc.open .chev{transform:rotate(90deg);}
+.acc .body{display:none;padding:0 18px 18px;border-top:1px solid var(--line);}
+.acc.open .body{display:block;}
+
+.meta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+.meta div{flex:1 1 100px;background:var(--surf);border-radius:14px;padding:13px 14px;}
+.meta .n{font-size:21px;font-weight:800;letter-spacing:-.5px;line-height:1.1;}
+.meta .l{font-size:14px;color:var(--mut);margin-top:3px;}
+
+/* hands */
+.hand{display:flex;gap:16px;padding:16px;border:1px solid var(--line);border-radius:16px;margin-bottom:12px;}
+.hand .ico{flex:0 0 58px;height:58px;border-radius:14px;background:var(--ambersoft);display:flex;align-items:center;justify-content:center;}
+.hand .ico svg{width:34px;height:34px;}
+.hand .t{font-size:19px;font-weight:700;}
+.hand .u{font-size:15px;color:var(--amber);font-weight:700;margin-bottom:6px;}
+.hand .d{font-size:16px;line-height:1.45;}
+.plate{display:block;margin:0 auto 14px;max-width:270px;width:100%;}
+
+.seg{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-bottom:16px;}
+.seg button{flex:1;font:inherit;font-size:16px;font-weight:700;border:0;background:#fff;color:var(--mut);
+  padding:13px 8px;min-height:48px;cursor:pointer;}
+.seg button.on{background:var(--amber);color:#fff;}
+.target{display:flex;gap:10px;flex-wrap:wrap;}
+.target div{flex:1 1 130px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;}
+.target .n{font-size:26px;font-weight:800;letter-spacing:-.8px;line-height:1;}
+.target .l{font-size:15px;color:var(--mut);margin-top:5px;}
+
+/* meals */
+.meal{border:1px solid var(--line);border-radius:16px;margin-bottom:12px;overflow:hidden;}
+.meal > .head{width:100%;text-align:left;font:inherit;background:#fff;border:0;padding:16px 18px;min-height:56px;
+  cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.meal .name{font-size:18px;font-weight:700;line-height:1.3;}
+.meal .chev{font-size:22px;color:var(--mut);transition:transform .15s;}
+.meal.open .chev{transform:rotate(90deg);}
+.meal .body{display:none;padding:0 18px 18px;border-top:1px solid var(--line);}
+.meal.open .body{display:block;}
+.por{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 10px;}
+.por span{background:var(--ambersoft);color:#8B4F0B;font-weight:700;font-size:15px;border-radius:999px;padding:7px 13px;}
+.botrow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.prot{font-size:16px;color:var(--mut);}
+.fav{font:inherit;font-size:15px;font-weight:700;border:1px solid var(--line);background:#fff;color:var(--mut);
+  border-radius:999px;padding:9px 15px;min-height:44px;cursor:pointer;}
+.meal.isfav{border-color:var(--amber);}
+.meal.isfav .fav{background:var(--ambersoft);border-color:var(--amber);color:#8B4F0B;}
+.favline{padding:9px 0;border-bottom:1px solid rgba(22,34,43,.10);font-size:16.5px;}
+.favline:last-child{border-bottom:0;}
+.vs{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+.vs > div{flex:1 1 150px;border-radius:16px;padding:16px;}
+.big{font-size:29px;font-weight:800;letter-spacing:-1px;line-height:1.15;}
+.big small{font-size:16px;font-weight:600;}
+
+/* exercises */
+.ex{border:1px solid var(--line);border-radius:16px;margin-bottom:12px;overflow:hidden;}
+.ex.done{border-color:var(--teal);background:var(--tealsoft);}
+.ex > .top{display:flex;align-items:center;gap:12px;padding:14px 16px;}
+.chk{flex:0 0 34px;width:34px;height:34px;border-radius:10px;border:2px solid var(--line);background:#fff;
+  cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;}
+.chk svg{width:20px;height:20px;opacity:0;}
+.ex.done .chk{background:var(--teal);border-color:var(--teal);} .ex.done .chk svg{opacity:1;}
+.ex .ttl{flex:1;font:inherit;text-align:left;background:none;border:0;padding:0;cursor:pointer;}
+.ex .name{font-size:19px;font-weight:700;line-height:1.25;display:block;}
+.ex .reps{font-size:16px;color:var(--mut);display:block;margin-top:2px;}
+.ex .chev{font-size:22px;color:var(--mut);transition:transform .15s;}
+.ex.open .chev{transform:rotate(90deg);}
+.ex .body{display:none;padding:2px 16px 18px;} .ex.open .body{display:block;}
+.feel{background:var(--tealsoft);border-radius:12px;padding:12px 14px;font-size:16px;}
+.err{background:var(--coralsoft);border-radius:12px;padding:12px 14px;font-size:16px;}
+.lvl{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;}
+.lvlbar{display:flex;align-items:center;gap:12px;}
+.lvlbar button{font:inherit;font-size:24px;font-weight:700;width:46px;height:46px;flex:0 0 46px;
+  border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:12px;cursor:pointer;}
+.lvlbar button:disabled{opacity:.3;}
+.lvlbar .cur{flex:1;text-align:center;}
+.lvlbar .cur .s{font-size:14px;color:var(--teal);font-weight:700;}
+.lvlbar .cur .t{font-size:17px;font-weight:700;line-height:1.3;}
+.dots{display:flex;gap:5px;justify-content:center;margin-top:10px;}
+.dots i{width:8px;height:8px;border-radius:50%;background:var(--line);} .dots i.on{background:var(--teal);}
+.timer{display:flex;align-items:center;gap:12px;margin-top:12px;}
+.timer .val{font-size:29px;font-weight:800;letter-spacing:-1px;min-width:74px;}
+.timer button{font:inherit;font-size:16px;font-weight:700;padding:12px 18px;min-height:48px;border-radius:12px;
+  border:0;background:var(--teal);color:#fff;cursor:pointer;}
+.timer button.g{background:var(--surf);color:var(--ink);border:1px solid var(--line);}
+
+/* suivi */
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+.stats div{flex:1 1 130px;background:var(--surf);border-radius:16px;padding:16px;}
+.stats .n{font-size:27px;font-weight:800;letter-spacing:-1px;line-height:1.1;}
+.stats .l{font-size:15px;color:var(--mut);margin-top:4px;}
+.stats .up{color:var(--coral);} .stats .dn{color:var(--teal);}
+.form{background:var(--surf);border-radius:18px;padding:18px;margin-bottom:16px;}
+.form label{display:block;font-size:15px;font-weight:700;color:var(--mut);margin-bottom:6px;}
+.form .r{display:flex;gap:10px;margin-bottom:12px;}
+.form input{flex:1;font:inherit;font-size:19px;padding:14px;min-height:52px;border:1px solid var(--line);
+  border-radius:12px;background:#fff;color:var(--ink);width:100%;}
+.form button{font:inherit;font-size:17px;font-weight:700;padding:14px 22px;min-height:52px;border:0;
+  border-radius:12px;background:var(--teal);color:#fff;cursor:pointer;white-space:nowrap;}
+.form button.a{background:var(--amber);}
+.msg{font-size:16px;font-weight:700;min-height:24px;color:var(--teal);}
+.chart{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 10px 6px;margin-bottom:16px;}
+.chart svg{width:100%;height:auto;display:block;}
+.legend{display:flex;gap:16px;justify-content:center;font-size:14px;color:var(--mut);padding:6px 0 4px;}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px;}
+table.t{width:100%;border-collapse:collapse;font-size:17px;}
+table.t th{text-align:left;font-size:14px;color:var(--mut);padding:0 8px 8px 0;border-bottom:2px solid var(--ink);}
+table.t td{padding:12px 8px 12px 0;border-bottom:1px solid var(--line);}
+table.t td.x{width:44px;text-align:right;}
+table.t td.x button{font:inherit;font-size:20px;background:none;border:0;color:var(--mut);padding:8px;min-height:40px;cursor:pointer;}
+.empty{background:var(--surf);border-radius:16px;padding:20px;color:var(--mut);font-size:16.5px;}
+.wide{width:100%;font:inherit;font-size:16px;font-weight:700;padding:14px;min-height:50px;border:1px solid var(--line);
+  border-radius:14px;background:#fff;color:var(--mut);cursor:pointer;margin-bottom:10px;}
+
+footer{padding:24px 16px 10px;color:var(--mut);font-size:15px;border-top:1px solid var(--line);margin-top:28px;}
+
+/* bottom tab bar */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;background:#fff;
+  border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);}
+.tabbar button{flex:1;font:inherit;background:none;border:0;padding:9px 4px 8px;min-height:64px;cursor:pointer;
+  color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:3px;}
+.tabbar svg{width:24px;height:24px;}
+.tabbar .lab{font-size:12.5px;font-weight:700;}
+.tabbar button.on{color:var(--ink);}
+.tabbar button.on svg{stroke:var(--teal);}
+</style>
+</head>
+<body>
+
+<header id="hd"><div class="k" id="hk"></div><h1 id="hh"></h1><p id="hp"></p></header>
+<div class="pills" id="pills"></div>
+<main>
+
+<!-- ================= ACCUEIL ================= -->
+<div class="view on" id="v-accueil">
+  <div class="sub on" id="s-accueil-semaine">
+    <div class="rowlist" id="week"></div>
+    <h2>Les six choses qui font le résultat</h2>
+    <div class="rowlist" id="rules"></div>
+    <div class="card co">
+      <h3>Ce qu'on ne fait pas</h3>
+      <p style="margin:0">Des abdos pour le ventre. Ils renforcent le muscle sous la couche de gras, ils ne la font pas fondre. Le ventre et le bas du dos sont les dernières zones à céder : elles suivront le total, avec plusieurs semaines de retard sur la balance.</p>
+    </div>
+    <div class="card tl">
+      <h3>L'objectif</h3>
+      <p style="margin:0">0,4 kg par semaine, soit 6 à 8 kg entre le 7 septembre et le 28 mars. Pas plus vite : au-delà, la part de muscle perdue augmente nettement.</p>
+    </div>
+  </div>
+
+  <div class="sub" id="s-accueil-calendrier">
+    <p class="sm mut">Deux périodes de perte séparées par une trêve volontaire. C'est plus tenable qu'un tunnel de six mois, et ça évite de se battre contre décembre — un combat que presque personne ne gagne.</p>
+    <div id="phases"></div>
+    <div class="card surf">
+      <h3>Ce que « déficit » veut dire</h3>
+      <p style="margin:0">Autour de 2 200 à 2 400 kcal par jour pendant les blocs 2 et 4. Tu n'es pas obligé de compter : appliquer les six règles y amène naturellement. Si tu stagnes, compter une seule semaine te dira où ça fuit. Ne descends pas sous 2 000 kcal.</p>
+    </div>
+  </div>
+
+  <div class="sub" id="s-accueil-famille">
+    <p class="sm mut">Les repas de ce plan sont bons pour des enfants de 9 et 12 ans. Le cadre qui les entoure, non.</p>
+    <div class="card tl">
+      <h3>Ce qui se partage sans réserve</h3>
+      <p>Les mêmes plats, à la même table. Un enfant n'a pas besoin d'un menu séparé.</p>
+      <p>Des légumes à chaque repas, un petit-déjeuner avec de vraies protéines, de l'eau comme boisson par défaut, de la cuisine maison.</p>
+      <p style="margin:0">Aucun aliment interdit. Le gâteau d'anniversaire reste un gâteau d'anniversaire.</p>
+    </div>
+    <div class="card co">
+      <h3>Ce qui ne se partage jamais</h3>
+      <p><b>Le déficit calorique.</b> Un enfant en croissance qui mange en restriction ralentit sa croissance.</p>
+      <p><b>Les portions contrôlées.</b> Eux mangent à leur faim et s'arrêtent quand ils n'ont plus faim. C'est leur régulation qui décide.</p>
+      <p style="margin:0"><b>Les cibles chiffrées, la balance, le suivi.</b> Rien de tout ça n'entre dans leur champ de vision.</p>
+    </div>
+    <div class="card surf">
+      <h3>Le point le plus important, et il n'est pas alimentaire</h3>
+      <p style="margin:0">Ce qui installe durablement un rapport compliqué à la nourriture, ce sont les mots autour. « Je fais attention », « c'est trop gras », les commentaires sur les corps. À cet âge, ces phrases s'enregistrent. Le plus sûr est que ton plan reste invisible pour eux : tu manges la même chose, tu te sers différemment, sans commentaire.</p>
+    </div>
+    <h2>Ce sur quoi il vaut la peine d'agir</h2>
+    <div class="rowlist">
+      <div><b>Bouger</b><span>Le vrai levier chez l'enfant. Une heure par jour, sous n'importe quelle forme.</span></div>
+      <div><b>Dormir</b><span>9 à 11 heures à cet âge. Ça pèse plus que la plupart des ajustements alimentaires.</span></div>
+      <div><b>Boire de l'eau</b><span>Sodas et jus : le seul poste où restreindre est justifié et sans risque.</span></div>
+    </div>
+    <div class="card am">
+      <h3>Si tu t'inquiètes pour le poids de l'un des deux</h3>
+      <p style="margin:0">C'est une conversation avec le pédiatre, pas un ajustement à la maison. La corpulence d'un enfant se lit sur une courbe, en tenant compte de l'âge et du stade de croissance. Un enfant peut prendre du poids un an avant une poussée de taille : c'est une étape normale.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ================= ASSIETTE ================= -->
+<div class="view" id="v-assiette">
+  <div class="sub on" id="s-assiette-portions">
+    <p>Ta main est proportionnée à ton corps. C'est pour ça qu'elle marche comme unité de mesure : elle s'ajuste toute seule, et elle est toujours avec toi.</p>
+    <div id="hands"></div>
+    <h2>Ce que ça donne par repas</h2>
+    <div class="seg" id="seg">
+      <button type="button" data-mode="deficit">Jour normal</button>
+      <button type="button" data-mode="sport">Jour de sport</button>
+    </div>
+    <div class="target" id="tgt"></div>
+    <p class="sm mut" id="tgtnote" style="margin-top:12px"></p>
+    <h2>Et dans l'assiette</h2>
+    <svg class="plate" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="100" cy="100" r="96" fill="#F4F8F9"/>
+      <path d="M100 8a92 92 0 0 0 0 184z" fill="#E1F4F2"/>
+      <path d="M100 8a92 92 0 0 1 92 92h-92z" fill="#FCF0E1"/>
+      <path d="M100 100h92a92 92 0 0 1-92 92z" fill="#EFE7DA"/>
+      <circle cx="100" cy="100" r="96" fill="none" stroke="#16222B" stroke-width="2.5"/>
+      <line x1="100" y1="4" x2="100" y2="196" stroke="#16222B" stroke-width="2"/>
+      <line x1="100" y1="100" x2="196" y2="100" stroke="#16222B" stroke-width="2"/>
+      <text x="52" y="98" font-size="13" font-weight="700" fill="#0E8B84" text-anchor="middle" font-family="sans-serif">Légumes</text>
+      <text x="52" y="114" font-size="12" fill="#5B6B75" text-anchor="middle" font-family="sans-serif">la moitié</text>
+      <text x="148" y="56" font-size="13" font-weight="700" fill="#C97416" text-anchor="middle" font-family="sans-serif">Protéines</text>
+      <text x="148" y="150" font-size="13" font-weight="700" fill="#7A6A52" text-anchor="middle" font-family="sans-serif">Féculents</text>
+    </svg>
+    <div class="card co"><h3>Le seul repère à ne pas lâcher</h3>
+      <p style="margin:0">Une protéine à chaque repas, sans exception, petit-déjeuner compris. Si tu ne devais retenir qu'une chose, c'est celle-là.</p></div>
+  </div>
+
+  <div class="sub" id="s-assiette-repas">
+    <p class="mut sm">Touche un repas pour voir ses portions. Aucune quantité à peser.</p>
+    <div id="favwrap"></div>
+    <div id="mealwrap"></div>
+    <p class="sm mut">Repères si tu improvises : 150 g de viande ou de poisson font 30 g de protéines. Trois œufs, 19 g. 200 g de skyr, 20 g. 100 g de légumineuses cuites, 8 g.</p>
+  </div>
+
+  <div class="sub" id="s-assiette-sandwich">
+    <p>Le pain n'est pas le problème. C'est la combinaison habituelle : baguette blanche, garniture pauvre en protéines, sauce grasse, chips, soda.</p>
+    <div class="vs">
+      <div class="surf">
+        <div class="lbl" style="margin-top:0">Le réflexe actuel</div>
+        <div class="sm" style="margin-bottom:10px">Baguette jambon-beurre, chips, soda.</div>
+        <div class="big">1 000 <small>kcal</small></div>
+        <div class="big" style="font-size:21px">25 g <small>de protéines</small></div>
+      </div>
+      <div class="tl">
+        <div class="lbl" style="margin-top:0">Le sandwich qui marche</div>
+        <div class="sm" style="margin-bottom:10px">Pain complet, 2 paumes de poulet ou thon, crudités, moutarde. Salade, eau.</div>
+        <div class="big">550 <small>kcal</small></div>
+        <div class="big" style="font-size:21px">35 g <small>de protéines</small></div>
+      </div>
+    </div>
+    <h2>Les cinq réglages, du plus au moins rentable</h2>
+    <div class="rowlist">
+      <div><b>L'accompagnement décide</b><span>Salade ou crudités à la place des chips. À lui seul, ce changement retire plus de calories que tout le reste réuni.</span></div>
+      <div><b>De l'eau, rien d'autre</b><span>Un soda ajoute l'équivalent d'un tiers de sandwich sans rassasier une seconde.</span></div>
+      <div><b>Une protéine franche, doublée</b><span>Deux paumes de poulet, thon, œuf ou rosbif. Fuis ceux dont la garniture est surtout du fromage et de la sauce.</span></div>
+      <div><b>Pain complet ou aux céréales</b><span>Plus de fibres, satiété plus longue. Si seule la baguette blanche est là, ce n'est pas grave.</span></div>
+      <div><b>Moutarde plutôt que mayonnaise</b><span>Ou sauce à part. Une dose de mayo, c'est un pouce et demi de gras invisible.</span></div>
+    </div>
+    <h2>Le rythme de la semaine</h2>
+    <div class="card am"><h3>2 jours de sandwich acheté</h3><p style="margin:0">Avec les cinq réglages. C'est la solution pratique, elle a le droit d'exister.</p></div>
+    <div class="card surf"><h3>3 jours de boîte préparée</h3><p style="margin:0">Tu cuisines en double le dimanche et un soir en semaine : le déjeuner du lendemain est réglé.</p></div>
+    <div class="card tl"><h3>Le meilleur rapport : le sandwich maison</h3><p style="margin:0">Pain complet, deux paumes de blanc de poulet, crudités, moutarde. Trois minutes le matin, deux fois moins cher.</p></div>
+  </div>
+</div>
+
+<!-- ================= SÉANCES ================= -->
+<div class="view" id="v-seances">
+  <div class="sub on" id="s-seances-A"></div>
+  <div class="sub" id="s-seances-B"></div>
+  <div class="sub" id="s-seances-hist">
+    <div class="meta" id="hstats"></div>
+    <h2>Tes séances</h2>
+    <div id="hlist"></div>
+    <p class="sm mut" style="margin-top:18px">Une séance s'inscrit ici dès que tu as coché tous ses exercices. Les niveaux sont mémorisés d'une fois sur l'autre.</p>
+  </div>
+  <div class="sub" id="s-seances-guide">
+    <h2>Ce qu'est une variante</h2>
+    <p>Sans haltères, tu ne peux pas ajouter de kilos quand un exercice devient facile. Alors on change de version du même mouvement : c'est ça, une variante. Le même exercice, rendu plus dur ou plus facile en modifiant l'angle, l'appui, la vitesse ou le nombre de points de contact.</p>
+    <p>Exemple avec les pompes. Contre un mur, c'est très facile. Mains sur un plan de travail, un peu moins. Sur une chaise, encore moins. Au sol, c'est la version classique. Pieds surélevés, c'est plus dur. Le mouvement ne change pas — seule l'inclinaison change, et avec elle la part de ton poids que tes bras doivent pousser.</p>
+    <div class="card tl"><h3>Quand monter d'un cran</h3>
+      <p style="margin:0">Quand tu atteins le haut de la fourchette sur <em>toutes</em> tes séries, deux séances de suite. Exemple : 4 × 8–15, et tu fais 15, 15, 15, 15 sans être en difficulté. Tu passes au niveau au-dessus, tu retombes à 8 répétitions, et tu recommences à grimper.</p></div>
+    <div class="card co"><h3>Quand descendre d'un cran</h3>
+      <p style="margin:0">Quand tu n'atteins pas le bas de la fourchette, quand la technique se casse, ou quand ça réveille une douleur. Descendre n'est pas un échec : c'est le seul moyen de continuer à progresser sans se blesser.</p></div>
+    <h2>Les règles communes</h2>
+    <ul>
+      <li><b>3 à 4 séries</b> par exercice, dans l'ordre de la liste.</li>
+      <li><b>90 secondes</b> de récupération entre chaque série.</li>
+      <li><b>On s'arrête deux répétitions avant l'échec.</b> Tu dois sentir qu'il t'en restait deux.</li>
+      <li><b>Toutes les six à huit semaines</b>, une semaine plus légère : moitié moins de séries.</li>
+    </ul>
+    <div class="card am"><h3>Ton coude et ton dos</h3>
+      <p>Les dips et le rowing australien ont été retirés : l'un écrase le poignet en extension, l'autre demande de serrer fort. Ce sont les deux gestes qui entretiennent une douleur de coude.</p>
+      <p style="margin:0">Si un exercice réveille une douleur, tu l'arrêtes et tu descends d'un cran. Si ça persiste, tu le remplaces. Et si tu dois sauter une séance entière, saute la A : la B protège le dos.</p></div>
+  </div>
+</div>
+
+<!-- ================= SUIVI ================= -->
+<div class="view" id="v-suivi">
+  <div class="sub on" id="s-suivi-poids">
+    <div class="stats" id="wstats"></div>
+    <div class="form">
+      <label for="wdate">Date</label>
+      <div class="r"><input type="date" id="wdate"></div>
+      <label for="wval">Poids du matin, à jeun (kg)</label>
+      <div class="r">
+        <input type="number" id="wval" step="0.1" min="30" max="250" inputmode="decimal" placeholder="80,4">
+        <button type="button" id="wadd">Enregistrer</button>
+      </div>
+      <div class="msg" id="wmsg"></div>
+    </div>
+    <div class="card tl"><h3>Ne regarde que la moyenne</h3>
+      <p style="margin:0">Ton poids varie de plus ou moins 1,5 kg d'un jour à l'autre pour des raisons qui n'ont rien à voir avec le gras. La courbe foncée est la moyenne sur sept jours : c'est la seule qui dit la vérité.</p></div>
+    <div id="wchart"></div>
+    <h2>Les dernières pesées</h2>
+    <div id="wlist"></div>
+  </div>
+
+  <div class="sub" id="s-suivi-taille">
+    <div class="stats" id="tstats"></div>
+    <div class="form">
+      <label for="tdate">Date</label>
+      <div class="r"><input type="date" id="tdate"></div>
+      <label for="tval">Tour de taille au nombril, le matin (cm)</label>
+      <div class="r">
+        <input type="number" id="tval" step="0.5" min="50" max="200" inputmode="decimal" placeholder="94">
+        <button type="button" class="a" id="tadd">Enregistrer</button>
+      </div>
+      <div class="msg" id="tmsg"></div>
+    </div>
+    <div class="card am"><h3>Tous les quinze jours suffit</h3>
+      <p style="margin:0">C'est ta vraie mesure : elle bougera avant la balance, surtout pour le ventre et le bas du dos. Toujours au même endroit, le matin, sans serrer le mètre.</p></div>
+    <div id="tchart"></div>
+    <h2>Les dernières mesures</h2>
+    <div id="tlist"></div>
+  </div>
+
+  <div class="sub" id="s-suivi-donnees">
+    <h2>Quand corriger</h2>
+    <div class="rowlist">
+      <div><b>Moyenne stable trois semaines de suite</b><span>Retire environ 150 kcal par jour, ou ajoute 2 000 pas. Un seul changement à la fois.</span></div>
+      <div><b>Perte supérieure à 0,7 kg par semaine</b><span>Tu vas trop vite et tu perds du muscle. Remonte les portions.</span></div>
+      <div><b>Force en chute deux semaines de suite</b><span>Même signal, même correction.</span></div>
+    </div>
+    <h2>Où sont tes données</h2>
+    <p class="sm">Tout est enregistré dans le navigateur de ce téléphone, et nulle part ailleurs. Rien n'est envoyé sur internet. En contrepartie : si tu vides les données de navigation ou si tu changes d'appareil, elles disparaissent. D'où l'export.</p>
+    <button type="button" class="wide" id="exp">Exporter mes données</button>
+    <button type="button" class="wide" id="imp">Importer une sauvegarde</button>
+    <input type="file" id="impf" accept="application/json" hidden>
+    <div class="msg" id="rmsg"></div>
+    <div class="card co" style="margin-top:16px"><h3>Tout effacer</h3>
+      <p style="margin:0">Supprime les pesées, les tours de taille, les niveaux d'exercices, l'historique et les favoris. Sans retour possible.</p></div>
+    <button type="button" class="wide" id="wipe" style="color:var(--coral);border-color:#EBC7C0;">Effacer toutes mes données</button>
+  </div>
+</div>
+
+</main>
+
+<footer>Plan d'hygiène de vie générale, pas un avis médical. En cas de douleur persistante, de prise de poids récente inexpliquée ou de traitement en cours, parles-en à ton médecin. Pour l'alimentation de tes enfants, l'interlocuteur est leur pédiatre.</footer>
+
+<div class="tabbar" id="tabbar"></div>
+
+<script>
+/* =========================================================
+   STOCKAGE
+   ========================================================= */
+function ld(k,d){ try{ return JSON.parse(localStorage.getItem(k)) || d; }catch(e){ return d; } }
+function st(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); return true; }catch(e){ return false; } }
+var KS='plan.v1.seances', KA='plan.v1.assiette', KV='plan.v1.suivi';
+
+var S = ld(KS,{}); if(!S.lvl)S.lvl={}; if(!S.log)S.log=[]; if(!S.done)S.done={};
+var A = ld(KA,{}); if(!A.fav)A.fav={}; if(!A.mode)A.mode='deficit';
+var V = ld(KV,{w:[],t:[]}); if(!V.w)V.w=[]; if(!V.t)V.t=[];
+function svS(){ st(KS,S); } function svA(){ st(KA,A); } function svV(){ return st(KV,V); }
+
+function tdy(){ return new Date().toISOString().slice(0,10); }
+function frd(s){ var p=s.split('-'); return p[2]+'/'+p[1]; }
+function num(x){ return Math.round(x*10)/10; }
+if(S.day !== tdy()){ S.day = tdy(); S.done = {}; svS(); }
+
+/* =========================================================
+   DONNÉES
+   ========================================================= */
+var WEEK=[
+ ["Lundi","Séance A, 30 min à la maison"],
+ ["Mardi","Natation"],
+ ["Mercredi à vendredi","Padel et séance B, à placer librement sur ces trois jours"],
+ ["Samedi","Vélo, la sortie longue"],
+ ["Dimanche","Bilan, et tu cuisines pour la semaine"]
+];
+var RULES=[
+ ["Une protéine dans chaque repas","Deux paumes, à chaque fois. Petit-déjeuner compris."],
+ ["La moitié de l'assiette en légumes","Deux poings. Le seul poste où tu peux te resservir sans y penser."],
+ ["Rien de calorique dans le verre","Ni soda, ni jus, ni boisson énergétique. Sur le vélo sous 90 minutes, l'eau suffit."],
+ ["Quatre verres d'alcool par semaine","Jamais en semaine. Le poste le plus directement lié au gras abdominal."],
+ ["8 000 pas par jour hors sport","Sur une semaine, ça pèse plus lourd qu'une séance de plus."],
+ ["Sept heures de sommeil","Heure de coucher fixe. Mal dormir, c'est perdre du muscle au lieu du gras."]
+];
+var PHASES=[
+ ["1. Mise en place","7 sept → 4 oct","Aucun déficit. Tu installes les deux séances, les protéines à chaque repas, la pesée et le tour de taille. Le but est que les habitudes tiennent, pas que la balance bouge.","Poids stable"],
+ ["2. Première perte","5 oct → 6 déc","Déficit actif, neuf semaines. Le bloc qui fait le gros du travail, avec une semaine de décharge à mi-parcours.","−3,5 kg"],
+ ["3. Trêve","7 déc → 3 janv","Retour à l'équilibre, volontairement. Tenir le poids, pas en perdre. Le renforcement continue.","±1 kg"],
+ ["4. Deuxième perte","4 janv → 28 févr","Deuxième bloc, mêmes règles. C'est là que le ventre et le bas du dos changent visiblement.","−3 kg"],
+ ["5. Sortie","1 mars → 28 mars","Remontée progressive vers l'équilibre, environ 100 kcal de plus par semaine. La phase qui décide si la perte tient.","Poids stable"]
+];
+var HANDS=[
+ ["Protéines","1 paume, doigts non compris","L'épaisseur et la largeur de ta paume. Un blanc de poulet, un pavé de poisson, un steak, trois œufs, ou 200 g de skyr.",
+  '<path d="M7 11V5.5a1.5 1.5 0 0 1 3 0V11"/><path d="M10 11V4.5a1.5 1.5 0 0 1 3 0V11"/><path d="M13 11V5.5a1.5 1.5 0 0 1 3 0V12"/><path d="M16 8.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-1a7 7 0 0 1-7-7v-1a1.5 1.5 0 0 1 3 0"/>'],
+ ["Légumes","1 poing fermé","Le volume de ton poing. Vise deux poings par repas — c'est le seul poste où tu peux te resservir sans compter.",
+  '<rect x="4" y="8" width="16" height="11" rx="4"/><path d="M8 8V6.5a1.5 1.5 0 0 1 3 0V8M11 8V6a1.5 1.5 0 0 1 3 0v2M14 8V6.5a1.5 1.5 0 0 1 3 0V8"/>'],
+ ["Féculents","1 main en coupe","Ce que ta main en creux peut contenir. Riz ou pâtes cuits, pommes de terre, lentilles, deux tranches de pain.",
+  '<path d="M3 12a9 5 0 0 0 18 0"/><path d="M3 12c0-1 1-2 2-2M21 12c0-1-1-2-2-2"/><path d="M7 10c1.5-2 8.5-2 10 0"/>'],
+ ["Matières grasses","1 pouce entier","Longueur et épaisseur de ton pouce. Une cuillère à soupe d'huile, une noix de beurre, un quart d'avocat, une petite poignée d'amandes.",
+  '<path d="M9 20V9a3 3 0 0 1 6 0v11"/><rect x="9" y="14" width="6" height="7" rx="2"/>']
+];
+var TARGETS={
+ deficit:{v:[["2","paumes de protéines"],["2","poings de légumes"],["1","main en coupe de féculents"],["1","pouce de gras"]],
+   note:"Trois repas construits comme ça t'amènent autour de 130 g de protéines sur la journée, sans rien compter."},
+ sport:{v:[["2","paumes de protéines"],["2","poings de légumes"],["2","mains en coupe de féculents"],["1","pouce de gras"]],
+   note:"Les jours de padel, de vélo long ou de natation, la main en coupe supplémentaire va au repas qui suit la séance."}
+};
+var MEALS=[
+ {g:"Petit-déjeuner",note:"Le repas le plus souvent raté côté protéines. Viennoiserie et jus : beaucoup de calories, presque pas de protéines, faim à 10 h 30.",items:[
+  {n:"Œufs brouillés, pain complet, un fruit",p:["1 paume d'œufs (3)","1 main en coupe de pain","1 fruit"],k:"30 g de protéines"},
+  {n:"Skyr, flocons d'avoine, fruits rouges, amandes",p:["1 paume de skyr","1 main en coupe d'avoine","1 poing de fruits rouges","1 pouce d'amandes"],k:"30 g de protéines"},
+  {n:"Omelette au jambon et aux tomates",p:["1 paume d'œufs et de jambon","1 poing de tomates","½ main en coupe de pain"],k:"32 g de protéines"},
+  {n:"Fromage blanc, banane, miel, noix",p:["1 paume de fromage blanc","1 fruit","1 pouce de noix"],k:"28 g de protéines"},
+  {n:"Pain complet, œufs durs, avocat écrasé",p:["1 paume d'œufs (2)","1 main en coupe de pain","1 pouce d'avocat"],k:"20 g de protéines"}]},
+ {g:"Déjeuner",note:"Deux jours de sandwich, trois jours de boîte préparée.",items:[
+  {n:"Sandwich maison ou acheté",p:["2 paumes de poulet ou thon","1 main en coupe de pain","1 poing de crudités","salade à côté"],k:"35 g de protéines"},
+  {n:"Lentilles, thon, tomates, oignon rouge",p:["1 paume de thon","1 main en coupe de lentilles","2 poings de légumes","1 pouce de vinaigrette"],k:"40 g de protéines"},
+  {n:"Poulet rôti, riz complet, légumes rôtis",p:["2 paumes de poulet","1 main en coupe de riz","2 poings de légumes"],k:"40 g de protéines"},
+  {n:"Poke bowl maison au saumon",p:["2 paumes de saumon","1 main en coupe de riz","2 poings de légumes","1 pouce d'avocat"],k:"35 g de protéines"},
+  {n:"Salade de pâtes complètes, œufs, mozzarella",p:["1 paume d'œufs et de mozzarella","1 main en coupe de pâtes","2 poings de tomates"],k:"30 g de protéines"},
+  {n:"Wrap de blé complet au poulet",p:["2 paumes de poulet","1 main en coupe (la galette)","1 poing de crudités"],k:"32 g de protéines"},
+  {n:"Les restes du dîner de la veille",p:["mêmes portions que le dîner","double les quantités à la cuisson"],k:"—"}]},
+ {g:"Dîner",note:"C'est le repas que tu contrôles entièrement.",items:[
+  {n:"Poisson blanc, patate douce au four, brocolis",p:["2 paumes de poisson","1 main en coupe de patate douce","2 poings de brocolis"],k:"35 g de protéines"},
+  {n:"Poulet, ratatouille, quinoa",p:["2 paumes de poulet","1 main en coupe de quinoa","2 poings de ratatouille"],k:"40 g de protéines"},
+  {n:"Steak haché, haricots verts, pommes de terre",p:["2 paumes de steak","1 main en coupe de pommes de terre","2 poings de haricots"],k:"38 g de protéines"},
+  {n:"Chili con carne et riz",p:["2 paumes de haché et haricots rouges","1 main en coupe de riz","1 poing de légumes"],k:"40 g de protéines"},
+  {n:"Saumon, poêlée de légumes, boulgour",p:["2 paumes de saumon","1 main en coupe de boulgour","2 poings de légumes"],k:"35 g de protéines"},
+  {n:"Curry de pois chiches aux épinards, riz",p:["1 main en coupe de pois chiches","1 main en coupe de riz","2 poings d'épinards","1 pouce d'huile"],k:"22 g de protéines"},
+  {n:"Soir léger : omelette et grande salade",p:["1 paume d'œufs","2 poings de salade","½ main en coupe de pain"],k:"25 g de protéines"}]},
+ {g:"Si tu as faim entre les repas",note:"Une place prévue vaut mieux qu'une envie subie.",items:[
+  {n:"Un skyr ou un fromage blanc",p:["1 paume"],k:"20 g de protéines"},
+  {n:"Une poignée d'amandes",p:["1 pouce"],k:"6 g de protéines"},
+  {n:"Un œuf dur",p:["½ paume"],k:"6 g de protéines"},
+  {n:"Deux carrés de chocolat noir prévus à l'avance",p:["1 pouce"],k:"—"}]}
+];
+var EX={
+A:{jour:"Lundi",focus:"Poussée et tronc",duree:"30 min",ex:[
+ {n:"Pompes inclinées",r:"4 séries de 8 à 15 répétitions",
+  steps:["Mains posées sur un plan surélevé (bord de table, plan de travail, dossier de canapé), écartées un peu plus large que les épaules.",
+   "Sur les poings ou sur deux livres épais si le poignet à plat tire sur le coude : l'idée est de garder le poignet droit.",
+   "Corps en une seule ligne des talons à la tête, fessiers serrés, ventre gainé.",
+   "Descends en 2 secondes jusqu'à ce que la poitrine frôle l'appui, coudes à environ 45° du corps, pas écartés en croix.",
+   "Remonte en poussant le sol loin de toi, sans bloquer les coudes en fin de mouvement."],
+  feel:"Ça doit tirer dans la poitrine, les triceps et les épaules — jamais dans le poignet ni le coude.",
+  err:"Le bassin qui s'affaisse ou les fesses qui montent. Si tu ne tiens plus la ligne, arrête la série.",
+  lvls:["Mains contre un mur","Mains sur un plan de travail","Mains sur une chaise ou une table basse","Mains au sol","Pieds surélevés sur une chaise"],start:1},
+ {n:"Squat",r:"3 séries de 12 à 20 répétitions",
+  steps:["Debout, pieds écartés de la largeur des épaules, pointes légèrement vers l'extérieur.",
+   "Bras tendus devant toi pour l'équilibre.",
+   "Descends en poussant les fesses vers l'arrière, comme pour t'asseoir sur une chaise invisible, dos droit.",
+   "Descends jusqu'à ce que les cuisses soient parallèles au sol, ou aussi bas que tu peux sans arrondir le bas du dos.",
+   "Remonte en poussant fort dans les talons."],
+  feel:"Cuisses et fessiers. Les genoux peuvent dépasser légèrement les orteils, c'est normal et sans danger.",
+  err:"Les talons qui décollent, ou le bas du dos qui s'arrondit en bas du mouvement. Descends moins bas.",
+  lvls:["S'asseoir sur une chaise et se relever","Squat au poids du corps","Squat avec 3 secondes de descente","Squat bulgare, pied arrière sur une chaise"],start:1},
+ {n:"Planche sur avant-bras",r:"3 séries de 30 à 60 secondes",timer:45,
+  steps:["À plat ventre, appuie-toi sur les avant-bras, coudes à l'aplomb des épaules.",
+   "Jamais sur les mains : les avant-bras protègent ton coude.",
+   "Décolle le bassin et tends les jambes, appui sur la pointe des pieds.",
+   "Serre les fessiers et rentre légèrement le bassin, comme pour effacer le creux du bas du dos.",
+   "Respire normalement pendant tout le maintien."],
+  feel:"Une tension profonde dans tout le ventre. Si tu la sens surtout dans le bas du dos, le bassin n'est pas rentré.",
+  err:"Les fesses en l'air, ou le ventre qui tombe. Mieux vaut 20 secondes propres que 60 secondes affaissées.",
+  lvls:["Sur les genoux","Planche complète, 20 secondes","Planche complète, 45 secondes","Planche complète, une jambe décollée"],start:1},
+ {n:"Dead bug",r:"3 séries de 8 à 10 répétitions par côté",
+  steps:["Allongé sur le dos, bras tendus vers le plafond, hanches et genoux pliés à 90°, tibias parallèles au sol.",
+   "Plaque le bas du dos contre le sol : plus d'espace sous les lombaires. C'est le point central de l'exercice.",
+   "Descends lentement le bras droit derrière la tête et la jambe gauche vers le sol, en même temps.",
+   "Arrête-toi au moment où le bas du dos commence à se décoller — c'est ta limite du jour.",
+   "Reviens à la position de départ et alterne."],
+  feel:"Le ventre qui travaille pour empêcher le dos de se creuser. C'est un exercice lent.",
+  err:"Aller trop loin et laisser le dos se cambrer. Tu perds tout l'intérêt, et c'est là qu'un dos sensible proteste.",
+  lvls:["Bras seuls, jambes immobiles","Jambes seules, bras immobiles","Bras et jambe opposés, amplitude courte","Bras et jambe opposés, amplitude complète"],start:2},
+ {n:"Pont fessier",r:"3 séries de 12 à 15 répétitions",
+  steps:["Allongé sur le dos, genoux pliés, pieds à plat à une trentaine de centimètres des fesses.",
+   "Bras le long du corps, paumes vers le sol.",
+   "Pousse dans les talons pour décoller le bassin jusqu'à aligner genoux, hanches et épaules.",
+   "Serre fort les fessiers en haut et tiens une seconde.",
+   "Redescends lentement sans poser complètement le bassin entre les répétitions."],
+  feel:"Les fessiers, et un peu l'arrière des cuisses. Si tu le sens dans le bas du dos, monte moins haut et serre plus.",
+  err:"Monter trop haut en cambrant le dos au lieu de serrer les fessiers.",
+  lvls:["Deux pieds au sol","Deux pieds, 3 secondes de maintien en haut","Pieds surélevés sur une chaise","Une jambe tendue"],start:1}
+]},
+B:{jour:"Mercredi, jeudi ou vendredi",focus:"Dos et chaîne postérieure",duree:"30 min",ex:[
+ {n:"Y – T – W au sol",r:"3 séries de 10 répétitions dans chaque position",
+  steps:["À plat ventre, front posé au sol ou sur une serviette pliée, jambes tendues.",
+   "Position Y : bras tendus devant toi en diagonale, pouces vers le plafond. Décolle les bras de quelques centimètres, tiens une seconde, repose.",
+   "Position T : bras tendus sur les côtés en croix, pouces vers le plafond. Même mouvement.",
+   "Position W : coudes pliés collés aux côtes, avant-bras vers l'avant. Décolle et serre les omoplates.",
+   "Rien à tenir dans les mains — c'est exactement pour ça que cet exercice remplace le rowing."],
+  feel:"Le haut du dos et l'arrière des épaules. Les omoplates se rapprochent l'une de l'autre.",
+  err:"Décoller la poitrine en cambrant le dos. Ce sont les bras qui montent, pas le buste.",
+  lvls:["Sans décoller, juste serrer les omoplates","Décoller les bras de quelques centimètres","Décoller bras et haut de la poitrine","Avec 2 secondes de maintien en haut"],start:1},
+ {n:"Reverse snow angel",r:"3 séries de 8 répétitions",
+  steps:["À plat ventre, bras le long du corps, paumes vers le sol.",
+   "Décolle légèrement les bras et fais-les balayer lentement le long du sol jusqu'au-dessus de la tête, sans jamais toucher le sol.",
+   "Fais le chemin inverse, aussi lentement.",
+   "Une répétition, c'est l'aller-retour complet. Compte environ 6 secondes par répétition."],
+  feel:"Une brûlure diffuse dans le haut du dos et les épaules. Normal : ce sont de petits muscles peu sollicités.",
+  err:"Aller vite. Tout l'intérêt est dans la lenteur.",
+  lvls:["Amplitude courte, jusqu'aux épaules","Amplitude complète","Amplitude complète, très lente"],start:1},
+ {n:"Hip thrust une jambe",r:"3 séries de 10 à 15 répétitions par jambe",
+  steps:["Assis au sol, dos appuyé contre le bord du canapé, omoplates calées sur l'assise.",
+   "Un pied à plat au sol, genou plié ; l'autre jambe tendue ou genou ramené vers la poitrine.",
+   "Pousse dans le talon de la jambe d'appui pour monter le bassin jusqu'à une ligne des genoux aux épaules.",
+   "Rentre légèrement le bassin en haut et serre le fessier une seconde.",
+   "Redescends lentement, sans poser les fesses au sol."],
+  feel:"Le fessier de la jambe d'appui, franchement. L'exercice le plus utile du programme pour le bas du dos.",
+  err:"Cambrer le bas du dos au lieu de serrer le fessier. Si tu sens tes lombaires, monte moins haut.",
+  lvls:["Deux pieds au sol, bassin au sol","Deux pieds, épaules sur le canapé","Une jambe, l'autre pied posé au sol","Une jambe, l'autre jambe tendue en l'air"],start:2},
+ {n:"Fentes marchées",r:"3 séries de 10 à 12 pas par jambe",
+  steps:["Debout, un grand pas en avant, dos droit, regard devant.",
+   "Descends verticalement jusqu'à ce que le genou arrière frôle le sol — tu descends, tu ne te penches pas en avant.",
+   "Pousse dans le talon avant pour te relever et enchaîne le pas suivant avec l'autre jambe.",
+   "Si tu manques de place, fais-les sur place en revenant au point de départ à chaque fois."],
+  feel:"Cuisse et fessier de la jambe avant.",
+  err:"Un pas trop court, qui envoie tout le travail dans le genou. Allonge le pas si le genou tire.",
+  lvls:["Fente statique en se tenant à un mur","Fente statique sans appui","Fente marchée","Fente marchée avec 2 secondes en bas"],start:1},
+ {n:"Bird-dog",r:"3 séries de 8 répétitions par côté",
+  steps:["À quatre pattes, mains sous les épaules, genoux sous les hanches, dos plat comme une table.",
+   "Tends en même temps le bras droit devant et la jambe gauche derrière, jusqu'à l'horizontale.",
+   "Tiens deux secondes sans que le bassin ne bascule d'un côté.",
+   "Reviens lentement et alterne. Imagine un verre d'eau posé sur ton bas du dos : il ne doit pas se renverser."],
+  feel:"Une tension dans le bas du dos et le ventre, qui travaillent à te stabiliser. L'exercice de référence pour un dos sensible.",
+  err:"Monter la jambe trop haut, ce qui creuse le dos. L'horizontale suffit largement.",
+  lvls:["Bras seul","Jambe seule","Bras et jambe opposés","Bras et jambe opposés, 3 secondes de maintien"],start:2},
+ {n:"Gainage latéral",r:"3 séries de 25 à 45 secondes par côté",timer:35,
+  steps:["Allongé sur le côté, appui sur l'avant-bras, coude à l'aplomb de l'épaule.",
+   "Genoux fléchis à 90° si l'appui gêne, jambes tendues sinon.",
+   "Décolle le bassin pour aligner chevilles, hanches et épaules.",
+   "Main libre posée sur la hanche. Respire normalement, puis change de côté."],
+  feel:"Le côté du ventre, sur toute sa hauteur.",
+  err:"Le bassin qui redescend petit à petit. Arrête la série quand tu ne tiens plus l'alignement.",
+  lvls:["Genoux fléchis","Jambes tendues","Jambes tendues, jambe du dessus levée"],start:0}
+]}};
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+var VIEWS={
+ accueil:{k:"Mon plan",h:"Six mois,<br>deux leviers",p:"L'assiette et le renforcement. Tout le reste suit.",cls:"",
+   subs:[["semaine","La semaine"],["calendrier","Le calendrier"],["famille","À table en famille"]]},
+ assiette:{k:"Mon assiette",h:"Aucune balance,<br>juste ta main",p:"",cls:"a",
+   subs:[["portions","Les portions"],["repas","Les repas"],["sandwich","Le sandwich"]]},
+ seances:{k:"Mes séances",h:"Trente minutes,<br>sans matériel",p:"",cls:"t",
+   subs:[["A","Séance A"],["B","Séance B"],["hist","Historique"],["guide","Comment ça marche"]]},
+ suivi:{k:"Mon suivi",h:"Le poids et le<br>tour de taille",p:"",cls:"",
+   subs:[["poids","Poids"],["taille","Tour de taille"],["donnees","Données"]]}
+};
+var TABICONS={
+ accueil:'<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/>',
+ assiette:'<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M12 12h8.5"/>',
+ seances:'<path d="M6 9v6M18 9v6M3.5 10.5v3M20.5 10.5v3M6 12h12"/>',
+ suivi:'<path d="M4 18l5-5 4 3 7-8"/><path d="M3 21h18"/>'
+};
+var current='accueil';
+
+document.getElementById('tabbar').innerHTML = Object.keys(VIEWS).map(function(k){
+  return '<button type="button" data-v="'+k+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">'+TABICONS[k]+'</svg><span class="lab">'+VIEWS[k].k.replace('Mon ','').replace('Mes ','').replace(/^./,function(c){return c.toUpperCase();})+'</span></button>';
+}).join('');
+
+function goView(k){
+  current=k;
+  var v=VIEWS[k];
+  document.getElementById('hd').className = v.cls;
+  document.getElementById('hk').textContent = v.k;
+  document.getElementById('hh').innerHTML = v.h;
+  var hp=document.getElementById('hp'); hp.textContent=v.p; hp.style.display = v.p?'block':'none';
+  document.querySelectorAll('.view').forEach(function(x){x.classList.remove('on');});
+  document.getElementById('v-'+k).classList.add('on');
+  document.querySelectorAll('#tabbar button').forEach(function(b){ b.classList.toggle('on', b.dataset.v===k); });
+  document.getElementById('pills').innerHTML = v.subs.map(function(s,i){
+    return '<button type="button" data-s="'+s[0]+'"'+(i===0?' class="on"':'')+'>'+s[1]+'</button>';
+  }).join('');
+  document.querySelectorAll('#pills button').forEach(function(b){
+    b.addEventListener('click', function(){ goSub(b.dataset.s); });
+  });
+  goSub(v.subs[0][0]);
+}
+function goSub(s){
+  document.querySelectorAll('#v-'+current+' .sub').forEach(function(x){x.classList.remove('on');});
+  var el=document.getElementById('s-'+current+'-'+s); if(el) el.classList.add('on');
+  document.querySelectorAll('#pills button').forEach(function(b){ b.classList.toggle('on', b.dataset.s===s); });
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('#tabbar button').forEach(function(b){
+  b.addEventListener('click', function(){ goView(b.dataset.v); });
+});
+
+/* =========================================================
+   ACCUEIL
+   ========================================================= */
+document.getElementById('week').innerHTML = WEEK.map(function(w){
+  return '<div><b>'+w[0]+'</b><span>'+w[1]+'</span></div>'; }).join('');
+document.getElementById('rules').innerHTML = RULES.map(function(r){
+  return '<div><b>'+r[0]+'</b><span>'+r[1]+'</span></div>'; }).join('');
+document.getElementById('phases').innerHTML = PHASES.map(function(p){
+  return '<div class="acc"><button type="button"><span class="name">'+p[0]+'<br><span style="font-weight:400;color:var(--mut);font-size:16px">'+p[1]+'</span></span><span class="chev">›</span></button>'+
+  '<div class="body"><p style="margin-top:14px">'+p[2]+'</p><p style="margin:0"><b>Repère : '+p[3]+'</b></p></div></div>'; }).join('');
+document.querySelectorAll('#phases .acc').forEach(function(a){
+  a.querySelector('button').addEventListener('click', function(){ a.classList.toggle('open'); });
+});
+
+/* =========================================================
+   ASSIETTE
+   ========================================================= */
+document.getElementById('hands').innerHTML = HANDS.map(function(h){
+  return '<div class="hand"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#C97416" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+h[3]+'</svg></div>'+
+  '<div><div class="t">'+h[0]+'</div><div class="u">'+h[1]+'</div><div class="d">'+h[2]+'</div></div></div>'; }).join('');
+
+function renderTarget(m){
+  var t=TARGETS[m];
+  document.getElementById('tgt').innerHTML = t.v.map(function(x){
+    return '<div><div class="n">'+x[0]+'</div><div class="l">'+x[1]+'</div></div>'; }).join('');
+  document.getElementById('tgtnote').textContent = t.note;
+}
+document.querySelectorAll('#seg button').forEach(function(b){
+  b.classList.toggle('on', b.dataset.mode===A.mode);
+  b.addEventListener('click', function(){
+    document.querySelectorAll('#seg button').forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on'); A.mode=b.dataset.mode; svA(); renderTarget(A.mode);
+  });
+});
+renderTarget(A.mode);
+
+function renderFav(){
+  var names=Object.keys(A.fav).filter(function(k){return A.fav[k];});
+  document.getElementById('favwrap').innerHTML = names.length
+    ? '<div class="card am"><h3>Mes favoris</h3>'+names.map(function(n){return '<div class="favline">'+n+'</div>';}).join('')+'</div>' : '';
+}
+var mw=document.getElementById('mealwrap');
+MEALS.forEach(function(g){
+  var h=document.createElement('h2'); h.textContent=g.g; mw.appendChild(h);
+  var n=document.createElement('p'); n.className='sm mut'; n.textContent=g.note; mw.appendChild(n);
+  g.items.forEach(function(m){
+    var d=document.createElement('div'); d.className='meal'; var id=m.n;
+    d.innerHTML='<button type="button" class="head"><span class="name">'+m.n+'</span><span class="chev">›</span></button>'+
+      '<div class="body"><div class="por">'+m.p.map(function(x){return '<span>'+x+'</span>';}).join('')+'</div>'+
+      '<div class="botrow"><span class="prot">'+m.k+'</span><button type="button" class="fav"></button></div></div>';
+    d.querySelector('.head').addEventListener('click', function(){ d.classList.toggle('open'); });
+    var fb=d.querySelector('.fav');
+    function drawFav(){ d.classList.toggle('isfav', !!A.fav[id]);
+      fb.textContent = A.fav[id] ? '★ Dans mes favoris' : '☆ Ajouter aux favoris'; }
+    fb.addEventListener('click', function(){ A.fav[id]=!A.fav[id]; svA(); drawFav(); renderFav(); });
+    drawFav(); mw.appendChild(d);
+  });
+});
+renderFav();
+
+/* =========================================================
+   SÉANCES
+   ========================================================= */
+function renderSeance(key){
+  var d=EX[key], root=document.getElementById('s-seances-'+key);
+  root.innerHTML='<div class="meta">'+
+    '<div><div class="n">'+d.jour+'</div><div class="l">quand</div></div>'+
+    '<div><div class="n">'+d.duree+'</div><div class="l">durée</div></div>'+
+    '<div><div class="n">'+d.ex.length+'</div><div class="l">exercices</div></div></div>'+
+    '<p class="sm mut">'+d.focus+'. Trois à quatre séries, 90 secondes de récupération, on s\'arrête deux répétitions avant l\'échec.</p>'+
+    '<div id="list'+key+'"></div>'+
+    '<button type="button" class="wide" id="rst'+key+'" style="margin-top:8px">Décocher tout</button>';
+  var list=document.getElementById('list'+key);
+
+  d.ex.forEach(function(e,i){
+    var id=key+i, el=document.createElement('div'); el.className='ex';
+    el.innerHTML='<div class="top">'+
+      '<button class="chk" type="button" aria-label="fait"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></button>'+
+      '<button class="ttl" type="button"><span class="name">'+e.n+'</span><span class="reps">'+e.r+'</span></button>'+
+      '<span class="chev">›</span></div>'+
+      '<div class="body">'+
+      '<div class="lbl">Comment le faire</div><ol class="steps">'+e.steps.map(function(s){return '<li>'+s+'</li>';}).join('')+'</ol>'+
+      '<div class="lbl">Ce que tu dois sentir</div><div class="feel">'+e.feel+'</div>'+
+      '<div class="lbl">L\'erreur fréquente</div><div class="err">'+e.err+'</div>'+
+      '<div class="lbl">Ton niveau</div>'+
+      '<div class="lvl"><div class="lvlbar"><button type="button" class="dn">−</button>'+
+      '<div class="cur"><div class="s"></div><div class="t"></div></div>'+
+      '<button type="button" class="up">+</button></div><div class="dots"></div></div>'+
+      (e.timer?'<div class="timer"><div class="val">'+e.timer+'s</div><button type="button" class="go">Démarrer</button><button type="button" class="g rz">Reset</button></div>':'')+
+      '</div>';
+
+    el.querySelector('.ttl').addEventListener('click', function(){ el.classList.toggle('open'); });
+    el.querySelector('.chev').addEventListener('click', function(){ el.classList.toggle('open'); });
+    if(S.done[id]) el.classList.add('done');
+    el.querySelector('.chk').addEventListener('click', function(){
+      el.classList.toggle('done'); S.done[id]=el.classList.contains('done'); svS(); checkComplete(key);
+    });
+
+    var cur = (typeof S.lvl[id]==='number') ? S.lvl[id] : e.start;
+    var sE=el.querySelector('.cur .s'), tE=el.querySelector('.cur .t'), dots=el.querySelector('.dots');
+    var up=el.querySelector('.up'), dn=el.querySelector('.dn');
+    function draw(){
+      sE.textContent='Niveau '+(cur+1)+' sur '+e.lvls.length;
+      tE.textContent=e.lvls[cur];
+      dots.innerHTML=e.lvls.map(function(_,j){return '<i class="'+(j<=cur?'on':'')+'"></i>';}).join('');
+      dn.disabled=(cur===0); up.disabled=(cur===e.lvls.length-1);
+    }
+    up.addEventListener('click', function(){ if(cur<e.lvls.length-1){cur++; S.lvl[id]=cur; svS(); draw();} });
+    dn.addEventListener('click', function(){ if(cur>0){cur--; S.lvl[id]=cur; svS(); draw();} });
+    draw();
+
+    if(e.timer){
+      var left=e.timer, tid=null;
+      var val=el.querySelector('.val'), go=el.querySelector('.go'), rz=el.querySelector('.rz');
+      function show(){ val.textContent=left+'s'; }
+      go.addEventListener('click', function(){
+        if(tid){ clearInterval(tid); tid=null; go.textContent='Reprendre'; return; }
+        go.textContent='Pause';
+        tid=setInterval(function(){ left--; show();
+          if(left<=0){ clearInterval(tid); tid=null; go.textContent='Démarrer'; left=e.timer;
+            val.textContent='Fini'; setTimeout(show,2500); } },1000);
+      });
+      rz.addEventListener('click', function(){ if(tid){clearInterval(tid);tid=null;} left=e.timer; go.textContent='Démarrer'; show(); });
+    }
+    list.appendChild(el);
+  });
+
+  document.getElementById('rst'+key).addEventListener('click', function(){
+    list.querySelectorAll('.ex').forEach(function(x){x.classList.remove('done');});
+    EX[key].ex.forEach(function(_,i){ delete S.done[key+i]; });
+    svS(); checkComplete(key); window.scrollTo(0,0);
+  });
+}
+function checkComplete(key){
+  var n=EX[key].ex.length, c=0;
+  for(var i=0;i<n;i++){ if(S.done[key+i]) c++; }
+  var d=tdy(), already=S.log.some(function(x){return x.d===d && x.s===key;});
+  if(c===n && !already){ S.log.push({d:d,s:key}); svS(); }
+  if(c<n && already){ S.log=S.log.filter(function(x){return !(x.d===d && x.s===key);}); svS(); }
+  renderHist();
+}
+function renderHist(){
+  var log=S.log.slice().sort(function(a,b){return a.d<b.d?1:-1;});
+  var now=new Date();
+  var d7=log.filter(function(x){return (now-new Date(x.d))/86400000<=7;}).length;
+  var d30=log.filter(function(x){return (now-new Date(x.d))/86400000<=30;}).length;
+  document.getElementById('hstats').innerHTML=
+    '<div><div class="n">'+d7+'</div><div class="l">ces 7 jours</div></div>'+
+    '<div><div class="n">'+d30+'</div><div class="l">ces 30 jours</div></div>'+
+    '<div><div class="n">'+log.length+'</div><div class="l">au total</div></div>';
+  document.getElementById('hlist').innerHTML = log.length
+    ? '<div class="rowlist">'+log.slice(0,30).map(function(x){
+        return '<div style="display:flex;justify-content:space-between"><b>Séance '+x.s+'</b><span>'+frd(x.d)+'</span></div>';
+      }).join('')+'</div>'
+    : '<div class="empty">Rien encore. Coche les exercices au fil de ta séance : elle s\'inscrira ici toute seule une fois terminée.</div>';
+}
+renderSeance('A'); renderSeance('B'); renderHist();
+
+/* =========================================================
+   SUIVI
+   ========================================================= */
+function avg7(arr){
+  var out=[];
+  for(var i=0;i<arr.length;i++){
+    var end=new Date(arr[i].d), sum=0, n=0;
+    for(var j=0;j<=i;j++){
+      var diff=(end-new Date(arr[j].d))/86400000;
+      if(diff>=0 && diff<7){ sum+=arr[j].v; n++; }
+    }
+    out.push({d:arr[i].d, v:sum/n});
+  }
+  return out;
+}
+function chart(arr, showAvg, color){
+  if(arr.length<2) return '';
+  var W=320,H=170,P=30,PB=24;
+  var vals=arr.map(function(x){return x.v;});
+  var mv = showAvg ? avg7(arr) : null;
+  if(mv) vals=vals.concat(mv.map(function(x){return x.v;}));
+  var mn=Math.min.apply(null,vals), mx=Math.max.apply(null,vals);
+  if(mx-mn<1){ mn-=0.5; mx+=0.5; }
+  var pad=(mx-mn)*0.15; mn-=pad; mx+=pad;
+  var t0=new Date(arr[0].d), t1=new Date(arr[arr.length-1].d);
+  var span=Math.max(1,(t1-t0)/86400000);
+  function X(d){ return P + ((new Date(d)-t0)/86400000)/span*(W-P-8); }
+  function Y(v){ return 10 + (1-(v-mn)/(mx-mn))*(H-10-PB); }
+  function path(a){ return a.map(function(p,i){ return (i?'L':'M')+num(X(p.d))+' '+num(Y(p.v)); }).join(' '); }
+  var g='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">';
+  [0,0.5,1].forEach(function(f){
+    var v=mn+(mx-mn)*f, y=Y(v);
+    g+='<line x1="'+P+'" y1="'+num(y)+'" x2="'+(W-8)+'" y2="'+num(y)+'" stroke="#E4EBEF" stroke-width="1"/>';
+    g+='<text x="'+(P-5)+'" y="'+num(y+4)+'" font-size="10" fill="#5B6B75" text-anchor="end">'+num(v)+'</text>';
+  });
+  g+='<path d="'+path(arr)+'" fill="none" stroke="'+color+'" stroke-width="1.5" opacity="'+(showAvg?'.35':'1')+'" stroke-linejoin="round"/>';
+  if(showAvg) g+='<path d="'+path(mv)+'" fill="none" stroke="'+color+'" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>';
+  arr.forEach(function(p){ g+='<circle cx="'+num(X(p.d))+'" cy="'+num(Y(p.v))+'" r="2.2" fill="'+color+'" opacity="'+(showAvg?'.45':'1')+'"/>'; });
+  g+='<text x="'+P+'" y="'+(H-6)+'" font-size="10" fill="#5B6B75">'+frd(arr[0].d)+'</text>';
+  g+='<text x="'+(W-8)+'" y="'+(H-6)+'" font-size="10" fill="#5B6B75" text-anchor="end">'+frd(arr[arr.length-1].d)+'</text></svg>';
+  var leg = showAvg ? '<div class="legend"><span><i style="background:'+color+';opacity:.4"></i>chaque matin</span><span><i style="background:'+color+'"></i>moyenne 7 jours</span></div>' : '';
+  return '<div class="chart">'+g+leg+'</div>';
+}
+function renderW(){
+  var a=V.w.slice().sort(function(x,y){return x.d<y.d?-1:1;});
+  if(!a.length){
+    document.getElementById('wstats').innerHTML='';
+    document.getElementById('wchart').innerHTML='';
+    document.getElementById('wlist').innerHTML='<div class="empty">Aucune pesée pour l\'instant. Note ton poids demain matin à jeun, puis chaque jour : c\'est la régularité qui rend la moyenne fiable.</div>';
+    return;
+  }
+  var mv=avg7(a), cur=mv[mv.length-1].v, first=mv[0].v, delta=cur-first, wk=null;
+  for(var i=mv.length-1;i>=0;i--){ if((new Date(mv[mv.length-1].d)-new Date(mv[i].d))/86400000>=7){ wk=mv[i].v; break; } }
+  var h='<div><div class="n">'+num(cur)+' kg</div><div class="l">moyenne 7 jours</div></div>';
+  h+='<div><div class="n '+(delta<0?'dn':delta>0?'up':'')+'">'+(delta>0?'+':'')+num(delta)+' kg</div><div class="l">depuis le début</div></div>';
+  if(wk!==null){ var dw=cur-wk; h+='<div><div class="n '+(dw<0?'dn':dw>0?'up':'')+'">'+(dw>0?'+':'')+num(dw)+' kg</div><div class="l">sur 7 jours</div></div>'; }
+  document.getElementById('wstats').innerHTML=h;
+  document.getElementById('wchart').innerHTML=chart(a,true,'#0E8B84');
+  document.getElementById('wlist').innerHTML='<table class="t"><tr><th>Date</th><th>Poids</th><th></th></tr>'+
+    a.slice().reverse().slice(0,20).map(function(p){
+      return '<tr><td>'+frd(p.d)+'</td><td>'+num(p.v)+' kg</td><td class="x"><button type="button" data-k="w" data-d="'+p.d+'">×</button></td></tr>';
+    }).join('')+'</table>';
+  bindDel();
+}
+function renderT(){
+  var a=V.t.slice().sort(function(x,y){return x.d<y.d?-1:1;});
+  if(!a.length){
+    document.getElementById('tstats').innerHTML='';
+    document.getElementById('tchart').innerHTML='';
+    document.getElementById('tlist').innerHTML='<div class="empty">Aucune mesure pour l\'instant. Prends-la au nombril, le matin, sans serrer — puis toutes les deux semaines.</div>';
+    return;
+  }
+  var cur=a[a.length-1].v, delta=cur-a[0].v;
+  document.getElementById('tstats').innerHTML=
+    '<div><div class="n">'+num(cur)+' cm</div><div class="l">dernière mesure</div></div>'+
+    '<div><div class="n '+(delta<0?'dn':delta>0?'up':'')+'">'+(delta>0?'+':'')+num(delta)+' cm</div><div class="l">depuis le début</div></div>';
+  document.getElementById('tchart').innerHTML=chart(a,false,'#C97416');
+  document.getElementById('tlist').innerHTML='<table class="t"><tr><th>Date</th><th>Tour de taille</th><th></th></tr>'+
+    a.slice().reverse().map(function(p){
+      return '<tr><td>'+frd(p.d)+'</td><td>'+num(p.v)+' cm</td><td class="x"><button type="button" data-k="t" data-d="'+p.d+'">×</button></td></tr>';
+    }).join('')+'</table>';
+  bindDel();
+}
+function bindDel(){
+  document.querySelectorAll('table.t td.x button').forEach(function(b){
+    b.onclick=function(){ var k=b.dataset.k;
+      V[k]=V[k].filter(function(x){return x.d!==b.dataset.d;});
+      svV(); k==='w'?renderW():renderT(); };
+  });
+}
+function addVal(key,dateId,valId,msgId,unit,after){
+  var d=document.getElementById(dateId).value || tdy();
+  var v=parseFloat(String(document.getElementById(valId).value).replace(',','.'));
+  var m=document.getElementById(msgId);
+  if(isNaN(v)){ m.style.color='#C4503C'; m.textContent='Entre une valeur.'; return; }
+  var ex=V[key].some(function(x){return x.d===d;});
+  V[key]=V[key].filter(function(x){return x.d!==d;});
+  V[key].push({d:d,v:v});
+  if(!svV()){ m.style.color='#C4503C'; m.textContent="Impossible d'enregistrer sur cet appareil."; return; }
+  m.style.color='#0E8B84';
+  m.textContent=(ex?'Valeur du '+frd(d)+' remplacée : ':'Enregistré : ')+num(v)+' '+unit;
+  document.getElementById(valId).value=''; after();
+  setTimeout(function(){ m.textContent=''; },4000);
+}
+document.getElementById('wadd').addEventListener('click',function(){ addVal('w','wdate','wval','wmsg','kg',renderW); });
+document.getElementById('tadd').addEventListener('click',function(){ addVal('t','tdate','tval','tmsg','cm',renderT); });
+document.getElementById('wval').addEventListener('keydown',function(e){ if(e.key==='Enter') document.getElementById('wadd').click(); });
+document.getElementById('tval').addEventListener('keydown',function(e){ if(e.key==='Enter') document.getElementById('tadd').click(); });
+
+document.getElementById('exp').addEventListener('click',function(){
+  var all={};
+  for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(k.indexOf('plan.v1.')===0) all[k]=localStorage.getItem(k); }
+  var b=new Blob([JSON.stringify(all,null,2)],{type:'application/json'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='mon-plan-'+tdy()+'.json'; a.click();
+  var m=document.getElementById('rmsg'); m.style.color='#0E8B84'; m.textContent='Sauvegarde téléchargée.';
+});
+document.getElementById('imp').addEventListener('click',function(){ document.getElementById('impf').click(); });
+document.getElementById('impf').addEventListener('change',function(e){
+  var f=e.target.files[0]; if(!f) return;
+  var r=new FileReader();
+  r.onload=function(){
+    var m=document.getElementById('rmsg');
+    try{
+      var all=JSON.parse(r.result);
+      Object.keys(all).forEach(function(k){ if(k.indexOf('plan.v1.')===0) localStorage.setItem(k,all[k]); });
+      S=ld(KS,{}); if(!S.lvl)S.lvl={}; if(!S.log)S.log=[]; if(!S.done)S.done={};
+      A=ld(KA,{}); if(!A.fav)A.fav={}; if(!A.mode)A.mode='deficit';
+      V=ld(KV,{w:[],t:[]}); if(!V.w)V.w=[]; if(!V.t)V.t=[];
+      renderW(); renderT(); renderHist(); renderFav(); renderSeance('A'); renderSeance('B');
+      m.style.color='#0E8B84'; m.textContent='Sauvegarde restaurée.';
+    }catch(err){ m.style.color='#C4503C'; m.textContent='Fichier illisible.'; }
+  };
+  r.readAsText(f);
+});
+document.getElementById('wipe').addEventListener('click',function(){
+  if(!confirm('Effacer définitivement toutes tes données ?')) return;
+  var ks=[];
+  for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(k.indexOf('plan.v1.')===0) ks.push(k); }
+  ks.forEach(function(k){ localStorage.removeItem(k); });
+  S={lvl:{},log:[],done:{},day:tdy()}; A={fav:{},mode:'deficit'}; V={w:[],t:[]};
+  renderW(); renderT(); renderHist(); renderFav(); renderSeance('A'); renderSeance('B');
+  var m=document.getElementById('rmsg'); m.style.color='#C4503C'; m.textContent='Données effacées.';
+});
+
+/* ---------- init ---------- */
+document.getElementById('wdate').value=tdy();
+document.getElementById('tdate').value=tdy();
+renderW(); renderT();
+goView('accueil');
+</script>
+</body>
+</html>
