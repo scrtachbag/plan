@@ -21,28 +21,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;f
      line-height:1.55;color:var(--ink);background:#fff;padding-bottom:calc(78px + env(safe-area-inset-bottom));}
 
 header{color:#fff;background:var(--ink);overflow:hidden;
-  padding:18px 16px 18px;padding-top:calc(18px + env(safe-area-inset-top));
+  padding:14px 16px 14px;padding-top:calc(14px + env(safe-area-inset-top));
   display:flex;align-items:center;gap:14px;}
 header.a{background:var(--amber);} header.t{background:var(--teal);}
-header .mark{flex:0 0 46px;width:46px;height:46px;border-radius:12px;background:rgba(255,255,255,.16);
+header .mark{flex:0 0 40px;width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.16);
   display:flex;align-items:center;justify-content:center;}
-header .mark svg{width:30px;height:30px;display:block;}
+header .mark svg{width:26px;height:26px;display:block;}
 header .txt{min-width:0;flex:1;}
 header .k{font-size:calc(12.5px * var(--fsx));font-weight:700;opacity:.85;letter-spacing:.5px;}
 header h1{font-size:calc(clamp(19px,6.4vw,26px) * var(--fsx));line-height:1.14;margin:2px 0 0;letter-spacing:-.5px;
   overflow-wrap:break-word;hyphens:auto;}
 
-.pills{display:flex;gap:8px;padding:12px 16px;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto;}
+.pills{display:flex;gap:8px;padding:10px 16px;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto;}
 .pills button{flex:0 0 auto;font:inherit;font-size:calc(16px * var(--fsx));font-weight:700;border:1px solid var(--line);
   background:#fff;color:var(--mut);border-radius:999px;padding:10px 18px;min-height:44px;cursor:pointer;}
 .pills button.on{background:var(--acc);border-color:var(--acc);color:#fff;}
 .pills::-webkit-scrollbar{display:none;}
 
-main{padding:18px 16px 0;}
+main{padding:14px 16px 0;}
 .view{display:none;} .view.on{display:block;}
 .sub{display:none;} .sub.on{display:block;}
 
-h2{font-size:calc(22px * var(--fsx));letter-spacing:-.4px;margin:28px 0 14px;padding-left:12px;
+h2{font-size:calc(20px * var(--fsx));letter-spacing:-.4px;margin:22px 0 11px;padding-left:12px;
    border-left:5px solid var(--acc);line-height:1.25;}
 h2:first-child{margin-top:6px;}
 h3{font-size:calc(19px * var(--fsx));margin:0 0 8px;letter-spacing:-.3px;}
@@ -73,9 +73,8 @@ ol.steps{margin:0 0 4px;padding-left:22px;} ol.steps li{margin-bottom:8px;}
 .acc.open .body{display:block;}
 
 .meta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
-.meta div{flex:1 1 100px;background:var(--surf);border-radius:14px;padding:13px 14px;}
-.meta div{border-left:4px solid var(--acc);}
-.meta .n{font-size:calc(22px * var(--fsx));font-weight:800;letter-spacing:-.5px;line-height:1.1;color:var(--accdeep);}
+.meta div{flex:1 1 90px;background:var(--surf);border-radius:14px;padding:11px 13px;}
+.meta .n{font-size:calc(20px * var(--fsx));font-weight:800;letter-spacing:-.5px;line-height:1.1;color:var(--accdeep);}
 .meta .l{font-size:calc(14px * var(--fsx));color:var(--mut);margin-top:3px;}
 
 /* hands */
@@ -122,16 +121,16 @@ ol.steps{margin:0 0 4px;padding-left:22px;} ol.steps li{margin-bottom:8px;}
 .big small{font-size:calc(16px * var(--fsx));font-weight:600;}
 
 /* exercises */
-.ex{border:1px solid var(--line);border-radius:16px;margin-bottom:12px;overflow:hidden;}
+.ex{border:1px solid var(--line);border-radius:14px;margin-bottom:8px;overflow:hidden;}
 .ex.done{border-color:var(--teal);background:var(--tealsoft);}
-.ex > .top{display:flex;align-items:center;gap:12px;padding:14px 16px;}
-.chk{flex:0 0 34px;width:34px;height:34px;border-radius:10px;border:2px solid var(--line);background:#fff;
+.ex > .top{display:flex;align-items:center;gap:12px;padding:11px 14px;}
+.chk{flex:0 0 30px;width:30px;height:30px;border-radius:10px;border:2px solid var(--line);background:#fff;
   cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;}
 .chk svg{width:20px;height:20px;opacity:0;}
 .ex.done .chk{background:var(--teal);border-color:var(--teal);} .ex.done .chk svg{opacity:1;}
 .ex .ttl{flex:1;font:inherit;text-align:left;background:none;border:0;padding:0;cursor:pointer;}
-.ex .name{font-size:calc(19px * var(--fsx));font-weight:700;line-height:1.25;display:block;}
-.ex .reps{font-size:calc(16px * var(--fsx));color:var(--mut);display:block;margin-top:2px;}
+.ex .name{font-size:calc(17.5px * var(--fsx));font-weight:700;line-height:1.25;display:block;}
+.ex .reps{font-size:calc(14.5px * var(--fsx));color:var(--mut);display:block;margin-top:1px;}
 .ex .chev{font-size:calc(22px * var(--fsx));color:var(--mut);transition:transform .15s;}
 .ex.open .chev{transform:rotate(90deg);}
 .ex .body{display:none;padding:2px 16px 18px;} .ex.open .body{display:block;}
@@ -157,7 +156,6 @@ ol.steps{margin:0 0 4px;padding-left:22px;} ol.steps li{margin-bottom:8px;}
 /* suivi */
 .stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
 .stats div{flex:1 1 130px;background:var(--surf);border-radius:16px;padding:16px;}
-.stats div{border-left:4px solid var(--acc);}
 .stats .n{font-size:calc(30px * var(--fsx));font-weight:800;letter-spacing:-1px;line-height:1.1;}
 .stats .l{font-size:calc(15px * var(--fsx));color:var(--mut);margin-top:4px;}
 .stats .up{color:var(--coral);} .stats .dn{color:var(--teal);}
@@ -166,7 +164,6 @@ ol.steps{margin:0 0 4px;padding-left:22px;} ol.steps li{margin-bottom:8px;}
 .form .r{display:flex;gap:10px;margin-bottom:12px;}
 .form input{flex:1;font:inherit;font-size:calc(19px * var(--fsx));padding:14px;min-height:52px;border:1px solid var(--line);
   border-radius:12px;background:#fff;color:var(--ink);width:100%;}
-.form{border-left:5px solid var(--acc);}
 .form button{font:inherit;font-size:calc(17px * var(--fsx));font-weight:700;padding:14px 22px;min-height:52px;border:0;
   border-radius:12px;background:var(--acc);color:#fff;cursor:pointer;white-space:nowrap;}
 .form button.a{background:var(--amber);}
@@ -190,6 +187,9 @@ table.t td.x button{font:inherit;font-size:calc(20px * var(--fsx));background:no
   border-radius:14px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;}
 .fsopts button.on{background:var(--acc);border-color:var(--acc);color:#fff;}
 .fsopts .aa{font-weight:800;line-height:1;}
+.sumline{font-size:calc(15.5px * var(--fsx));color:var(--mut);margin:0 0 6px;line-height:1.45;}
+.sumline b{color:var(--ink);font-weight:700;}
+.intro{font-size:calc(15.5px * var(--fsx));color:var(--mut);margin:0 0 16px;line-height:1.45;}
 .prog{margin:0 0 20px;}
 .prog .bar{display:flex;gap:3px;height:16px;border-radius:8px;overflow:hidden;margin-bottom:10px;}
 .prog .bar i{flex:1;background:var(--line);}
@@ -871,11 +871,8 @@ renderFav();
    ========================================================= */
 function renderSeance(key){
   var d=EX[key], root=document.getElementById('s-seances-'+key);
-  root.innerHTML='<div class="meta">'+
-    '<div><div class="n">'+d.jour+'</div><div class="l">quand</div></div>'+
-    '<div><div class="n">'+d.duree+'</div><div class="l">durée</div></div>'+
-    '<div><div class="n">'+d.ex.length+'</div><div class="l">exercices</div></div></div>'+
-    '<p class="sm mut">'+d.focus+'. Trois à quatre séries, 90 secondes de récupération, on s\'arrête deux répétitions avant l\'échec.</p>'+
+  root.innerHTML='<div class="sumline"><b>'+d.jour+'</b> · '+d.duree+' · '+d.ex.length+' exercices</div>'+
+    '<div class="intro">'+d.focus+'. Trois à quatre séries, 90 s de récupération, on s\'arrête deux répétitions avant l\'échec.</div>'+
     '<div id="list'+key+'"></div>'+
     '<button type="button" class="wide" id="rst'+key+'" style="margin-top:8px">Décocher tout</button>';
   var list=document.getElementById('list'+key);
