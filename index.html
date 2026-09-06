@@ -396,6 +396,7 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
     <p>Ta main est proportionnée à ton corps. C'est pour ça qu'elle marche comme unité de mesure : elle s'ajuste toute seule, et elle est toujours avec toi.</p>
     <div id="hands"></div>
     <h2>Ce que ça donne par repas</h2>
+    <div id="blocban"></div>
     <div class="seg" id="seg">
       <button type="button" data-mode="deficit">Jour normal</button>
       <button type="button" data-mode="sport">Jour de sport</button>
@@ -585,11 +586,12 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
     <div class="form">
       <label for="sdate">Nuit du</label>
       <div class="r"><input type="date" id="sdate"></div>
-      <label for="sval">Heures de sommeil</label>
-      <div class="r">
-        <input type="number" id="sval" step="0.25" min="0" max="14" inputmode="decimal" placeholder="7,5">
-        <button type="button" id="sadd">Enregistrer</button>
-      </div>
+      <label>Heures de sommeil</label>
+      <div class="repshead"><div class="repsval"><span id="svalv">7,5</span> <small>heures</small></div></div>
+      <input type="range" id="svalr" min="16" max="44" step="1" value="30">
+      <div class="repsbounds"><span>4 h</span><span>7 h</span><span>11 h</span></div>
+      <input type="hidden" id="sval" value="7.5">
+      <button type="button" class="wide" id="sadd" style="margin:10px 0 0;background:var(--teal);border-color:var(--teal);color:#fff">Enregistrer</button>
       <div class="msg" id="smsg"></div>
     </div>
     <div class="card tl"><h3>Pourquoi ça compte ici</h3>
@@ -752,12 +754,20 @@ var HANDS=[
  ["Matières grasses","1 pouce entier","Longueur et épaisseur de ton pouce. Une cuillère à soupe d'huile, une noix de beurre, un quart d'avocat, une petite poignée d'amandes.",
   '<path d="M9 20V9a3 3 0 0 1 6 0v11"/><rect x="9" y="14" width="6" height="7" rx="2"/>']
 ];
-var TARGETS={
- deficit:{v:[["2","paumes de protéines"],["2","poings de légumes"],["1","main en coupe de féculents"],["1","pouce de gras"]],
-   note:"Trois repas construits comme ça t'amènent autour de 130 g de protéines sur la journée, sans rien compter."},
- sport:{v:[["2","paumes de protéines"],["2","poings de légumes"],["2","mains en coupe de féculents"],["1","pouce de gras"]],
-   note:"Les jours de padel, de vélo long ou de natation, la main en coupe supplémentaire va au repas qui suit la séance."}
-};
+function targetFor(mode){
+  var def=enDeficit();
+  var fec = def ? (mode==='sport'?2:1) : (mode==='sport'?3:2);
+  var note = def
+    ? (mode==='sport'
+        ? "Bloc de déficit. Les jours de padel, de vélo long ou de natation, la main en coupe supplémentaire va au repas qui suit la séance."
+        : "Bloc de déficit. Trois repas construits comme ça t'amènent autour de 130 g de protéines et de 2 200 à 2 400 kcal, sans rien compter.")
+    : (mode==='sport'
+        ? "Hors déficit. Tu manges à l'équilibre : ne rogne pas sur les féculents les jours de sport, c'est ce qui protège la récupération."
+        : "Hors déficit — tu es dans un bloc où l'objectif est de tenir le poids, pas d'en perdre. Deux mains en coupe, et le reste ne change pas.");
+  return {v:[["2","paumes de protéines"],["2","poings de légumes"],
+             [String(fec), fec>1?"mains en coupe de féculents":"main en coupe de féculents"],
+             ["1","pouce de gras"]], note:note};
+}
 var MEALS=[
  {g:"Petit-déjeuner",note:"Le repas le plus souvent raté côté protéines. Viennoiserie et jus : beaucoup de calories, presque pas de protéines, faim à 10 h 30.",items:[
   {n:"Œufs brouillés, pain complet, un fruit",p:["1 paume d'œufs (3)","1 main en coupe de pain","1 fruit"],k:"30 g de protéines"},
@@ -949,18 +959,24 @@ document.querySelectorAll('#tabbar button').forEach(function(b){
 /* =========================================================
    ACCUEIL
    ========================================================= */
-(function(){
-  var BLOCS=[
-    ["Mise en place","2026-09-07","2026-10-04"],
-    ["Première perte","2026-10-05","2026-12-06"],
-    ["Trêve des fêtes","2026-12-07","2027-01-03"],
-    ["Deuxième perte","2027-01-04","2027-02-28"],
-    ["Sortie","2027-03-01","2027-03-28"]
-  ];
-  var now=new Date(), idx=-1;
+var BLOCS=[
+  ["Mise en place","2026-09-07","2026-10-04",false,"Aucun déficit. Tu installes les habitudes : deux séances, une protéine à chaque repas, la pesée quotidienne. Un poids stable ce mois-ci est un succès, pas un échec."],
+  ["Première perte","2026-10-05","2026-12-06",true,"Déficit actif. Une seule main en coupe de féculents par repas, deux les jours de sport. C'est le bloc qui fait le gros du travail."],
+  ["Trêve des fêtes","2026-12-07","2027-01-03",false,"Retour à l'équilibre, volontairement. L'objectif est de tenir le poids, pas d'en perdre. Deux mains en coupe de féculents, et le renforcement continue."],
+  ["Deuxième perte","2027-01-04","2027-02-28",true,"Deuxième bloc de déficit, mêmes règles que le premier. C'est ici que le ventre et le bas du dos changent visiblement."],
+  ["Sortie","2027-03-01","2027-03-28",false,"Remontée progressive vers l'équilibre, environ 100 kcal de plus par semaine. La phase qui décide si la perte tient dans le temps."]
+];
+function blocIdx(){
+  var now=new Date();
   for(var i=0;i<BLOCS.length;i++){
-    if(now>=new Date(BLOCS[i][1]) && now<=new Date(BLOCS[i][2]+'T23:59:59')) idx=i;
+    if(now>=new Date(BLOCS[i][1]) && now<=new Date(BLOCS[i][2]+'T23:59:59')) return i;
   }
+  return -1;
+}
+function enDeficit(){ var i=blocIdx(); return i>=0 && BLOCS[i][3]; }
+
+(function(){
+  var now=new Date(), idx=blocIdx();
   var bar=BLOCS.map(function(b,i){
     var cls = i<idx ? 'past' : (i===idx ? 'now' : '');
     return '<i class="'+cls+'"></i>';
@@ -980,6 +996,18 @@ document.querySelectorAll('#tabbar button').forEach(function(b){
   document.getElementById('prog').innerHTML =
     '<div class="bar">'+bar+'</div>'+
     '<div class="now-label">'+label+'</div><div class="now-sub">'+sub+'</div>';
+
+  if(idx>=0 && U.bloc!==idx){
+    var b=BLOCS[idx];
+    document.getElementById('prog').insertAdjacentHTML('afterend',
+      '<div class="card '+(b[3]?'am':'tl')+'" id="blocnew"><h3>Tu entres dans le bloc '+(idx+1)+' · '+b[0]+'</h3>'+
+      '<p style="margin:0 0 12px">'+b[4]+'</p>'+
+      '<button type="button" class="wide" id="blocok" style="margin:0">Compris</button></div>');
+    document.getElementById('blocok').addEventListener('click', function(){
+      U.bloc=idx; svU();
+      var c=document.getElementById('blocnew'); if(c) c.remove();
+    });
+  }
 })();
 
 document.getElementById('week').innerHTML = WEEK.map(function(w){
@@ -1001,7 +1029,15 @@ document.getElementById('hands').innerHTML = HANDS.map(function(h){
   '<div><div class="t">'+h[0]+'</div><div class="u">'+h[1]+'</div><div class="d">'+h[2]+'</div></div></div>'; }).join('');
 
 function renderTarget(m){
-  var t=TARGETS[m];
+  var t=targetFor(m);
+  var i=blocIdx(), ban=document.getElementById('blocban');
+  if(ban){
+    ban.innerHTML = (i<0) ? '' :
+      '<div class="card '+(BLOCS[i][3]?'am':'tl')+'" style="padding:12px 16px;margin-bottom:14px">'+
+      '<div style="font-weight:800;font-size:calc(15.5px * var(--fsx))">Bloc '+(i+1)+' · '+BLOCS[i][0]+
+      (BLOCS[i][3]?' — en déficit':' — à l\'équilibre')+'</div>'+
+      '<div class="sm mut" style="margin-top:3px">Les portions ci-dessous sont déjà ajustées à ce bloc.</div></div>';
+  }
   document.getElementById('tgt').innerHTML = t.v.map(function(x){
     return '<div><div class="n">'+x[0]+'</div><div class="l">'+x[1]+'</div></div>'; }).join('');
   document.getElementById('tgtnote').textContent = t.note;
@@ -1760,6 +1796,17 @@ function analyse(){
   return {etat:etat, cur:cur, rythme:rythme, rythme4:rythme4, n:a.length, debut:mv[0].v};
 }
 function coachTexte(A){
+  var bi=blocIdx();
+  if(bi>=0 && !BLOCS[bi][3] && A.etat!=='debut'){
+    if(A.etat==='vite')
+      return {c:'warn', h:'Tu perds alors que ce bloc ne le demande pas',
+              b:"Bloc « "+BLOCS[bi][0]+" » : l'objectif est de tenir le poids. Remonte les portions, en particulier les féculents. Perdre ici se paie plus tard, en fatigue et en muscle."};
+    if(A.etat==='hausse' && A.rythme>0.5)
+      return {c:'warn', h:'La moyenne monte un peu vite',
+              b:"Un kilo sur un bloc d'équilibre, ce n'est pas grave. Au-delà, reprends les six règles une par une — surtout l'alcool et les calories liquides."};
+    return {c:'', h:'Poids stable, et c\'est exactement l\'objectif',
+            b:'Bloc « '+BLOCS[bi][0]+' » : on ne cherche pas à perdre ici. Tenir le poids pendant cette période est un résultat en soi, et c\'est ce qui rend le bloc suivant tenable.'};
+  }
   if(A.etat==='debut')
     return {c:'', h:'Encore '+(3-A.n)+' pesée'+((3-A.n)>1?'s':'')+' avant la première lecture',
             b:"La moyenne sur sept jours a besoin de quelques jours pour dire quelque chose. Pèse-toi chaque matin à jeun, sans regarder le chiffre du jour."};
@@ -1828,11 +1875,22 @@ function renderSleepQuick(){
     return;
   }
   box.innerHTML='<div class="quick"><div class="qh">Combien d\'heures cette nuit ?</div>'+
-    '<div class="qr"><input type="number" id="qs" step="0.25" min="0" max="14" inputmode="decimal" placeholder="7,5">'+
-    '<button type="button" id="qsb">Enregistrer</button></div></div>';
+    '<div class="repshead"><div class="repsval"><span id="qsv">7,5</span> <small>heures</small></div>'+
+    '<div class="repslast" id="qshint"></div></div>'+
+    '<input type="range" id="qs" min="16" max="44" step="1" value="30">'+
+    '<div class="repsbounds"><span>4 h</span><span>7 h</span><span>11 h</span></div>'+
+    '<button type="button" class="wide" id="qsb" style="margin:10px 0 0;background:var(--teal);border-color:var(--teal);color:#fff">Enregistrer</button></div>';
+  var sl=document.getElementById('qs'), sv=document.getElementById('qsv'), sh=document.getElementById('qshint');
+  function q(){ return parseInt(sl.value,10)/4; }
+  function maj(){
+    var v=q();
+    sv.textContent=String(num(v)).replace('.',',');
+    sh.textContent = v>=7 ? 'Au-dessus de la cible' : 'Sous la cible de sept heures';
+    sh.style.color = v>=7 ? 'var(--teal)' : 'var(--coral)';
+  }
+  sl.addEventListener('input', maj); maj();
   document.getElementById('qsb').addEventListener('click', function(){
-    var v=parseFloat(String(document.getElementById('qs').value).replace(',','.'));
-    if(isNaN(v)) return;
+    var v=q();
     V.s=V.s.filter(function(x){return x.d!==tdy();});
     V.s.push({d:tdy(),v:v}); svV();
     renderSleepQuick(); renderSleep(); renderCoach();
@@ -1916,6 +1974,11 @@ renderW(); renderT();
 renderQuick(); renderWaist(); renderSleepQuick(); renderDrinkQuick();
 renderSleep(); renderDrink(); renderCoach(); renderBilan();
 document.getElementById('sdate').value=tdy();
+(function(){
+  var r=document.getElementById('svalr'), v=document.getElementById('svalv'), h=document.getElementById('sval');
+  function maj(){ var x=parseInt(r.value,10)/4; h.value=String(x); v.textContent=String(num(x)).replace('.',','); }
+  r.addEventListener('input', maj); maj();
+})();
 goView('accueil');
 </script>
 </body>
