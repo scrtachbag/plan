@@ -154,6 +154,39 @@ input[type=range]{width:100%;margin:2px 0 0;accent-color:var(--teal);height:32px
 .repsbounds{display:flex;justify-content:space-between;font-size:calc(12.5px * var(--fsx));color:var(--mut);margin-top:-2px;}
 .repshint{font-size:calc(13.5px * var(--fsx));margin-top:6px;}
 .repshint.up{color:var(--amber);font-weight:700;}
+/* mode séance */
+.run{position:fixed;inset:0;z-index:60;background:#fff;display:none;flex-direction:column;}
+.run.on{display:flex;}
+.runtop{background:var(--teal);color:#fff;padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top));
+  display:flex;align-items:center;gap:12px;}
+.runtop .rt{flex:1;min-width:0;}
+.runtop .r1{font-size:calc(12.5px * var(--fsx));font-weight:700;opacity:.85;}
+.runtop .r2{font-size:calc(17px * var(--fsx));font-weight:800;letter-spacing:-.3px;line-height:1.2;}
+.runtop button{flex:0 0 auto;font:inherit;font-size:calc(15px * var(--fsx));font-weight:700;background:rgba(255,255,255,.2);
+  border:0;color:#fff;border-radius:10px;padding:9px 14px;min-height:42px;cursor:pointer;}
+.runbar{height:4px;background:#E1F4F2;}
+.runbar i{display:block;height:100%;background:var(--amber);transition:width .2s;}
+.runbody{flex:1;overflow-y:auto;padding:18px 16px 8px;-webkit-overflow-scrolling:touch;}
+.runname{font-size:calc(26px * var(--fsx));font-weight:800;letter-spacing:-.7px;line-height:1.12;margin:0 0 4px;}
+.runlvl{font-size:calc(15.5px * var(--fsx));color:var(--mut);margin:0 0 16px;}
+.runsets{display:flex;gap:6px;margin-bottom:16px;}
+.runsets i{flex:1;height:9px;border-radius:5px;background:var(--line);}
+.runsets i.ok{background:var(--teal);} .runsets i.cur{background:var(--amber);}
+.runserie{font-size:calc(19px * var(--fsx));font-weight:800;letter-spacing:-.4px;margin-bottom:12px;}
+.runfoot{border-top:1px solid var(--line);padding:10px 16px;padding-bottom:calc(10px + env(safe-area-inset-bottom));
+  display:flex;gap:8px;align-items:center;background:#fff;}
+.runfoot button{font:inherit;font-weight:700;border-radius:12px;min-height:54px;cursor:pointer;border:1px solid var(--line);
+  background:#fff;color:var(--mut);font-size:calc(15px * var(--fsx));padding:0 14px;}
+.runfoot .go{flex:1;background:var(--teal);border-color:var(--teal);color:#fff;font-size:calc(17px * var(--fsx));}
+.rest{position:absolute;inset:0;background:rgba(9,32,30,.96);color:#fff;display:none;
+  flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:5;}
+.rest.on{display:flex;}
+.rest .n{font-size:64px;font-weight:800;letter-spacing:-2px;line-height:1;}
+.rest .l{font-size:calc(16px * var(--fsx));opacity:.8;text-align:center;padding:0 24px;}
+.rest button{font:inherit;font-size:calc(16px * var(--fsx));font-weight:700;background:rgba(255,255,255,.18);
+  border:0;color:#fff;border-radius:12px;padding:14px 26px;min-height:52px;cursor:pointer;}
+.startbtn{width:100%;font:inherit;font-size:calc(17px * var(--fsx));font-weight:700;padding:16px;min-height:58px;
+  border:0;border-radius:14px;background:var(--teal);color:#fff;cursor:pointer;margin-bottom:14px;}
 .evo{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:8px;}
 .evo .top2{display:flex;align-items:center;justify-content:space-between;gap:10px;}
 .evo .nm2{font-size:calc(15.5px * var(--fsx));font-weight:700;line-height:1.25;}
@@ -207,6 +240,17 @@ table.t td.x button{font:inherit;font-size:calc(20px * var(--fsx));background:no
 .chips span{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px;
   font-size:calc(14px * var(--fsx));}
 .chips span.used{background:var(--surf);color:var(--mut);border-color:var(--surf);text-decoration:line-through;}
+.shop{display:flex;flex-direction:column;gap:2px;}
+.shopit{display:flex;align-items:center;gap:11px;width:100%;text-align:left;font:inherit;
+  font-size:calc(15.5px * var(--fsx));background:none;border:0;padding:9px 0;cursor:pointer;color:var(--ink);
+  border-bottom:1px solid rgba(22,34,43,.08);}
+.shop .shopit:last-child{border-bottom:0;}
+.shopit .box{flex:0 0 24px;width:24px;height:24px;border-radius:7px;border:2px solid var(--line);
+  background:#fff;display:flex;align-items:center;justify-content:center;}
+.shopit .box svg{width:15px;height:15px;opacity:0;}
+.shopit.got{color:var(--mut);text-decoration:line-through;}
+.shopit.got .box{background:var(--amber);border-color:var(--amber);}
+.shopit.got .box svg{opacity:1;}
 .tally{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 0;}
 .tally div{flex:1 1 120px;background:var(--surf);border-radius:14px;padding:11px 13px;}
 .tally .n{font-size:calc(20px * var(--fsx));font-weight:800;letter-spacing:-.5px;line-height:1.1;color:#8B4F0B;}
@@ -227,6 +271,21 @@ table.t td.x button{font:inherit;font-size:calc(20px * var(--fsx));background:no
 .rec .body{display:none;padding:0 14px 14px;border-top:1px solid var(--line);}
 .rec.open .body{display:block;}
 .rec .use{font-size:calc(13.5px * var(--fsx));color:var(--amber);font-weight:700;margin-top:10px;}
+.quick{background:var(--surf);border-radius:16px;padding:14px 16px;margin-bottom:14px;}
+.quick .qh{font-size:calc(15px * var(--fsx));font-weight:700;margin-bottom:8px;}
+.quick .qr{display:flex;gap:8px;}
+.quick input{flex:1;min-width:0;font:inherit;font-size:calc(18px * var(--fsx));padding:12px;min-height:50px;
+  border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);}
+.quick button{font:inherit;font-size:calc(15px * var(--fsx));font-weight:700;padding:12px 18px;min-height:50px;
+  border:0;border-radius:12px;background:var(--teal);color:#fff;cursor:pointer;white-space:nowrap;}
+.coach{border-radius:16px;padding:16px;margin-bottom:14px;background:var(--tealsoft);}
+.coach.warn{background:var(--ambersoft);} .coach.bad{background:var(--coralsoft);}
+.coach .ch{font-size:calc(16.5px * var(--fsx));font-weight:800;letter-spacing:-.2px;margin-bottom:5px;}
+.coach .cb{font-size:calc(15px * var(--fsx));line-height:1.5;}
+.proj{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+.proj div{flex:1 1 120px;background:var(--surf);border-radius:14px;padding:12px 14px;}
+.proj .n{font-size:calc(21px * var(--fsx));font-weight:800;letter-spacing:-.6px;line-height:1.1;}
+.proj .l{font-size:calc(13.5px * var(--fsx));color:var(--mut);margin-top:3px;}
 .sumline{font-size:calc(15.5px * var(--fsx));color:var(--mut);margin:0 0 6px;line-height:1.45;}
 .sumline b{color:var(--ink);font-weight:700;}
 .intro{font-size:calc(15.5px * var(--fsx));color:var(--mut);margin:0 0 16px;line-height:1.45;}
@@ -270,6 +329,8 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
 <div class="view on" id="v-accueil">
   <div class="sub on" id="s-accueil-semaine">
     <div class="prog" id="prog"></div>
+    <div id="quickwrap"></div>
+    <div id="coachwrap"></div>
     <div class="rowlist" id="week"></div>
     <h2>Les six choses qui font le résultat</h2>
     <div class="rowlist" id="rules"></div>
@@ -477,6 +538,8 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
 <div class="view" id="v-suivi">
   <div class="sub on" id="s-suivi-poids">
     <div class="stats" id="wstats"></div>
+    <div class="proj" id="proj"></div>
+    <div id="coachfull"></div>
     <div class="form">
       <label for="wdate">Date</label>
       <div class="r"><input type="date" id="wdate"></div>
@@ -565,6 +628,25 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
 <footer>Plan d'hygiène de vie générale, pas un avis médical. En cas de douleur persistante, de prise de poids récente inexpliquée ou de traitement en cours, parles-en à ton médecin. Pour l'alimentation de tes enfants, l'interlocuteur est leur pédiatre.</footer>
 
 <div class="tabbar" id="tabbar"></div>
+
+<div class="run" id="run">
+  <div class="runtop">
+    <div class="rt"><div class="r1" id="runr1"></div><div class="r2" id="runr2"></div></div>
+    <button type="button" id="runclose">Quitter</button>
+  </div>
+  <div class="runbar"><i id="runbar"></i></div>
+  <div class="runbody" id="runbody"></div>
+  <div class="runfoot">
+    <button type="button" id="runprev">‹</button>
+    <button type="button" class="go" id="rundone">Série faite</button>
+    <button type="button" id="runnext">›</button>
+  </div>
+  <div class="rest" id="rest">
+    <div class="n" id="restn">90</div>
+    <div class="l">Récupération. Reprends quand le compte atteint zéro, pas avant.</div>
+    <button type="button" id="restskip">Passer</button>
+  </div>
+</div>
 
 <script>
 /* =========================================================
@@ -668,7 +750,7 @@ var MEALS=[
 ];
 var EX={
 A:{jour:"Lundi",focus:"Poussée et tronc",duree:"30 min",ex:[
- {n:"Pompes inclinées",r:"4 séries de 8 à 15 répétitions",mn:8,mx:15,u:"réps",
+ {n:"Pompes inclinées",r:"4 séries de 8 à 15 répétitions",sets:4,mn:8,mx:15,u:"réps",
   steps:["Mains posées sur un plan surélevé (bord de table, plan de travail, dossier de canapé), écartées un peu plus large que les épaules.",
    "Sur les poings ou sur deux livres épais si le poignet à plat tire sur le coude : l'idée est de garder le poignet droit.",
    "Corps en une seule ligne des talons à la tête, fessiers serrés, ventre gainé.",
@@ -677,7 +759,7 @@ A:{jour:"Lundi",focus:"Poussée et tronc",duree:"30 min",ex:[
   feel:"Ça doit tirer dans la poitrine, les triceps et les épaules — jamais dans le poignet ni le coude.",
   err:"Le bassin qui s'affaisse ou les fesses qui montent. Si tu ne tiens plus la ligne, arrête la série.",
   lvls:["Mains contre un mur","Mains sur un plan de travail","Mains sur une chaise ou une table basse","Mains au sol","Pieds surélevés sur une chaise"],start:1},
- {n:"Squat",r:"3 séries de 12 à 20 répétitions",mn:12,mx:20,u:"réps",
+ {n:"Squat",r:"3 séries de 12 à 20 répétitions",sets:3,mn:12,mx:20,u:"réps",
   steps:["Debout, pieds écartés de la largeur des épaules, pointes légèrement vers l'extérieur.",
    "Bras tendus devant toi pour l'équilibre.",
    "Descends en poussant les fesses vers l'arrière, comme pour t'asseoir sur une chaise invisible, dos droit.",
@@ -686,7 +768,7 @@ A:{jour:"Lundi",focus:"Poussée et tronc",duree:"30 min",ex:[
   feel:"Cuisses et fessiers. Les genoux peuvent dépasser légèrement les orteils, c'est normal et sans danger.",
   err:"Les talons qui décollent, ou le bas du dos qui s'arrondit en bas du mouvement. Descends moins bas.",
   lvls:["S'asseoir sur une chaise et se relever","Squat au poids du corps","Squat avec 3 secondes de descente","Squat bulgare, pied arrière sur une chaise"],start:1},
- {n:"Planche sur avant-bras",r:"3 séries de 30 à 60 secondes",mn:20,mx:60,u:"s",timer:45,
+ {n:"Planche sur avant-bras",r:"3 séries de 30 à 60 secondes",sets:3,mn:20,mx:60,u:"s",timer:45,
   steps:["À plat ventre, appuie-toi sur les avant-bras, coudes à l'aplomb des épaules.",
    "Jamais sur les mains : les avant-bras protègent ton coude.",
    "Décolle le bassin et tends les jambes, appui sur la pointe des pieds.",
@@ -695,7 +777,7 @@ A:{jour:"Lundi",focus:"Poussée et tronc",duree:"30 min",ex:[
   feel:"Une tension profonde dans tout le ventre. Si tu la sens surtout dans le bas du dos, le bassin n'est pas rentré.",
   err:"Les fesses en l'air, ou le ventre qui tombe. Mieux vaut 20 secondes propres que 60 secondes affaissées.",
   lvls:["Sur les genoux","Planche complète, 20 secondes","Planche complète, 45 secondes","Planche complète, une jambe décollée"],start:1},
- {n:"Dead bug",r:"3 séries de 8 à 10 répétitions par côté",mn:6,mx:12,u:"réps/côté",
+ {n:"Dead bug",r:"3 séries de 8 à 10 répétitions par côté",sets:3,mn:6,mx:12,u:"réps/côté",
   steps:["Allongé sur le dos, bras tendus vers le plafond, hanches et genoux pliés à 90°, tibias parallèles au sol.",
    "Plaque le bas du dos contre le sol : plus d'espace sous les lombaires. C'est le point central de l'exercice.",
    "Descends lentement le bras droit derrière la tête et la jambe gauche vers le sol, en même temps.",
@@ -704,7 +786,7 @@ A:{jour:"Lundi",focus:"Poussée et tronc",duree:"30 min",ex:[
   feel:"Le ventre qui travaille pour empêcher le dos de se creuser. C'est un exercice lent.",
   err:"Aller trop loin et laisser le dos se cambrer. Tu perds tout l'intérêt, et c'est là qu'un dos sensible proteste.",
   lvls:["Bras seuls, jambes immobiles","Jambes seules, bras immobiles","Bras et jambe opposés, amplitude courte","Bras et jambe opposés, amplitude complète"],start:2},
- {n:"Pont fessier",r:"3 séries de 12 à 15 répétitions",mn:10,mx:18,u:"réps",
+ {n:"Pont fessier",r:"3 séries de 12 à 15 répétitions",sets:3,mn:10,mx:18,u:"réps",
   steps:["Allongé sur le dos, genoux pliés, pieds à plat à une trentaine de centimètres des fesses.",
    "Bras le long du corps, paumes vers le sol.",
    "Pousse dans les talons pour décoller le bassin jusqu'à aligner genoux, hanches et épaules.",
@@ -715,7 +797,7 @@ A:{jour:"Lundi",focus:"Poussée et tronc",duree:"30 min",ex:[
   lvls:["Deux pieds au sol","Deux pieds, 3 secondes de maintien en haut","Pieds surélevés sur une chaise","Une jambe tendue"],start:1}
 ]},
 B:{jour:"Mercredi, jeudi ou vendredi",focus:"Dos et chaîne postérieure",duree:"30 min",ex:[
- {n:"Y – T – W au sol",r:"3 séries de 10 répétitions dans chaque position",mn:6,mx:12,u:"réps",
+ {n:"Y – T – W au sol",r:"3 séries de 10 répétitions dans chaque position",sets:3,mn:6,mx:12,u:"réps",
   steps:["À plat ventre, front posé au sol ou sur une serviette pliée, jambes tendues.",
    "Position Y : bras tendus devant toi en diagonale, pouces vers le plafond. Décolle les bras de quelques centimètres, tiens une seconde, repose.",
    "Position T : bras tendus sur les côtés en croix, pouces vers le plafond. Même mouvement.",
@@ -724,7 +806,7 @@ B:{jour:"Mercredi, jeudi ou vendredi",focus:"Dos et chaîne postérieure",duree:
   feel:"Le haut du dos et l'arrière des épaules. Les omoplates se rapprochent l'une de l'autre.",
   err:"Décoller la poitrine en cambrant le dos. Ce sont les bras qui montent, pas le buste.",
   lvls:["Sans décoller, juste serrer les omoplates","Décoller les bras de quelques centimètres","Décoller bras et haut de la poitrine","Avec 2 secondes de maintien en haut"],start:1},
- {n:"Reverse snow angel",r:"3 séries de 8 répétitions",mn:5,mx:12,u:"réps",
+ {n:"Reverse snow angel",r:"3 séries de 8 répétitions",sets:3,mn:5,mx:12,u:"réps",
   steps:["À plat ventre, bras le long du corps, paumes vers le sol.",
    "Décolle légèrement les bras et fais-les balayer lentement le long du sol jusqu'au-dessus de la tête, sans jamais toucher le sol.",
    "Fais le chemin inverse, aussi lentement.",
@@ -732,7 +814,7 @@ B:{jour:"Mercredi, jeudi ou vendredi",focus:"Dos et chaîne postérieure",duree:
   feel:"Une brûlure diffuse dans le haut du dos et les épaules. Normal : ce sont de petits muscles peu sollicités.",
   err:"Aller vite. Tout l'intérêt est dans la lenteur.",
   lvls:["Amplitude courte, jusqu'aux épaules","Amplitude complète","Amplitude complète, très lente"],start:1},
- {n:"Hip thrust une jambe",r:"3 séries de 10 à 15 répétitions par jambe",mn:10,mx:15,u:"réps/jambe",
+ {n:"Hip thrust une jambe",r:"3 séries de 10 à 15 répétitions par jambe",sets:3,mn:10,mx:15,u:"réps/jambe",
   steps:["Assis au sol, dos appuyé contre le bord du canapé, omoplates calées sur l'assise.",
    "Un pied à plat au sol, genou plié ; l'autre jambe tendue ou genou ramené vers la poitrine.",
    "Pousse dans le talon de la jambe d'appui pour monter le bassin jusqu'à une ligne des genoux aux épaules.",
@@ -741,7 +823,7 @@ B:{jour:"Mercredi, jeudi ou vendredi",focus:"Dos et chaîne postérieure",duree:
   feel:"Le fessier de la jambe d'appui, franchement. L'exercice le plus utile du programme pour le bas du dos.",
   err:"Cambrer le bas du dos au lieu de serrer le fessier. Si tu sens tes lombaires, monte moins haut.",
   lvls:["Deux pieds au sol, bassin au sol","Deux pieds, épaules sur le canapé","Une jambe, l'autre pied posé au sol","Une jambe, l'autre jambe tendue en l'air"],start:2},
- {n:"Fentes marchées",r:"3 séries de 10 à 12 pas par jambe",mn:8,mx:14,u:"pas/jambe",
+ {n:"Fentes marchées",r:"3 séries de 10 à 12 pas par jambe",sets:3,mn:8,mx:14,u:"pas/jambe",
   steps:["Debout, un grand pas en avant, dos droit, regard devant.",
    "Descends verticalement jusqu'à ce que le genou arrière frôle le sol — tu descends, tu ne te penches pas en avant.",
    "Pousse dans le talon avant pour te relever et enchaîne le pas suivant avec l'autre jambe.",
@@ -749,7 +831,7 @@ B:{jour:"Mercredi, jeudi ou vendredi",focus:"Dos et chaîne postérieure",duree:
   feel:"Cuisse et fessier de la jambe avant.",
   err:"Un pas trop court, qui envoie tout le travail dans le genou. Allonge le pas si le genou tire.",
   lvls:["Fente statique en se tenant à un mur","Fente statique sans appui","Fente marchée","Fente marchée avec 2 secondes en bas"],start:1},
- {n:"Bird-dog",r:"3 séries de 8 répétitions par côté",mn:6,mx:12,u:"réps/côté",
+ {n:"Bird-dog",r:"3 séries de 8 répétitions par côté",sets:3,mn:6,mx:12,u:"réps/côté",
   steps:["À quatre pattes, mains sous les épaules, genoux sous les hanches, dos plat comme une table.",
    "Tends en même temps le bras droit devant et la jambe gauche derrière, jusqu'à l'horizontale.",
    "Tiens deux secondes sans que le bassin ne bascule d'un côté.",
@@ -757,7 +839,7 @@ B:{jour:"Mercredi, jeudi ou vendredi",focus:"Dos et chaîne postérieure",duree:
   feel:"Une tension dans le bas du dos et le ventre, qui travaillent à te stabiliser. L'exercice de référence pour un dos sensible.",
   err:"Monter la jambe trop haut, ce qui creuse le dos. L'horizontale suffit largement.",
   lvls:["Bras seul","Jambe seule","Bras et jambe opposés","Bras et jambe opposés, 3 secondes de maintien"],start:2},
- {n:"Gainage latéral",r:"3 séries de 25 à 45 secondes par côté",mn:20,mx:50,u:"s",timer:35,
+ {n:"Gainage latéral",r:"3 séries de 25 à 45 secondes par côté",sets:3,mn:20,mx:50,u:"s",timer:35,
   steps:["Allongé sur le côté, appui sur l'avant-bras, coude à l'aplomb de l'épaule.",
    "Genoux fléchis à 90° si l'appui gêne, jambes tendues sinon.",
    "Décolle le bassin pour aligner chevilles, hanches et épaules.",
@@ -924,6 +1006,7 @@ renderFav();
 function renderSeance(key){
   var d=EX[key], root=document.getElementById('s-seances-'+key);
   root.innerHTML='<div class="sumline"><b>'+d.jour+'</b> · '+d.duree+' · '+d.ex.length+' exercices</div>'+
+    '<button type="button" class="startbtn" data-run="'+key+'">Démarrer la séance</button>'+
     '<div class="intro">'+d.focus+'. Trois à quatre séries, 90 s de récupération, on s\'arrête deux répétitions avant l\'échec.</div>'+
     '<div id="list'+key+'"></div>'+
     '<button type="button" class="wide" id="rst'+key+'" style="margin-top:8px">Décocher tout</button>';
@@ -1024,12 +1107,140 @@ function renderSeance(key){
     list.appendChild(el);
   });
 
+  root.querySelector('.startbtn').addEventListener('click', function(){ runStart(key); });
   document.getElementById('rst'+key).addEventListener('click', function(){
     list.querySelectorAll('.ex').forEach(function(x){x.classList.remove('done');});
     EX[key].ex.forEach(function(_,i){ delete S.done[key+i]; });
     svS(); checkComplete(key); window.scrollTo(0,0);
   });
 }
+/* =========================================================
+   MODE SÉANCE GUIDÉ
+   ========================================================= */
+var R={key:null,i:0,set:1,restId:null,restLeft:0,holdId:null,holdLeft:0};
+
+function runStart(key){
+  R.key=key; R.i=0; R.set=1;
+  document.getElementById('run').classList.add('on');
+  runDraw();
+}
+function runQuit(){
+  runStopRest(); runStopHold();
+  document.getElementById('run').classList.remove('on');
+  renderSeance(R.key); renderHist();
+  R.key=null;
+}
+function runEx(){ return EX[R.key].ex[R.i]; }
+function runLvl(){
+  var e=runEx(), id=R.key+R.i;
+  return (typeof S.lvl[id]==='number') ? S.lvl[id] : e.start;
+}
+function runReps(){
+  var e=runEx(), v=S.reps[R.key+R.i+':'+runLvl()];
+  return (typeof v==='number') ? v : e.mn;
+}
+function runDraw(){
+  var e=runEx(), n=EX[R.key].ex.length, l=runLvl(), v=runReps();
+  document.getElementById('runr1').textContent='Séance '+R.key+' · exercice '+(R.i+1)+' sur '+n;
+  document.getElementById('runr2').textContent=e.n;
+  var totalSets=0, doneSets=0;
+  EX[R.key].ex.forEach(function(x,j){
+    totalSets+=x.sets;
+    if(j<R.i) doneSets+=x.sets;
+    if(j===R.i) doneSets+=R.set-1;
+  });
+  document.getElementById('runbar').style.width=Math.round(doneSets/totalSets*100)+'%';
+
+  var sets='';
+  for(var k=1;k<=e.sets;k++){
+    sets+='<i class="'+(k<R.set?'ok':(k===R.set?'cur':''))+'"></i>';
+  }
+  var last=S.last[R.key+R.i+':'+l];
+  var h='<div class="runname">'+e.n+'</div>'+
+    '<div class="runlvl">Niveau '+(l+1)+' sur '+e.lvls.length+' — '+e.lvls[l]+'</div>'+
+    '<div class="runsets">'+sets+'</div>'+
+    '<div class="runserie">Série '+R.set+' sur '+e.sets+'</div>'+
+    '<div class="reps" style="border-top:0;margin-top:0;padding-top:0">'+
+      '<div class="repshead"><div class="repsval"><span class="rv">'+v+'</span> <small>'+e.u+'</small></div>'+
+      '<div class="repslast">'+((typeof last==='number')?'Dernière séance : '+last:'Première fois à ce niveau')+'</div></div>'+
+      '<input type="range" class="rr" min="'+e.mn+'" max="'+e.mx+'" step="1" value="'+v+'">'+
+      '<div class="repsbounds"><span>'+e.mn+'</span><span>'+e.mx+'</span></div>'+
+    '</div>';
+  if(e.timer) h+='<button type="button" class="wide" id="runhold" style="margin-top:12px">Lancer le chrono de maintien</button>';
+  h+='<div class="note f" style="margin-top:16px"><b>À sentir</b>'+e.feel+'</div>'+
+     '<div class="note e"><b>Erreur fréquente</b>'+e.err+'</div>'+
+     '<ol class="steps" style="margin-top:14px">'+e.steps.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ol>';
+  document.getElementById('runbody').innerHTML=h;
+  document.getElementById('runbody').scrollTop=0;
+
+  var sl=document.getElementById('runbody').querySelector('.rr');
+  sl.addEventListener('input', function(){
+    document.getElementById('runbody').querySelector('.rv').textContent=sl.value;
+  });
+  sl.addEventListener('change', function(){
+    S.reps[R.key+R.i+':'+runLvl()]=parseInt(sl.value,10); svS();
+  });
+  var hb=document.getElementById('runhold');
+  if(hb) hb.addEventListener('click', function(){ runHold(e); });
+
+  var lastEx = (R.i===EX[R.key].ex.length-1) && (R.set===e.sets);
+  document.getElementById('rundone').textContent = lastEx ? 'Terminer la séance' : 'Série faite';
+  document.getElementById('runprev').disabled = (R.i===0);
+  document.getElementById('runnext').disabled = (R.i===EX[R.key].ex.length-1);
+}
+function runHold(e){
+  runStopHold();
+  R.holdLeft=runReps();
+  var b=document.getElementById('runhold');
+  R.holdId=setInterval(function(){
+    R.holdLeft--;
+    b.textContent = R.holdLeft>0 ? 'Maintien : '+R.holdLeft+' s' : 'Terminé';
+    if(R.holdLeft<=0){ runStopHold(); setTimeout(function(){ b.textContent='Lancer le chrono de maintien'; },2000); }
+  },1000);
+  b.textContent='Maintien : '+R.holdLeft+' s';
+}
+function runStopHold(){ if(R.holdId){ clearInterval(R.holdId); R.holdId=null; } }
+function runRest(sec){
+  R.restLeft=sec;
+  var r=document.getElementById('rest'), n=document.getElementById('restn');
+  n.textContent=sec; r.classList.add('on');
+  R.restId=setInterval(function(){
+    R.restLeft--; n.textContent=Math.max(0,R.restLeft);
+    if(R.restLeft<=0) runStopRest();
+  },1000);
+}
+function runStopRest(){
+  if(R.restId){ clearInterval(R.restId); R.restId=null; }
+  document.getElementById('rest').classList.remove('on');
+}
+function runDone(){
+  var e=runEx(), n=EX[R.key].ex.length;
+  if(R.set < e.sets){
+    R.set++; runDraw(); runRest(90); return;
+  }
+  S.done[R.key+R.i]=true; svS();
+  if(R.i < n-1){
+    R.i++; R.set=1; runDraw(); runRest(90); return;
+  }
+  checkComplete(R.key);
+  var l=EX[R.key].ex.length;
+  document.getElementById('runbody').innerHTML =
+    '<div class="runname">Séance terminée</div>'+
+    '<p class="mut">Les '+l+' exercices sont cochés, ton niveau et tes répétitions sont enregistrés. '+
+    'Tu retrouveras la progression dans l\'onglet Historique.</p>';
+  document.getElementById('rundone').textContent='Fermer';
+  document.getElementById('rundone').onclick=function(){ document.getElementById('rundone').onclick=null; runQuit(); };
+}
+document.getElementById('rundone').addEventListener('click', function(){ if(R.key) runDone(); });
+document.getElementById('runclose').addEventListener('click', runQuit);
+document.getElementById('restskip').addEventListener('click', runStopRest);
+document.getElementById('runprev').addEventListener('click', function(){
+  if(R.i>0){ R.i--; R.set=1; runStopRest(); runDraw(); }
+});
+document.getElementById('runnext').addEventListener('click', function(){
+  if(R.i<EX[R.key].ex.length-1){ R.i++; R.set=1; runStopRest(); runDraw(); }
+});
+
 function checkComplete(key){
   var n=EX[key].ex.length, c=0;
   for(var i=0;i<n;i++){ if(S.done[key+i]) c++; }
@@ -1217,7 +1428,7 @@ function addVal(key,dateId,valId,msgId,unit,after){
   document.getElementById(valId).value=''; after();
   setTimeout(function(){ m.textContent=''; },4000);
 }
-document.getElementById('wadd').addEventListener('click',function(){ addVal('w','wdate','wval','wmsg','kg',renderW); });
+document.getElementById('wadd').addEventListener('click',function(){ addVal('w','wdate','wval','wmsg','kg',function(){ renderW(); renderQuick(); renderCoach(); }); });
 document.getElementById('tadd').addEventListener('click',function(){ addVal('t','tdate','tval','tmsg','cm',renderT); });
 document.getElementById('wval').addEventListener('keydown',function(e){ if(e.key==='Enter') document.getElementById('wadd').click(); });
 document.getElementById('tval').addEventListener('keydown',function(e){ if(e.key==='Enter') document.getElementById('tadd').click(); });
@@ -1334,6 +1545,17 @@ function renderSemaine(d){
          '</div></div>';
     });
   }
+  if(d.courses && d.courses.length){
+    h+='<h2>La liste de courses</h2>';
+    if(d.coursesNote) h+='<p class="sm mut">'+esc(d.coursesNote)+'</p>';
+    d.courses.forEach(function(g,gi){
+      h+='<div class="card surf" style="padding:12px 16px"><h3>'+esc(g.rayon)+'</h3>'+
+         '<div class="shop">'+g.items.map(function(it,ii){
+           return '<button type="button" class="shopit" data-c="c'+gi+'_'+ii+'">'+
+                  '<span class="box">'+chkSvg()+'</span><span>'+esc(it)+'</span></button>';
+         }).join('')+'</div></div>';
+    });
+  }
   h+='<button type="button" class="wide" id="rstsem" style="margin-top:14px">Tout décocher</button>';
 
   document.getElementById('semwrap').innerHTML=h;
@@ -1348,8 +1570,17 @@ function renderSemaine(d){
       W.done[k]=el.classList.contains('done'); svW(); refreshSem();
     });
   });
+  document.querySelectorAll('#semwrap .shopit').forEach(function(b){
+    var k=b.dataset.c;
+    if(W.done[k]) b.classList.add('got');
+    b.addEventListener('click', function(){
+      b.classList.toggle('got');
+      W.done[k]=b.classList.contains('got'); svW();
+    });
+  });
   document.getElementById('rstsem').addEventListener('click', function(){
     W.done={}; svW();
+    document.querySelectorAll('#semwrap .shopit').forEach(function(b){ b.classList.remove('got'); });
     document.querySelectorAll('#semwrap .rec').forEach(function(el){ el.classList.remove('done'); });
     refreshSem(); window.scrollTo(0,0);
   });
@@ -1367,6 +1598,97 @@ function loadSemaine(){
   });
 }
 loadSemaine();
+
+/* =========================================================
+   BOUCLE DE RETOUR : pesée rapide, lecture, projection, bilan
+   ========================================================= */
+function sortedW(){ return V.w.slice().sort(function(a,b){return a.d<b.d?-1:1;}); }
+function avgAt(mv, joursAvant){
+  if(!mv.length) return null;
+  var fin=new Date(mv[mv.length-1].d);
+  for(var i=mv.length-1;i>=0;i--){
+    if((fin-new Date(mv[i].d))/86400000>=joursAvant) return mv[i].v;
+  }
+  return null;
+}
+function analyse(){
+  var a=sortedW();
+  if(a.length<3) return {etat:'debut', n:a.length};
+  var mv=avg7(a), cur=mv[mv.length-1].v;
+  var j7=avgAt(mv,7), j21=avgAt(mv,21), j28=avgAt(mv,28);
+  var rythme = (j7!==null) ? (cur-j7) : null;              // kg par semaine
+  var rythme4 = (j28!==null) ? (cur-j28)/4 : rythme;       // lissé sur 4 semaines
+  var etat='ok';
+  if(j21!==null && Math.abs(cur-j21)<0.3) etat='plateau';
+  else if(rythme!==null && rythme<-0.7) etat='vite';
+  else if(rythme!==null && rythme>0.2) etat='hausse';
+  return {etat:etat, cur:cur, rythme:rythme, rythme4:rythme4, n:a.length, debut:mv[0].v};
+}
+function coachTexte(A){
+  if(A.etat==='debut')
+    return {c:'', h:'Encore '+(3-A.n)+' pesée'+((3-A.n)>1?'s':'')+' avant la première lecture',
+            b:"La moyenne sur sept jours a besoin de quelques jours pour dire quelque chose. Pèse-toi chaque matin à jeun, sans regarder le chiffre du jour."};
+  if(A.etat==='plateau')
+    return {c:'warn', h:'Ta moyenne ne bouge plus depuis trois semaines',
+            b:"C'est le moment de corriger, et d'une seule façon à la fois : retire environ 150 kcal par jour, ou ajoute 2 000 pas quotidiens. Pas les deux, sinon tu ne sauras pas ce qui a marché."};
+  if(A.etat==='vite')
+    return {c:'bad', h:'Tu descends trop vite',
+            b:"Plus de 0,7 kg par semaine, c'est du muscle qui part avec le gras. Remonte les portions, en particulier les féculents autour des séances."};
+  if(A.etat==='hausse')
+    return {c:'warn', h:'La moyenne remonte',
+            b:"Une semaine ne veut rien dire, surtout après un week-end. Si ça continue la semaine prochaine, reprends les six règles une par une avant de changer quoi que ce soit."};
+  return {c:'', h:'Le rythme est bon',
+          b:'Environ '+Math.abs(num(A.rythme))+' kg sur les sept derniers jours. Rien à corriger : continue exactement pareil.'};
+}
+function renderQuick(){
+  var box=document.getElementById('quickwrap'); if(!box) return;
+  var d=tdy(), deja=V.w.some(function(x){return x.d===d;});
+  if(deja){
+    var mv=avg7(sortedW()), cur=mv[mv.length-1].v;
+    box.innerHTML='<div class="quick"><div class="qh">Pesée du jour enregistrée</div>'+
+      '<div class="sm mut">Moyenne sur sept jours : <b style="color:var(--ink)">'+num(cur)+' kg</b>. C\'est le seul chiffre à regarder.</div></div>';
+    return;
+  }
+  box.innerHTML='<div class="quick"><div class="qh">Ton poids ce matin, à jeun</div>'+
+    '<div class="qr"><input type="number" id="qw" step="0.1" min="30" max="250" inputmode="decimal" placeholder="80,4">'+
+    '<button type="button" id="qwb">Enregistrer</button></div></div>';
+  document.getElementById('qwb').addEventListener('click', function(){
+    var v=parseFloat(String(document.getElementById('qw').value).replace(',','.'));
+    if(isNaN(v)) return;
+    V.w=V.w.filter(function(x){return x.d!==tdy();});
+    V.w.push({d:tdy(),v:v}); svV();
+    renderQuick(); renderCoach(); renderW();
+  });
+}
+function renderCoach(){
+  var A=analyse(), t=coachTexte(A);
+  var html='<div class="coach '+(t.c||'')+'"><div class="ch">'+t.h+'</div><div class="cb">'+t.b+'</div></div>';
+  var b1=document.getElementById('coachwrap'); if(b1) b1.innerHTML=html;
+  var b2=document.getElementById('coachfull'); if(b2) b2.innerHTML=html;
+
+  var p=document.getElementById('proj'); if(!p) return;
+  if(A.etat==='debut'){ p.innerHTML=''; return; }
+  var fin=new Date('2027-03-28'), sem=Math.max(0,(fin-new Date())/86400000/7);
+  var proj = (A.rythme4!==null) ? A.cur + A.rythme4*sem : null;
+  var perdu = A.debut - A.cur;
+  p.innerHTML=
+    '<div><div class="n">'+(perdu>0?'−':'+')+num(Math.abs(perdu))+' kg</div><div class="l">depuis le début</div></div>'+
+    '<div><div class="n">'+(A.rythme4!==null?(A.rythme4>0?'+':'')+num(A.rythme4)+' kg':'—')+'</div><div class="l">par semaine, sur 4 semaines</div></div>'+
+    (proj!==null?'<div><div class="n">'+num(proj)+' kg</div><div class="l">projection au 28 mars</div></div>':'');
+}
+function renderBilan(){
+  var box=document.getElementById('coachwrap'); if(!box) return;
+  if(new Date().getDay()!==0) return;
+  var now=new Date();
+  var seances=S.log.filter(function(x){ return (now-new Date(x.d))/86400000<=7; }).length;
+  var A=analyse();
+  var ligne = (A.etat==='debut') ? 'Pas encore assez de pesées pour une moyenne.'
+    : 'Moyenne à '+num(A.cur)+' kg, '+(A.rythme<0?'en baisse de '+num(Math.abs(A.rythme)):'en hausse de '+num(Math.abs(A.rythme)))+' kg sur la semaine.';
+  box.insertAdjacentHTML('afterbegin',
+    '<div class="card am"><h3>Bilan de la semaine</h3>'+
+    '<p style="margin:0 0 6px">'+seances+' séance'+(seances>1?'s':'')+' de renforcement sur les sept derniers jours, sur deux prévues.</p>'+
+    '<p style="margin:0">'+ligne+' C\'est aussi le jour du tour de taille, une semaine sur deux, et de la cuisine pour la semaine.</p></div>');
+}
 
 /* ---------- réglages ---------- */
 var FSOPTS=[[0.78,'Compact','Aa'],[0.85,'Normal','Aa'],[0.93,'Confortable','Aa'],[1.05,'Grand','Aa']];
@@ -1389,6 +1711,7 @@ renderFs();
 document.getElementById('wdate').value=tdy();
 document.getElementById('tdate').value=tdy();
 renderW(); renderT();
+renderQuick(); renderCoach(); renderBilan();
 goView('accueil');
 </script>
 </body>

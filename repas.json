@@ -126,5 +126,33 @@
         "Jambon ibérique"
       ]
     }
-  ]
+  ],
+  "courses": [
+    {
+      "rayon": "Légumes",
+      "items": [
+        "Concombre",
+        "Salade verte",
+        "Courgettes",
+        "Carottes",
+        "Oignons",
+        "Haricots verts ou brocolis"
+      ]
+    },
+    {
+      "rayon": "Frais",
+      "items": [
+        "Œufs (une douzaine)",
+        "Fromage râpé"
+      ]
+    },
+    {
+      "rayon": "Épicerie",
+      "items": [
+        "Lentilles vertes",
+        "Moutarde"
+      ]
+    }
+  ],
+  "coursesNote": "Ce qui manque aux cinq repas ci-dessus, et rien d'autre. Le frigo couvre déjà toutes les protéines de la semaine."
 }
