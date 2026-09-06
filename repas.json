@@ -36,7 +36,11 @@
       ],
       "prot": "35 g de protéines",
       "note": "Un grand verre de gaspacho d'abord, puis la galette garnie de jambon, un œuf cassé dessus, un peu de fromage. Dix minutes de cuisine, et le gaspacho commence à partir.",
-      "utilise": "Gaspacho, galettes, jambon blanc"
+      "utilise": [
+        "Gaspacho",
+        "Galettes de sarrasin",
+        "Jambon blanc"
+      ]
     },
     {
       "titre": "Rôti froid sur taboulé",
@@ -48,7 +52,11 @@
       ],
       "prot": "38 g de protéines",
       "note": "Le rôti est ce qui manquait au taboulé : une vraie protéine maigre. Une seule main en coupe de semoule, et pas de pain à côté. Se transporte en boîte pour le déjeuner du lendemain.",
-      "utilise": "Rôti cuit, taboulé, tomates cerises"
+      "utilise": [
+        "Rôti cuit",
+        "Taboulé",
+        "Tomates cerises"
+      ]
     },
     {
       "titre": "Saucisses de Toulouse et lentilles",
@@ -60,7 +68,9 @@
       ],
       "prot": "35 g de protéines",
       "note": "Une saucisse, pas deux : elle est là pour parfumer, ce sont les lentilles qui font le volume et une bonne part des protéines. Fais-en le double, ça se réchauffe très bien.",
-      "utilise": "Saucisses de Toulouse"
+      "utilise": [
+        "Saucisses de Toulouse"
+      ]
     },
     {
       "titre": "Cordon bleu au four, poêlée de légumes",
@@ -72,7 +82,9 @@
       ],
       "prot": "30 g de protéines",
       "note": "Au four, pas à la poêle dans l'huile. Et pas de riz ni de pâtes à côté : la panure joue déjà le rôle du féculent, c'est l'erreur classique sur ce plat.",
-      "utilise": "Cordons bleus"
+      "utilise": [
+        "Cordons bleus"
+      ]
     },
     {
       "titre": "Tarte feuilletée aux légumes, lardons en accent",
@@ -84,21 +96,35 @@
       ],
       "prot": "22 g de protéines",
       "note": "Pâte étalée, couche de moutarde, légumes en rondelles, une poignée de lardons pour toute la tarte, trois œufs battus versés dessus. Grosse salade à côté et surtout pas de pain : la pâte est déjà le féculent du repas.",
-      "utilise": "Pâte feuilletée, lardons, tomates cerises"
+      "utilise": [
+        "Pâte feuilletée",
+        "Lardons",
+        "Tomates cerises"
+      ]
     }
   ],
   "aparte": [
     {
       "titre": "Le gaspacho, en entrée et pas en plat",
-      "texte": "Environ 2 g de protéines par bol : ce n'est pas un repas. En revanche c'est une excellente entrée, qui remplit avant le plat pour très peu de calories. Un grand verre avant chaque dîner de la semaine et il sera fini sans y penser."
+      "texte": "Environ 2 g de protéines par bol : ce n'est pas un repas. En revanche c'est une excellente entrée, qui remplit avant le plat pour très peu de calories. Un grand verre avant chaque dîner de la semaine et il sera fini sans y penser.",
+      "utilise": [
+        "Gaspacho"
+      ]
     },
     {
       "titre": "Le pâté et la mousse de foie",
-      "texte": "Il n'existe pas de version équilibrée de ces deux-là, autant l'assumer. Étale-les sur deux ou trois apéritifs, un pouce à chaque fois, sur du pain complet, avec des cornichons et des tomates. Jamais au moment du repas, sinon ils remplacent la protéine du plat."
+      "texte": "Il n'existe pas de version équilibrée de ces deux-là, autant l'assumer. Étale-les sur deux ou trois apéritifs, un pouce à chaque fois, sur du pain complet, avec des cornichons et des tomates. Jamais au moment du repas, sinon ils remplacent la protéine du plat.",
+      "utilise": [
+        "Pâté",
+        "Mousse de foie"
+      ]
     },
     {
       "titre": "Le jambon ibérique",
-      "texte": "Le meilleur produit de la liste. Ne le noie pas dans une recette : quelques tranches fines avec le gaspacho, un soir, comme repas plaisir assumé."
+      "texte": "Le meilleur produit de la liste. Ne le noie pas dans une recette : quelques tranches fines avec le gaspacho, un soir, comme repas plaisir assumé.",
+      "utilise": [
+        "Jambon ibérique"
+      ]
     }
   ]
 }

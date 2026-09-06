@@ -192,9 +192,20 @@ table.t td.x button{font:inherit;font-size:calc(20px * var(--fsx));background:no
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0;}
 .chips span{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px;
   font-size:calc(14px * var(--fsx));}
-.rec{border:1px solid var(--line);border-radius:14px;margin-bottom:10px;overflow:hidden;}
-.rec > .head{width:100%;text-align:left;font:inherit;background:#fff;border:0;padding:12px 14px;
-  min-height:54px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.chips span.used{background:var(--surf);color:var(--mut);border-color:var(--surf);text-decoration:line-through;}
+.tally{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 0;}
+.tally div{flex:1 1 120px;background:var(--surf);border-radius:14px;padding:11px 13px;}
+.tally .n{font-size:calc(20px * var(--fsx));font-weight:800;letter-spacing:-.5px;line-height:1.1;color:#8B4F0B;}
+.tally .l{font-size:calc(14px * var(--fsx));color:var(--mut);margin-top:3px;}
+.rec{border:1px solid var(--line);border-radius:14px;margin-bottom:8px;overflow:hidden;}
+.rec.done{border-color:var(--amber);background:var(--ambersoft);}
+.rec > .top{display:flex;align-items:center;gap:11px;padding:11px 14px;}
+.rec .chk{flex:0 0 30px;width:30px;height:30px;border-radius:9px;border:2px solid var(--line);
+  background:#fff;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;}
+.rec .chk svg{width:18px;height:18px;opacity:0;}
+.rec.done .chk{background:var(--amber);border-color:var(--amber);}
+.rec.done .chk svg{opacity:1;}
+.rec .ttl{flex:1;min-width:0;font:inherit;text-align:left;background:none;border:0;padding:0;cursor:pointer;}
 .rec .nm{font-size:calc(17px * var(--fsx));font-weight:700;line-height:1.25;}
 .rec .qd{font-size:calc(13.5px * var(--fsx));color:var(--mut);margin-top:1px;}
 .rec .chev{font-size:calc(22px * var(--fsx));color:var(--mut);transition:transform .15s;}
@@ -1120,6 +1131,7 @@ document.getElementById('impf').addEventListener('change',function(e){
       A=ld(KA,{}); if(!A.fav)A.fav={}; if(!A.mode)A.mode='deficit';
       V=ld(KV,{w:[],t:[]}); if(!V.w)V.w=[]; if(!V.t)V.t=[];
       U=ld(KU,{}); if(!U.fsx)U.fsx=0.85; applyFs(); renderFs();
+      W=ld(KW,{}); if(!W.done)W.done={}; loadSemaine();
       renderW(); renderT(); renderHist(); renderFav(); renderSeance('A'); renderSeance('B');
       m.style.color='#0E8B84'; m.textContent='Sauvegarde restaurée.';
     }catch(err){ m.style.color='#C4503C'; m.textContent='Fichier illisible.'; }
@@ -1132,19 +1144,53 @@ document.getElementById('wipe').addEventListener('click',function(){
   for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(k.indexOf('plan.v1.')===0) ks.push(k); }
   ks.forEach(function(k){ localStorage.removeItem(k); });
   S={lvl:{},log:[],done:{},day:tdy()}; A={fav:{},mode:'deficit'}; V={w:[],t:[]}; U={fsx:0.85};
+  W={done:{}}; loadSemaine();
   applyFs(); renderFs();
   renderW(); renderT(); renderHist(); renderFav(); renderSeance('A'); renderSeance('B');
   var m=document.getElementById('rmsg'); m.style.color='#C4503C'; m.textContent='Données effacées.';
 });
 
 /* ---------- repas de la semaine ---------- */
+var KW='plan.v1.semaine';
+var W = ld(KW,{}); if(!W.done) W.done={};
+function svW(){ st(KW,W); }
+var SEM=null;
 function esc(x){ return String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function semKey(t,i){ return t+i; }
+function usedSet(){
+  var used={};
+  (SEM.repas||[]).forEach(function(r,i){ if(W.done['r'+i]) (r.utilise||[]).forEach(function(x){used[x]=1;}); });
+  (SEM.aparte||[]).forEach(function(a,i){ if(W.done['a'+i]) (a.utilise||[]).forEach(function(x){used[x]=1;}); });
+  return used;
+}
+function refreshSem(){
+  var used=usedSet(), n=0;
+  document.querySelectorAll('#semwrap .chips span').forEach(function(el){
+    var on = !!used[el.dataset.p];
+    el.classList.toggle('used', on);
+  });
+  (SEM.frigo||[]).forEach(function(p){ if(used[p]) n++; });
+  var faits=0, total=(SEM.repas||[]).length;
+  for(var i=0;i<total;i++){ if(W.done['r'+i]) faits++; }
+  var t=document.getElementById('tally');
+  if(t) t.innerHTML =
+    '<div><div class="n">'+faits+' / '+total+'</div><div class="l">repas faits</div></div>'+
+    '<div><div class="n">'+n+' / '+(SEM.frigo||[]).length+'</div><div class="l">produits utilisés</div></div>';
+}
+function chkSvg(){
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>';
+}
 function renderSemaine(d){
+  SEM=d;
+  if(W.sem!==d.semaine){ W.sem=d.semaine; W.done={}; svW(); }
+
   var h='<div class="wk">'+esc(d.semaine||'Cette semaine')+'</div>'+
         '<div class="wkh">Ce qu\'il y a dans le frigo</div>';
   if(d.note) h+='<p class="sm mut">'+esc(d.note)+'</p>';
   if(d.frigo && d.frigo.length)
-    h+='<div class="chips">'+d.frigo.map(function(x){return '<span>'+esc(x)+'</span>';}).join('')+'</div>';
+    h+='<div class="chips">'+d.frigo.map(function(x){
+        return '<span data-p="'+esc(x)+'">'+esc(x)+'</span>'; }).join('')+'</div>';
+  h+='<div class="tally" id="tally"></div>';
   if(d.congelo && d.congelo.length)
     h+='<div class="card tl" style="margin-top:16px"><h3>À congeler dès ce soir</h3>'+
        '<p style="margin:0 0 8px">'+esc(d.congeloNote||'')+'</p>'+
@@ -1152,27 +1198,50 @@ function renderSemaine(d){
 
   h+='<h2>Les repas</h2>';
   (d.repas||[]).forEach(function(r,i){
-    h+='<div class="rec" data-i="'+i+'"><button type="button" class="head">'+
-       '<span><span class="nm">'+esc(r.titre)+'</span>'+
-       (r.quand?'<span class="qd">'+esc(r.quand)+'</span>':'')+'</span>'+
-       '<span class="chev">›</span></button><div class="body">'+
+    h+='<div class="rec" data-k="r'+i+'"><div class="top">'+
+       '<button type="button" class="chk" aria-label="fait">'+chkSvg()+'</button>'+
+       '<button type="button" class="ttl"><span class="nm">'+esc(r.titre)+'</span>'+
+       (r.quand?'<span class="qd">'+esc(r.quand)+'</span>':'')+'</button>'+
+       '<span class="chev">›</span></div><div class="body">'+
        '<div class="por">'+(r.portions||[]).map(function(p){return '<span>'+esc(p)+'</span>';}).join('')+'</div>'+
        (r.prot?'<div class="prot">'+esc(r.prot)+'</div>':'')+
        (r.note?'<p style="margin:10px 0 0">'+esc(r.note)+'</p>':'')+
-       (r.utilise?'<div class="use">Utilise : '+esc(r.utilise)+'</div>':'')+
+       ((r.utilise&&r.utilise.length)?'<div class="use">Utilise : '+esc(r.utilise.join(', '))+'</div>':'')+
        '</div></div>';
   });
 
   if(d.aparte && d.aparte.length){
     h+='<h2>À part</h2>';
-    d.aparte.forEach(function(a){
-      h+='<div class="card surf"><h3>'+esc(a.titre)+'</h3><p style="margin:0">'+esc(a.texte)+'</p></div>';
+    d.aparte.forEach(function(a,i){
+      h+='<div class="rec" data-k="a'+i+'"><div class="top">'+
+         '<button type="button" class="chk" aria-label="fait">'+chkSvg()+'</button>'+
+         '<button type="button" class="ttl"><span class="nm">'+esc(a.titre)+'</span></button>'+
+         '<span class="chev">›</span></div><div class="body">'+
+         '<p style="margin:12px 0 0">'+esc(a.texte)+'</p>'+
+         ((a.utilise&&a.utilise.length)?'<div class="use">Utilise : '+esc(a.utilise.join(', '))+'</div>':'')+
+         '</div></div>';
     });
   }
+  h+='<button type="button" class="wide" id="rstsem" style="margin-top:14px">Tout décocher</button>';
+
   document.getElementById('semwrap').innerHTML=h;
-  document.querySelectorAll('.rec').forEach(function(el){
-    el.querySelector('.head').addEventListener('click', function(){ el.classList.toggle('open'); });
+
+  document.querySelectorAll('#semwrap .rec').forEach(function(el){
+    var k=el.dataset.k;
+    if(W.done[k]) el.classList.add('done');
+    el.querySelector('.ttl').addEventListener('click', function(){ el.classList.toggle('open'); });
+    el.querySelector('.chev').addEventListener('click', function(){ el.classList.toggle('open'); });
+    el.querySelector('.chk').addEventListener('click', function(){
+      el.classList.toggle('done');
+      W.done[k]=el.classList.contains('done'); svW(); refreshSem();
+    });
   });
+  document.getElementById('rstsem').addEventListener('click', function(){
+    W.done={}; svW();
+    document.querySelectorAll('#semwrap .rec').forEach(function(el){ el.classList.remove('done'); });
+    refreshSem(); window.scrollTo(0,0);
+  });
+  refreshSem();
 }
 function loadSemaine(){
   fetch('repas.json',{cache:'no-cache'}).then(function(r){
