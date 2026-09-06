@@ -1,0 +1,104 @@
+{
+  "semaine": "Semaine du 7 au 13 septembre",
+  "note": "Cinq repas construits à partir de ce qu'il y a dans le frigo. Le vrai levier anti-gaspillage n'est pas de tout manger en cinq jours : c'est le congélateur.",
+  "frigo": [
+    "Gaspacho",
+    "Taboulé",
+    "Tomates cerises",
+    "Pâte feuilletée",
+    "Galettes de sarrasin",
+    "Rôti cuit",
+    "Jambon blanc",
+    "Jambon ibérique",
+    "Cordons bleus",
+    "Saucisses de Toulouse",
+    "Lardons",
+    "Pâté",
+    "Mousse de foie"
+  ],
+  "congelo": [
+    "Lardons",
+    "Saucisses de Toulouse",
+    "Cordons bleus",
+    "Pâte feuilletée",
+    "Galettes de sarrasin",
+    "Rôti tranché"
+  ],
+  "congeloNote": "Tous ceux-là se congèlent très bien. Mets-en la moitié au congélateur dès ce soir et la contrainte des cinq jours disparaît.",
+  "repas": [
+    {
+      "titre": "Gaspacho puis galette complète",
+      "quand": "Ce soir",
+      "portions": [
+        "2 paumes de jambon blanc et œuf",
+        "1 main en coupe : la galette",
+        "2 poings de salade"
+      ],
+      "prot": "35 g de protéines",
+      "note": "Un grand verre de gaspacho d'abord, puis la galette garnie de jambon, un œuf cassé dessus, un peu de fromage. Dix minutes de cuisine, et le gaspacho commence à partir.",
+      "utilise": "Gaspacho, galettes, jambon blanc"
+    },
+    {
+      "titre": "Rôti froid sur taboulé",
+      "quand": "Sans aucune cuisson",
+      "portions": [
+        "2 paumes de rôti tranché",
+        "1 main en coupe de taboulé",
+        "2 poings de tomates cerises et concombre"
+      ],
+      "prot": "38 g de protéines",
+      "note": "Le rôti est ce qui manquait au taboulé : une vraie protéine maigre. Une seule main en coupe de semoule, et pas de pain à côté. Se transporte en boîte pour le déjeuner du lendemain.",
+      "utilise": "Rôti cuit, taboulé, tomates cerises"
+    },
+    {
+      "titre": "Saucisses de Toulouse et lentilles",
+      "quand": "Le plat le plus rassasiant de la semaine",
+      "portions": [
+        "1 paume : une saucisse par personne",
+        "1 main en coupe de lentilles",
+        "2 poings de carotte et oignon"
+      ],
+      "prot": "35 g de protéines",
+      "note": "Une saucisse, pas deux : elle est là pour parfumer, ce sont les lentilles qui font le volume et une bonne part des protéines. Fais-en le double, ça se réchauffe très bien.",
+      "utilise": "Saucisses de Toulouse"
+    },
+    {
+      "titre": "Cordon bleu au four, poêlée de légumes",
+      "quand": "Le soir où tu n'as envie de rien",
+      "portions": [
+        "2 paumes : un cordon bleu",
+        "2 poings de haricots verts ou brocolis",
+        "pas de féculent en plus"
+      ],
+      "prot": "30 g de protéines",
+      "note": "Au four, pas à la poêle dans l'huile. Et pas de riz ni de pâtes à côté : la panure joue déjà le rôle du féculent, c'est l'erreur classique sur ce plat.",
+      "utilise": "Cordons bleus"
+    },
+    {
+      "titre": "Tarte feuilletée aux légumes, lardons en accent",
+      "quand": "Quand la pâte arrive à date",
+      "portions": [
+        "1 paume : 3 œufs et les lardons",
+        "1 main en coupe : la pâte",
+        "2 poings de courgettes et tomates"
+      ],
+      "prot": "22 g de protéines",
+      "note": "Pâte étalée, couche de moutarde, légumes en rondelles, une poignée de lardons pour toute la tarte, trois œufs battus versés dessus. Grosse salade à côté et surtout pas de pain : la pâte est déjà le féculent du repas.",
+      "utilise": "Pâte feuilletée, lardons, tomates cerises"
+    }
+  ],
+  "aparte": [
+    {
+      "titre": "Le gaspacho, en entrée et pas en plat",
+      "texte": "Environ 2 g de protéines par bol : ce n'est pas un repas. En revanche c'est une excellente entrée, qui remplit avant le plat pour très peu de calories. Un grand verre avant chaque dîner de la semaine et il sera fini sans y penser."
+    },
+    {
+      "titre": "Le pâté et la mousse de foie",
+      "texte": "Il n'existe pas de version équilibrée de ces deux-là, autant l'assumer. Étale-les sur deux ou trois apéritifs, un pouce à chaque fois, sur du pain complet, avec des cornichons et des tomates. Jamais au moment du repas, sinon ils remplacent la protéine du plat."
+    },
+    {
+      "titre": "Le jambon ibérique",
+      "texte": "Le meilleur produit de la liste. Ne le noie pas dans une recette : quelques tranches fines avec le gaspacho, un soir, comme repas plaisir assumé."
+    }
+  ]
+}
