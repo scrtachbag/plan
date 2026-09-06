@@ -168,7 +168,8 @@ input[type=range]{width:100%;margin:2px 0 0;accent-color:var(--teal);height:32px
 .runbar i{display:block;height:100%;background:var(--amber);transition:width .2s;}
 .runbody{flex:1;overflow-y:auto;padding:18px 16px 8px;-webkit-overflow-scrolling:touch;}
 .runname{font-size:calc(26px * var(--fsx));font-weight:800;letter-spacing:-.7px;line-height:1.12;margin:0 0 4px;}
-.runlvl{font-size:calc(15.5px * var(--fsx));color:var(--mut);margin:0 0 16px;}
+.runlvl{font-size:calc(15.5px * var(--fsx));color:var(--mut);margin:6px 0 16px;}
+.runbody .lvltrack{margin:10px 0 0;}
 .runsets{display:flex;gap:6px;margin-bottom:16px;}
 .runsets i{flex:1;height:9px;border-radius:5px;background:var(--line);}
 .runsets i.ok{background:var(--teal);} .runsets i.cur{background:var(--amber);}
@@ -330,6 +331,9 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
   <div class="sub on" id="s-accueil-semaine">
     <div class="prog" id="prog"></div>
     <div id="quickwrap"></div>
+    <div id="waistwrap"></div>
+    <div id="sleepwrap"></div>
+    <div id="drinkwrap"></div>
     <div id="coachwrap"></div>
     <div class="rowlist" id="week"></div>
     <h2>Les six choses qui font le résultat</h2>
@@ -576,6 +580,41 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
     <div id="tlist"></div>
   </div>
 
+  <div class="sub" id="s-suivi-sommeil">
+    <div class="stats" id="sstats"></div>
+    <div class="form">
+      <label for="sdate">Nuit du</label>
+      <div class="r"><input type="date" id="sdate"></div>
+      <label for="sval">Heures de sommeil</label>
+      <div class="r">
+        <input type="number" id="sval" step="0.25" min="0" max="14" inputmode="decimal" placeholder="7,5">
+        <button type="button" id="sadd">Enregistrer</button>
+      </div>
+      <div class="msg" id="smsg"></div>
+    </div>
+    <div class="card tl"><h3>Pourquoi ça compte ici</h3>
+      <p style="margin:0">À déficit égal, une nuit courte fait perdre davantage de muscle et moins de gras, et augmente la faim le lendemain. Sept heures, ce n'est pas un bonus de confort : c'est un poste du plan au même titre que les protéines.</p></div>
+    <div id="schart"></div>
+    <h2>Les dernières nuits</h2>
+    <div id="slist"></div>
+  </div>
+
+  <div class="sub" id="s-suivi-alcool">
+    <div class="stats" id="astats"></div>
+    <div class="card line" style="text-align:center">
+      <div id="acount" style="font-size:calc(40px * var(--fsx));font-weight:800;letter-spacing:-1.5px;line-height:1;"></div>
+      <div class="sm mut" id="acap" style="margin-top:4px"></div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button type="button" class="wide" id="aminus" style="margin:0">− 1 verre</button>
+        <button type="button" class="wide" id="aplus" style="margin:0;background:var(--teal);border-color:var(--teal);color:#fff">+ 1 verre</button>
+      </div>
+    </div>
+    <div class="card am"><h3>Le plafond, et pourquoi</h3>
+      <p style="margin:0">Quatre verres par semaine, jamais en semaine. C'est le poste le plus directement associé au gras abdominal, et le plus facile à sous-estimer : un verre de vin, une bière et un apéritif font déjà trois.</p></div>
+    <h2>Les semaines passées</h2>
+    <div id="alist"></div>
+  </div>
+
   <div class="sub" id="s-suivi-reperes">
     <h2>Quand corriger</h2>
     <div class="rowlist">
@@ -670,7 +709,7 @@ applyFs();
 var S = ld(KS,{}); if(!S.lvl)S.lvl={}; if(!S.log)S.log=[]; if(!S.done)S.done={};
 if(!S.reps)S.reps={}; if(!S.last)S.last={}; if(!S.snap)S.snap={};
 var A = ld(KA,{}); if(!A.fav)A.fav={}; if(!A.mode)A.mode='deficit';
-var V = ld(KV,{w:[],t:[]}); if(!V.w)V.w=[]; if(!V.t)V.t=[];
+var V = ld(KV,{w:[],t:[]}); if(!V.w)V.w=[]; if(!V.t)V.t=[]; if(!V.s)V.s=[]; if(!V.a)V.a=[];
 function svS(){ st(KS,S); } function svA(){ st(KA,A); } function svV(){ return st(KV,V); }
 
 function tdy(){ return new Date().toISOString().slice(0,10); }
@@ -860,7 +899,7 @@ var VIEWS={
  seances:{k:"Mes séances",h:"Trente minutes, sans matériel",acc:"teal",cls:"t",
    subs:[["A","Séance A"],["B","Séance B"],["hist","Historique"],["guide","Comment ça marche"]]},
  suivi:{k:"Mon suivi",h:"Poids et tour de taille",acc:"teal",cls:"",
-   subs:[["poids","Poids"],["taille","Tour de taille"],["reperes","Repères"]]},
+   subs:[["poids","Poids"],["taille","Tour de taille"],["sommeil","Sommeil"],["alcool","Alcool"],["reperes","Repères"]]},
  reglages:{k:"Réglages",h:"Réglages et sauvegarde",acc:"ink",cls:"",
    subs:[["tout","Réglages"]]}
 };
@@ -1156,8 +1195,13 @@ function runDraw(){
     sets+='<i class="'+(k<R.set?'ok':(k===R.set?'cur':''))+'"></i>';
   }
   var last=S.last[R.key+R.i+':'+l];
+  var track='';
+  for(var q=0;q<e.lvls.length;q++){
+    track+='<button type="button" data-j="'+q+'" class="'+(q===l?'on':(q<l?'fill':''))+'">'+(q+1)+'</button>';
+  }
   var h='<div class="runname">'+e.n+'</div>'+
-    '<div class="runlvl">Niveau '+(l+1)+' sur '+e.lvls.length+' — '+e.lvls[l]+'</div>'+
+    '<div class="lvltrack" id="runtrack">'+track+'</div>'+
+    '<div class="runlvl">'+e.lvls[l]+'</div>'+
     '<div class="runsets">'+sets+'</div>'+
     '<div class="runserie">Série '+R.set+' sur '+e.sets+'</div>'+
     '<div class="reps" style="border-top:0;margin-top:0;padding-top:0">'+
@@ -1182,6 +1226,11 @@ function runDraw(){
   });
   var hb=document.getElementById('runhold');
   if(hb) hb.addEventListener('click', function(){ runHold(e); });
+  document.querySelectorAll('#runtrack button').forEach(function(b){
+    b.addEventListener('click', function(){
+      S.lvl[R.key+R.i]=parseInt(b.dataset.j,10); svS(); runDraw();
+    });
+  });
 
   var lastEx = (R.i===EX[R.key].ex.length-1) && (R.set===e.sets);
   document.getElementById('rundone').textContent = lastEx ? 'Terminer la séance' : 'Série faite';
@@ -1411,7 +1460,10 @@ function bindDel(){
   document.querySelectorAll('table.t td.x button').forEach(function(b){
     b.onclick=function(){ var k=b.dataset.k;
       V[k]=V[k].filter(function(x){return x.d!==b.dataset.d;});
-      svV(); k==='w'?renderW():renderT(); };
+      svV();
+      if(k==='w'){ renderW(); renderQuick(); renderCoach(); }
+      else if(k==='t'){ renderT(); renderWaist(); }
+      else { renderSleep(); renderSleepQuick(); } };
   });
 }
 function addVal(key,dateId,valId,msgId,unit,after){
@@ -1429,7 +1481,10 @@ function addVal(key,dateId,valId,msgId,unit,after){
   setTimeout(function(){ m.textContent=''; },4000);
 }
 document.getElementById('wadd').addEventListener('click',function(){ addVal('w','wdate','wval','wmsg','kg',function(){ renderW(); renderQuick(); renderCoach(); }); });
-document.getElementById('tadd').addEventListener('click',function(){ addVal('t','tdate','tval','tmsg','cm',renderT); });
+document.getElementById('tadd').addEventListener('click',function(){ addVal('t','tdate','tval','tmsg','cm',function(){ renderT(); renderWaist(); }); });
+document.getElementById('sadd').addEventListener('click',function(){ addVal('s','sdate','sval','smsg','h',function(){ renderSleep(); renderSleepQuick(); renderCoach(); }); });
+document.getElementById('aminus').addEventListener('click',function(){ setVerres(tdy(), verresJour(tdy())-1); renderDrink(); renderDrinkQuick(); });
+document.getElementById('aplus').addEventListener('click',function(){ setVerres(tdy(), verresJour(tdy())+1); renderDrink(); renderDrinkQuick(); });
 document.getElementById('wval').addEventListener('keydown',function(e){ if(e.key==='Enter') document.getElementById('wadd').click(); });
 document.getElementById('tval').addEventListener('keydown',function(e){ if(e.key==='Enter') document.getElementById('tadd').click(); });
 
@@ -1452,10 +1507,12 @@ document.getElementById('impf').addEventListener('change',function(e){
       S=ld(KS,{}); if(!S.lvl)S.lvl={}; if(!S.log)S.log=[]; if(!S.done)S.done={};
       if(!S.reps)S.reps={}; if(!S.last)S.last={}; if(!S.snap)S.snap={};
       A=ld(KA,{}); if(!A.fav)A.fav={}; if(!A.mode)A.mode='deficit';
-      V=ld(KV,{w:[],t:[]}); if(!V.w)V.w=[]; if(!V.t)V.t=[];
+      V=ld(KV,{w:[],t:[]}); if(!V.w)V.w=[]; if(!V.t)V.t=[]; if(!V.s)V.s=[]; if(!V.a)V.a=[];
       U=ld(KU,{}); if(!U.fsx)U.fsx=0.85; applyFs(); renderFs();
       W=ld(KW,{}); if(!W.done)W.done={}; loadSemaine();
-      renderW(); renderT(); renderHist(); renderFav(); renderSeance('A'); renderSeance('B');
+      renderW(); renderT(); renderSleep(); renderDrink(); renderHist(); renderFav();
+      renderQuick(); renderWaist(); renderSleepQuick(); renderDrinkQuick(); renderCoach();
+      renderSeance('A'); renderSeance('B');
       m.style.color='#0E8B84'; m.textContent='Sauvegarde restaurée.';
     }catch(err){ m.style.color='#C4503C'; m.textContent='Fichier illisible.'; }
   };
@@ -1466,10 +1523,12 @@ document.getElementById('wipe').addEventListener('click',function(){
   var ks=[];
   for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(k.indexOf('plan.v1.')===0) ks.push(k); }
   ks.forEach(function(k){ localStorage.removeItem(k); });
-  S={lvl:{},log:[],done:{},day:tdy(),reps:{},last:{},snap:{}}; A={fav:{},mode:'deficit'}; V={w:[],t:[]}; U={fsx:0.85};
+  S={lvl:{},log:[],done:{},day:tdy(),reps:{},last:{},snap:{}}; A={fav:{},mode:'deficit'}; V={w:[],t:[],s:[],a:[]}; U={fsx:0.85};
   W={done:{}}; loadSemaine();
   applyFs(); renderFs();
-  renderW(); renderT(); renderHist(); renderFav(); renderSeance('A'); renderSeance('B');
+  renderW(); renderT(); renderSleep(); renderDrink(); renderHist(); renderFav();
+  renderQuick(); renderWaist(); renderSleepQuick(); renderDrinkQuick(); renderCoach();
+  renderSeance('A'); renderSeance('B');
   var m=document.getElementById('rmsg'); m.style.color='#C4503C'; m.textContent='Données effacées.';
 });
 
@@ -1600,6 +1659,82 @@ function loadSemaine(){
 loadSemaine();
 
 /* =========================================================
+   SOMMEIL, ALCOOL, TOUR DE TAILLE
+   ========================================================= */
+function lundi(dt){ var d=new Date(dt); var j=(d.getDay()+6)%7; d.setDate(d.getDate()-j);
+  return d.toISOString().slice(0,10); }
+function sortBy(a){ return a.slice().sort(function(x,y){return x.d<y.d?-1:1;}); }
+function moyenne(arr,jours){
+  var now=new Date(), s=0, n=0;
+  arr.forEach(function(x){ if((now-new Date(x.d))/86400000<jours){ s+=x.v; n++; } });
+  return n? s/n : null;
+}
+function verresJour(d){ var e=V.a.filter(function(x){return x.d===d;})[0]; return e?e.v:0; }
+function verresSemaine(ref){
+  var l=lundi(ref||tdy()), t=0;
+  V.a.forEach(function(x){ if(lundi(x.d)===l) t+=x.v; });
+  return t;
+}
+function setVerres(d,v){
+  v=Math.max(0,v);
+  V.a=V.a.filter(function(x){return x.d!==d;});
+  if(v>0) V.a.push({d:d,v:v});
+  svV();
+}
+function tailleDue(){
+  if(!V.t.length) return 999;
+  var a=sortBy(V.t), last=new Date(a[a.length-1].d);
+  return Math.floor((new Date()-last)/86400000);
+}
+
+function renderSleep(){
+  var a=sortBy(V.s);
+  var m7=moyenne(V.s,7);
+  document.getElementById('sstats').innerHTML = a.length
+    ? '<div><div class="n">'+(m7!==null?num(m7)+' h':'—')+'</div><div class="l">moyenne 7 nuits</div></div>'+
+      '<div><div class="n '+(m7!==null&&m7>=7?'dn':'up')+'">'+(m7!==null?(m7>=7?'objectif tenu':'sous 7 h'):'—')+'</div><div class="l">cible : 7 h</div></div>'
+    : '';
+  document.getElementById('schart').innerHTML = chart(a, true, '#0E8B84');
+  document.getElementById('slist').innerHTML = a.length
+    ? '<table class="t"><tr><th>Nuit du</th><th>Durée</th><th></th></tr>'+
+      a.slice().reverse().slice(0,20).map(function(p){
+        return '<tr><td>'+frd(p.d)+'</td><td>'+num(p.v)+' h</td>'+
+               '<td class="x"><button type="button" data-k="s" data-d="'+p.d+'">×</button></td></tr>';
+      }).join('')+'</table>'
+    : '<div class="empty">Aucune nuit enregistrée. Note la durée chaque matin, en même temps que la pesée.</div>';
+  bindDel();
+}
+
+function renderDrink(){
+  var t=verresSemaine(), reste=4-t;
+  var el=document.getElementById('acount');
+  if(el){
+    el.textContent=t+' / 4';
+    el.style.color = t>4 ? '#C4503C' : (t===4 ? '#C97416' : '#0E8B84');
+    document.getElementById('acap').textContent = t>4
+      ? 'Plafond dépassé de '+(t-4)+' verre'+((t-4)>1?'s':'')+' cette semaine'
+      : (reste===0 ? 'Plafond atteint pour cette semaine' : 'Encore '+reste+' verre'+(reste>1?'s':'')+' possible'+(reste>1?'s':'')+' d\'ici dimanche');
+  }
+  var st=document.getElementById('astats');
+  if(st){
+    var jours=0; V.a.forEach(function(x){ if(lundi(x.d)===lundi(tdy()) && x.v>0) jours++; });
+    st.innerHTML='<div><div class="n">'+verresJour(tdy())+'</div><div class="l">aujourd\'hui</div></div>'+
+      '<div><div class="n">'+jours+'</div><div class="l">jours avec alcool cette semaine</div></div>';
+  }
+  var sem={};
+  V.a.forEach(function(x){ var l=lundi(x.d); sem[l]=(sem[l]||0)+x.v; });
+  var ls=Object.keys(sem).sort().reverse().slice(0,10);
+  var box=document.getElementById('alist');
+  if(box) box.innerHTML = ls.length
+    ? '<table class="t"><tr><th>Semaine du</th><th>Verres</th><th></th></tr>'+
+      ls.map(function(l){
+        var v=sem[l], c = v>4 ? 'color:#C4503C;font-weight:700' : 'color:#0E8B84;font-weight:700';
+        return '<tr><td>'+frd(l)+'</td><td style="'+c+'">'+v+'</td><td>'+(v>4?'au-dessus':'dans le plafond')+'</td></tr>';
+      }).join('')+'</table>'
+    : '<div class="empty">Rien d\'enregistré. Une semaine sans alcool compte aussi : elle apparaîtra à zéro dès que tu commenceras à noter.</div>';
+}
+
+/* =========================================================
    BOUCLE DE RETOUR : pesée rapide, lecture, projection, bilan
    ========================================================= */
 function sortedW(){ return V.w.slice().sort(function(a,b){return a.d<b.d?-1:1;}); }
@@ -1628,9 +1763,14 @@ function coachTexte(A){
   if(A.etat==='debut')
     return {c:'', h:'Encore '+(3-A.n)+' pesée'+((3-A.n)>1?'s':'')+' avant la première lecture',
             b:"La moyenne sur sept jours a besoin de quelques jours pour dire quelque chose. Pèse-toi chaque matin à jeun, sans regarder le chiffre du jour."};
-  if(A.etat==='plateau')
+  if(A.etat==='plateau'){
+    var m7=moyenne(V.s,7), sem=verresSemaine();
+    var pointe='';
+    if(m7!==null && m7<7) pointe=" Avant de toucher aux portions, regarde le sommeil : tu es à "+num(m7)+" h de moyenne, sous la cible de sept heures. C'est souvent là que se trouve le blocage.";
+    else if(sem>4) pointe=" Avant de toucher aux portions, regarde l'alcool : "+sem+" verres cette semaine, au-dessus du plafond de quatre.";
     return {c:'warn', h:'Ta moyenne ne bouge plus depuis trois semaines',
-            b:"C'est le moment de corriger, et d'une seule façon à la fois : retire environ 150 kcal par jour, ou ajoute 2 000 pas quotidiens. Pas les deux, sinon tu ne sauras pas ce qui a marché."};
+            b:"C'est le moment de corriger, et d'une seule façon à la fois : retire environ 150 kcal par jour, ou ajoute 2 000 pas quotidiens."+pointe};
+  }
   if(A.etat==='vite')
     return {c:'bad', h:'Tu descends trop vite',
             b:"Plus de 0,7 kg par semaine, c'est du muscle qui part avec le gras. Remonte les portions, en particulier les féculents autour des séances."};
@@ -1660,6 +1800,65 @@ function renderQuick(){
     renderQuick(); renderCoach(); renderW();
   });
 }
+function renderWaist(){
+  var box=document.getElementById('waistwrap'); if(!box) return;
+  var j=tailleDue();
+  if(j<14){ box.innerHTML=''; return; }
+  box.innerHTML='<div class="quick"><div class="qh">'+
+    (j===999?'Ton tour de taille de départ':'Tour de taille — la mesure des quinze jours est due')+'</div>'+
+    '<div class="qr"><input type="number" id="qt" step="0.5" min="50" max="200" inputmode="decimal" placeholder="94">'+
+    '<button type="button" id="qtb" style="background:var(--amber)">Enregistrer</button></div>'+
+    '<div class="sm mut" style="margin-top:8px">Au nombril, le matin, sans serrer le mètre. C\'est elle qui bouge avant la balance.</div></div>';
+  document.getElementById('qtb').addEventListener('click', function(){
+    var v=parseFloat(String(document.getElementById('qt').value).replace(',','.'));
+    if(isNaN(v)) return;
+    V.t=V.t.filter(function(x){return x.d!==tdy();});
+    V.t.push({d:tdy(),v:v}); svV();
+    renderWaist(); renderT();
+  });
+}
+function renderSleepQuick(){
+  var box=document.getElementById('sleepwrap'); if(!box) return;
+  var deja=V.s.some(function(x){return x.d===tdy();});
+  if(deja){
+    var m7=moyenne(V.s,7);
+    box.innerHTML='<div class="quick"><div class="qh">Nuit enregistrée</div>'+
+      '<div class="sm mut">Moyenne sur sept nuits : <b style="color:var(--ink)">'+(m7!==null?num(m7)+' h':'—')+'</b>'+
+      (m7!==null&&m7<7?'. Sous la cible de sept heures.':'.')+'</div></div>';
+    return;
+  }
+  box.innerHTML='<div class="quick"><div class="qh">Combien d\'heures cette nuit ?</div>'+
+    '<div class="qr"><input type="number" id="qs" step="0.25" min="0" max="14" inputmode="decimal" placeholder="7,5">'+
+    '<button type="button" id="qsb">Enregistrer</button></div></div>';
+  document.getElementById('qsb').addEventListener('click', function(){
+    var v=parseFloat(String(document.getElementById('qs').value).replace(',','.'));
+    if(isNaN(v)) return;
+    V.s=V.s.filter(function(x){return x.d!==tdy();});
+    V.s.push({d:tdy(),v:v}); svV();
+    renderSleepQuick(); renderSleep(); renderCoach();
+  });
+}
+function renderDrinkQuick(){
+  var box=document.getElementById('drinkwrap'); if(!box) return;
+  var j=verresJour(tdy()), sem=verresSemaine();
+  var couleur = sem>4 ? 'var(--coral)' : (sem===4 ? 'var(--amber)' : 'var(--teal)');
+  box.innerHTML='<div class="quick"><div class="qh">Verres d\'alcool aujourd\'hui</div>'+
+    '<div style="display:flex;align-items:center;gap:12px">'+
+      '<button type="button" id="qam" style="font:inherit;font-size:calc(22px * var(--fsx));font-weight:700;width:52px;height:52px;border:1px solid var(--line);background:#fff;border-radius:12px;cursor:pointer">−</button>'+
+      '<div style="flex:1;text-align:center">'+
+        '<div style="font-size:calc(30px * var(--fsx));font-weight:800;line-height:1;letter-spacing:-1px">'+j+'</div>'+
+        '<div class="sm" style="color:'+couleur+';font-weight:700;margin-top:3px">'+sem+' sur 4 cette semaine</div>'+
+      '</div>'+
+      '<button type="button" id="qap" style="font:inherit;font-size:calc(22px * var(--fsx));font-weight:700;width:52px;height:52px;border:0;background:var(--teal);color:#fff;border-radius:12px;cursor:pointer">+</button>'+
+    '</div></div>';
+  document.getElementById('qap').addEventListener('click', function(){
+    setVerres(tdy(), verresJour(tdy())+1); renderDrinkQuick(); renderDrink(); renderCoach();
+  });
+  document.getElementById('qam').addEventListener('click', function(){
+    setVerres(tdy(), verresJour(tdy())-1); renderDrinkQuick(); renderDrink(); renderCoach();
+  });
+}
+
 function renderCoach(){
   var A=analyse(), t=coachTexte(A);
   var html='<div class="coach '+(t.c||'')+'"><div class="ch">'+t.h+'</div><div class="cb">'+t.b+'</div></div>';
@@ -1684,10 +1883,13 @@ function renderBilan(){
   var A=analyse();
   var ligne = (A.etat==='debut') ? 'Pas encore assez de pesées pour une moyenne.'
     : 'Moyenne à '+num(A.cur)+' kg, '+(A.rythme<0?'en baisse de '+num(Math.abs(A.rythme)):'en hausse de '+num(Math.abs(A.rythme)))+' kg sur la semaine.';
+  var m7=moyenne(V.s,7), sem=verresSemaine();
   box.insertAdjacentHTML('afterbegin',
     '<div class="card am"><h3>Bilan de la semaine</h3>'+
-    '<p style="margin:0 0 6px">'+seances+' séance'+(seances>1?'s':'')+' de renforcement sur les sept derniers jours, sur deux prévues.</p>'+
-    '<p style="margin:0">'+ligne+' C\'est aussi le jour du tour de taille, une semaine sur deux, et de la cuisine pour la semaine.</p></div>');
+    '<p style="margin:0 0 6px">'+seances+' séance'+(seances>1?'s':'')+' de renforcement sur deux prévues.</p>'+
+    '<p style="margin:0 0 6px">'+ligne+'</p>'+
+    '<p style="margin:0 0 6px">Sommeil : '+(m7!==null?num(m7)+' h de moyenne'+(m7<7?', sous la cible':', cible tenue'):'pas encore suivi')+'.</p>'+
+    '<p style="margin:0">Alcool : '+sem+' verre'+(sem>1?'s':'')+(sem>4?', au-dessus du plafond':', dans le plafond')+'.</p></div>');
 }
 
 /* ---------- réglages ---------- */
@@ -1711,7 +1913,9 @@ renderFs();
 document.getElementById('wdate').value=tdy();
 document.getElementById('tdate').value=tdy();
 renderW(); renderT();
-renderQuick(); renderCoach(); renderBilan();
+renderQuick(); renderWaist(); renderSleepQuick(); renderDrinkQuick();
+renderSleep(); renderDrink(); renderCoach(); renderBilan();
+document.getElementById('sdate').value=tdy();
 goView('accueil');
 </script>
 </body>
