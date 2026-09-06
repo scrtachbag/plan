@@ -145,6 +145,20 @@ ol.steps{margin:0 0 4px;padding-left:22px;} ol.steps li{margin-bottom:8px;}
   background:#fff;font:inherit;font-size:calc(14px * var(--fsx));font-weight:700;color:var(--mut);cursor:pointer;}
 .lvltrack button.fill{background:var(--tealsoft);border-color:var(--tealsoft);color:#0A6C66;}
 .lvltrack button.on{background:var(--teal);border-color:var(--teal);color:#fff;}
+.reps{margin:12px 0 0;padding-top:12px;border-top:1px solid var(--line);}
+.repshead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:4px;}
+.repsval{font-size:calc(22px * var(--fsx));font-weight:800;letter-spacing:-.6px;color:var(--teal);line-height:1.1;}
+.repsval small{font-size:calc(13px * var(--fsx));font-weight:600;color:var(--mut);letter-spacing:0;}
+.repslast{font-size:calc(13.5px * var(--fsx));color:var(--mut);text-align:right;}
+input[type=range]{width:100%;margin:2px 0 0;accent-color:var(--teal);height:32px;}
+.repsbounds{display:flex;justify-content:space-between;font-size:calc(12.5px * var(--fsx));color:var(--mut);margin-top:-2px;}
+.repshint{font-size:calc(13.5px * var(--fsx));margin-top:6px;}
+.repshint.up{color:var(--amber);font-weight:700;}
+.evo{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:8px;}
+.evo .top2{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.evo .nm2{font-size:calc(15.5px * var(--fsx));font-weight:700;line-height:1.25;}
+.evo .st2{font-size:calc(13.5px * var(--fsx));color:var(--mut);margin-top:1px;}
+.evo svg{display:block;width:100%;height:auto;margin-top:8px;}
 .lvlname{font-size:calc(16.5px * var(--fsx));font-weight:700;line-height:1.35;}
 .lvlhint{font-size:calc(14px * var(--fsx));color:var(--mut);margin-top:1px;}
 .timer{display:flex;align-items:center;gap:12px;margin-top:12px;}
@@ -433,7 +447,10 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
     <div class="meta" id="hstats"></div>
     <h2>Tes séances</h2>
     <div id="hlist"></div>
-    <p class="sm mut" style="margin-top:18px">Une séance s'inscrit ici dès que tu as coché tous ses exercices. Les niveaux sont mémorisés d'une fois sur l'autre.</p>
+    <p class="sm mut" style="margin-top:16px">Une séance s'inscrit ici dès que tu as coché tous ses exercices. Ton niveau et tes répétitions sont enregistrés au même moment.</p>
+    <h2>Évolution par exercice</h2>
+    <p class="sm mut">La courbe combine le niveau et les répétitions : elle monte quand tu ajoutes des répétitions, et elle fait un bond quand tu passes au cran suivant.</p>
+    <div id="evowrap"></div>
   </div>
   <div class="sub" id="s-seances-guide">
     <h2>Ce qu'est une variante</h2>
@@ -569,6 +586,7 @@ if(U.v!==2){
 function applyFs(){ document.documentElement.style.setProperty('--fsx', String(U.fsx)); }
 applyFs();
 var S = ld(KS,{}); if(!S.lvl)S.lvl={}; if(!S.log)S.log=[]; if(!S.done)S.done={};
+if(!S.reps)S.reps={}; if(!S.last)S.last={}; if(!S.snap)S.snap={};
 var A = ld(KA,{}); if(!A.fav)A.fav={}; if(!A.mode)A.mode='deficit';
 var V = ld(KV,{w:[],t:[]}); if(!V.w)V.w=[]; if(!V.t)V.t=[];
 function svS(){ st(KS,S); } function svA(){ st(KA,A); } function svV(){ return st(KV,V); }
@@ -650,7 +668,7 @@ var MEALS=[
 ];
 var EX={
 A:{jour:"Lundi",focus:"Poussée et tronc",duree:"30 min",ex:[
- {n:"Pompes inclinées",r:"4 séries de 8 à 15 répétitions",
+ {n:"Pompes inclinées",r:"4 séries de 8 à 15 répétitions",mn:8,mx:15,u:"réps",
   steps:["Mains posées sur un plan surélevé (bord de table, plan de travail, dossier de canapé), écartées un peu plus large que les épaules.",
    "Sur les poings ou sur deux livres épais si le poignet à plat tire sur le coude : l'idée est de garder le poignet droit.",
    "Corps en une seule ligne des talons à la tête, fessiers serrés, ventre gainé.",
@@ -659,7 +677,7 @@ A:{jour:"Lundi",focus:"Poussée et tronc",duree:"30 min",ex:[
   feel:"Ça doit tirer dans la poitrine, les triceps et les épaules — jamais dans le poignet ni le coude.",
   err:"Le bassin qui s'affaisse ou les fesses qui montent. Si tu ne tiens plus la ligne, arrête la série.",
   lvls:["Mains contre un mur","Mains sur un plan de travail","Mains sur une chaise ou une table basse","Mains au sol","Pieds surélevés sur une chaise"],start:1},
- {n:"Squat",r:"3 séries de 12 à 20 répétitions",
+ {n:"Squat",r:"3 séries de 12 à 20 répétitions",mn:12,mx:20,u:"réps",
   steps:["Debout, pieds écartés de la largeur des épaules, pointes légèrement vers l'extérieur.",
    "Bras tendus devant toi pour l'équilibre.",
    "Descends en poussant les fesses vers l'arrière, comme pour t'asseoir sur une chaise invisible, dos droit.",
@@ -668,7 +686,7 @@ A:{jour:"Lundi",focus:"Poussée et tronc",duree:"30 min",ex:[
   feel:"Cuisses et fessiers. Les genoux peuvent dépasser légèrement les orteils, c'est normal et sans danger.",
   err:"Les talons qui décollent, ou le bas du dos qui s'arrondit en bas du mouvement. Descends moins bas.",
   lvls:["S'asseoir sur une chaise et se relever","Squat au poids du corps","Squat avec 3 secondes de descente","Squat bulgare, pied arrière sur une chaise"],start:1},
- {n:"Planche sur avant-bras",r:"3 séries de 30 à 60 secondes",timer:45,
+ {n:"Planche sur avant-bras",r:"3 séries de 30 à 60 secondes",mn:20,mx:60,u:"s",timer:45,
   steps:["À plat ventre, appuie-toi sur les avant-bras, coudes à l'aplomb des épaules.",
    "Jamais sur les mains : les avant-bras protègent ton coude.",
    "Décolle le bassin et tends les jambes, appui sur la pointe des pieds.",
@@ -677,7 +695,7 @@ A:{jour:"Lundi",focus:"Poussée et tronc",duree:"30 min",ex:[
   feel:"Une tension profonde dans tout le ventre. Si tu la sens surtout dans le bas du dos, le bassin n'est pas rentré.",
   err:"Les fesses en l'air, ou le ventre qui tombe. Mieux vaut 20 secondes propres que 60 secondes affaissées.",
   lvls:["Sur les genoux","Planche complète, 20 secondes","Planche complète, 45 secondes","Planche complète, une jambe décollée"],start:1},
- {n:"Dead bug",r:"3 séries de 8 à 10 répétitions par côté",
+ {n:"Dead bug",r:"3 séries de 8 à 10 répétitions par côté",mn:6,mx:12,u:"réps/côté",
   steps:["Allongé sur le dos, bras tendus vers le plafond, hanches et genoux pliés à 90°, tibias parallèles au sol.",
    "Plaque le bas du dos contre le sol : plus d'espace sous les lombaires. C'est le point central de l'exercice.",
    "Descends lentement le bras droit derrière la tête et la jambe gauche vers le sol, en même temps.",
@@ -686,7 +704,7 @@ A:{jour:"Lundi",focus:"Poussée et tronc",duree:"30 min",ex:[
   feel:"Le ventre qui travaille pour empêcher le dos de se creuser. C'est un exercice lent.",
   err:"Aller trop loin et laisser le dos se cambrer. Tu perds tout l'intérêt, et c'est là qu'un dos sensible proteste.",
   lvls:["Bras seuls, jambes immobiles","Jambes seules, bras immobiles","Bras et jambe opposés, amplitude courte","Bras et jambe opposés, amplitude complète"],start:2},
- {n:"Pont fessier",r:"3 séries de 12 à 15 répétitions",
+ {n:"Pont fessier",r:"3 séries de 12 à 15 répétitions",mn:10,mx:18,u:"réps",
   steps:["Allongé sur le dos, genoux pliés, pieds à plat à une trentaine de centimètres des fesses.",
    "Bras le long du corps, paumes vers le sol.",
    "Pousse dans les talons pour décoller le bassin jusqu'à aligner genoux, hanches et épaules.",
@@ -697,7 +715,7 @@ A:{jour:"Lundi",focus:"Poussée et tronc",duree:"30 min",ex:[
   lvls:["Deux pieds au sol","Deux pieds, 3 secondes de maintien en haut","Pieds surélevés sur une chaise","Une jambe tendue"],start:1}
 ]},
 B:{jour:"Mercredi, jeudi ou vendredi",focus:"Dos et chaîne postérieure",duree:"30 min",ex:[
- {n:"Y – T – W au sol",r:"3 séries de 10 répétitions dans chaque position",
+ {n:"Y – T – W au sol",r:"3 séries de 10 répétitions dans chaque position",mn:6,mx:12,u:"réps",
   steps:["À plat ventre, front posé au sol ou sur une serviette pliée, jambes tendues.",
    "Position Y : bras tendus devant toi en diagonale, pouces vers le plafond. Décolle les bras de quelques centimètres, tiens une seconde, repose.",
    "Position T : bras tendus sur les côtés en croix, pouces vers le plafond. Même mouvement.",
@@ -706,7 +724,7 @@ B:{jour:"Mercredi, jeudi ou vendredi",focus:"Dos et chaîne postérieure",duree:
   feel:"Le haut du dos et l'arrière des épaules. Les omoplates se rapprochent l'une de l'autre.",
   err:"Décoller la poitrine en cambrant le dos. Ce sont les bras qui montent, pas le buste.",
   lvls:["Sans décoller, juste serrer les omoplates","Décoller les bras de quelques centimètres","Décoller bras et haut de la poitrine","Avec 2 secondes de maintien en haut"],start:1},
- {n:"Reverse snow angel",r:"3 séries de 8 répétitions",
+ {n:"Reverse snow angel",r:"3 séries de 8 répétitions",mn:5,mx:12,u:"réps",
   steps:["À plat ventre, bras le long du corps, paumes vers le sol.",
    "Décolle légèrement les bras et fais-les balayer lentement le long du sol jusqu'au-dessus de la tête, sans jamais toucher le sol.",
    "Fais le chemin inverse, aussi lentement.",
@@ -714,7 +732,7 @@ B:{jour:"Mercredi, jeudi ou vendredi",focus:"Dos et chaîne postérieure",duree:
   feel:"Une brûlure diffuse dans le haut du dos et les épaules. Normal : ce sont de petits muscles peu sollicités.",
   err:"Aller vite. Tout l'intérêt est dans la lenteur.",
   lvls:["Amplitude courte, jusqu'aux épaules","Amplitude complète","Amplitude complète, très lente"],start:1},
- {n:"Hip thrust une jambe",r:"3 séries de 10 à 15 répétitions par jambe",
+ {n:"Hip thrust une jambe",r:"3 séries de 10 à 15 répétitions par jambe",mn:10,mx:15,u:"réps/jambe",
   steps:["Assis au sol, dos appuyé contre le bord du canapé, omoplates calées sur l'assise.",
    "Un pied à plat au sol, genou plié ; l'autre jambe tendue ou genou ramené vers la poitrine.",
    "Pousse dans le talon de la jambe d'appui pour monter le bassin jusqu'à une ligne des genoux aux épaules.",
@@ -723,7 +741,7 @@ B:{jour:"Mercredi, jeudi ou vendredi",focus:"Dos et chaîne postérieure",duree:
   feel:"Le fessier de la jambe d'appui, franchement. L'exercice le plus utile du programme pour le bas du dos.",
   err:"Cambrer le bas du dos au lieu de serrer le fessier. Si tu sens tes lombaires, monte moins haut.",
   lvls:["Deux pieds au sol, bassin au sol","Deux pieds, épaules sur le canapé","Une jambe, l'autre pied posé au sol","Une jambe, l'autre jambe tendue en l'air"],start:2},
- {n:"Fentes marchées",r:"3 séries de 10 à 12 pas par jambe",
+ {n:"Fentes marchées",r:"3 séries de 10 à 12 pas par jambe",mn:8,mx:14,u:"pas/jambe",
   steps:["Debout, un grand pas en avant, dos droit, regard devant.",
    "Descends verticalement jusqu'à ce que le genou arrière frôle le sol — tu descends, tu ne te penches pas en avant.",
    "Pousse dans le talon avant pour te relever et enchaîne le pas suivant avec l'autre jambe.",
@@ -731,7 +749,7 @@ B:{jour:"Mercredi, jeudi ou vendredi",focus:"Dos et chaîne postérieure",duree:
   feel:"Cuisse et fessier de la jambe avant.",
   err:"Un pas trop court, qui envoie tout le travail dans le genou. Allonge le pas si le genou tire.",
   lvls:["Fente statique en se tenant à un mur","Fente statique sans appui","Fente marchée","Fente marchée avec 2 secondes en bas"],start:1},
- {n:"Bird-dog",r:"3 séries de 8 répétitions par côté",
+ {n:"Bird-dog",r:"3 séries de 8 répétitions par côté",mn:6,mx:12,u:"réps/côté",
   steps:["À quatre pattes, mains sous les épaules, genoux sous les hanches, dos plat comme une table.",
    "Tends en même temps le bras droit devant et la jambe gauche derrière, jusqu'à l'horizontale.",
    "Tiens deux secondes sans que le bassin ne bascule d'un côté.",
@@ -739,7 +757,7 @@ B:{jour:"Mercredi, jeudi ou vendredi",focus:"Dos et chaîne postérieure",duree:
   feel:"Une tension dans le bas du dos et le ventre, qui travaillent à te stabiliser. L'exercice de référence pour un dos sensible.",
   err:"Monter la jambe trop haut, ce qui creuse le dos. L'horizontale suffit largement.",
   lvls:["Bras seul","Jambe seule","Bras et jambe opposés","Bras et jambe opposés, 3 secondes de maintien"],start:2},
- {n:"Gainage latéral",r:"3 séries de 25 à 45 secondes par côté",timer:35,
+ {n:"Gainage latéral",r:"3 séries de 25 à 45 secondes par côté",mn:20,mx:50,u:"s",timer:35,
   steps:["Allongé sur le côté, appui sur l'avant-bras, coude à l'aplomb de l'épaule.",
    "Genoux fléchis à 90° si l'appui gêne, jambes tendues sinon.",
    "Décolle le bassin pour aligner chevilles, hanches et épaules.",
@@ -920,6 +938,12 @@ function renderSeance(key){
       '<div class="body">'+
       '<div class="lvlwrap"><div class="lvltrack"></div>'+
       '<div class="lvlname"></div><div class="lvlhint"></div></div>'+
+      (e.mn?'<div class="reps"><div class="repshead">'+
+        '<div class="repsval"><span class="rv"></span> <small>'+e.u+'</small></div>'+
+        '<div class="repslast"></div></div>'+
+        '<input type="range" class="rr" min="'+e.mn+'" max="'+e.mx+'" step="1">'+
+        '<div class="repsbounds"><span>'+e.mn+'</span><span>'+e.mx+'</span></div>'+
+        '<div class="repshint"></div></div>':'')+
       '<ol class="steps">'+e.steps.map(function(s){return '<li>'+s+'</li>';}).join('')+'</ol>'+
       '<div class="note f"><b>À sentir</b>'+e.feel+'</div>'+
       '<div class="note e"><b>Erreur fréquente</b>'+e.err+'</div>'+
@@ -948,12 +972,41 @@ function renderSeance(key){
         ? 'Niveau maximum de cet exercice'
         : 'Niveau '+(cur+1)+' sur '+e.lvls.length+' — touche un numéro pour changer';
     }
+    var slider=el.querySelector('.rr');
+    function rkey(){ return id+':'+cur; }
+    function drawReps(){
+      if(!slider) return;
+      var v = S.reps[rkey()];
+      if(typeof v!=='number'){ v=e.mn; }
+      slider.value=v;
+      el.querySelector('.rv').textContent=v;
+      var last = S.last[rkey()];
+      el.querySelector('.repslast').textContent =
+        (typeof last==='number') ? 'Dernière séance : '+last : 'Première fois à ce niveau';
+      var hint=el.querySelector('.repshint');
+      if(v>=e.mx){
+        hint.className='repshint up';
+        hint.textContent = (cur<e.lvls.length-1)
+          ? 'Haut de la fourchette atteint. Deux séances comme ça et tu montes au niveau '+(cur+2)+'.'
+          : 'Haut de la fourchette au niveau maximum. Ralentis la descente à trois secondes pour continuer à progresser.';
+      } else {
+        hint.className='repshint mut';
+        hint.textContent = 'Encore '+(e.mx-v)+' avant le haut de la fourchette.';
+      }
+    }
+    if(slider){
+      slider.addEventListener('input', function(){
+        var v=parseInt(slider.value,10);
+        S.reps[rkey()]=v; el.querySelector('.rv').textContent=v;
+      });
+      slider.addEventListener('change', function(){ svS(); drawReps(); });
+    }
     for(var j=0;j<btns.length;j++){
       btns[j].addEventListener('click', function(){
-        cur = parseInt(this.dataset.j,10); S.lvl[id]=cur; svS(); draw();
+        cur = parseInt(this.dataset.j,10); S.lvl[id]=cur; svS(); draw(); drawReps();
       });
     }
-    draw();
+    draw(); drawReps();
 
     if(e.timer){
       var left=e.timer, tid=null;
@@ -981,7 +1034,16 @@ function checkComplete(key){
   var n=EX[key].ex.length, c=0;
   for(var i=0;i<n;i++){ if(S.done[key+i]) c++; }
   var d=tdy(), already=S.log.some(function(x){return x.d===d && x.s===key;});
-  if(c===n && !already){ S.log.push({d:d,s:key}); svS(); }
+  if(c===n && !already){
+    S.log.push({d:d,s:key});
+    EX[key].ex.forEach(function(e,i){
+      var id=key+i, l=(typeof S.lvl[id]==='number')?S.lvl[id]:e.start;
+      var r=S.reps[id+':'+l]; if(typeof r!=='number') r=e.mn;
+      S.snap[d]=S.snap[d]||{}; S.snap[d][id]={l:l,r:r};
+      S.last[id+':'+l]=r;
+    });
+    svS();
+  }
   if(c<n && already){ S.log=S.log.filter(function(x){return !(x.d===d && x.s===key);}); svS(); }
   renderHist();
 }
@@ -999,6 +1061,55 @@ function renderHist(){
         return '<div style="display:flex;justify-content:space-between"><b>Séance '+x.s+'</b><span>'+frd(x.d)+'</span></div>';
       }).join('')+'</div>'
     : '<div class="empty">Rien encore. Coche les exercices au fil de ta séance : elle s\'inscrira ici toute seule une fois terminée.</div>';
+  renderEvo();
+}
+
+function spark(vals, max){
+  if(vals.length<2) return '';
+  var W=260,H=34;
+  var mn=0, mx=Math.max(max,1);
+  var pts=vals.map(function(v,i){
+    var x=(vals.length===1?0:i/(vals.length-1))*(W-6)+3;
+    var y=H-3-((v-mn)/(mx-mn))*(H-6);
+    return x.toFixed(1)+' '+y.toFixed(1);
+  });
+  return '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">'+
+    '<polyline points="'+pts.join(' ')+'" fill="none" stroke="#0E8B84" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>'+
+    '<circle cx="'+pts[pts.length-1].split(' ')[0]+'" cy="'+pts[pts.length-1].split(' ')[1]+'" r="3" fill="#C97416"/>'+
+    '</svg>';
+}
+
+function renderEvo(){
+  var dates=Object.keys(S.snap).sort();
+  var box=document.getElementById('evowrap');
+  if(!box) return;
+  if(!dates.length){
+    box.innerHTML='<div class="empty">L\'évolution apparaîtra ici après ta première séance terminée. Chaque séance complète enregistre ton niveau et tes répétitions pour chaque exercice.</div>';
+    return;
+  }
+  var h='';
+  ['A','B'].forEach(function(key){
+    var titre=false;
+    EX[key].ex.forEach(function(e,i){
+      var id=key+i;
+      var serie=[], derniere=null;
+      dates.forEach(function(d){
+        var v=S.snap[d] && S.snap[d][id];
+        if(v){
+          var span=Math.max(1,e.mx-e.mn);
+          serie.push(v.l + (v.r-e.mn)/span);
+          derniere=v;
+        }
+      });
+      if(!derniere) return;
+      if(!titre){ h+='<h2>Séance '+key+'</h2>'; titre=true; }
+      h+='<div class="evo"><div class="top2"><div style="min-width:0">'+
+         '<div class="nm2">'+e.n+'</div>'+
+         '<div class="st2">Niveau '+(derniere.l+1)+' sur '+e.lvls.length+' · '+derniere.r+' '+e.u+'</div>'+
+         '</div></div>'+ spark(serie, e.lvls.length) +'</div>';
+    });
+  });
+  box.innerHTML = h || '<div class="empty">Aucune donnée pour l\'instant.</div>';
 }
 renderSeance('A'); renderSeance('B'); renderHist();
 
@@ -1128,6 +1239,7 @@ document.getElementById('impf').addEventListener('change',function(e){
       var all=JSON.parse(r.result);
       Object.keys(all).forEach(function(k){ if(k.indexOf('plan.v1.')===0) localStorage.setItem(k,all[k]); });
       S=ld(KS,{}); if(!S.lvl)S.lvl={}; if(!S.log)S.log=[]; if(!S.done)S.done={};
+      if(!S.reps)S.reps={}; if(!S.last)S.last={}; if(!S.snap)S.snap={};
       A=ld(KA,{}); if(!A.fav)A.fav={}; if(!A.mode)A.mode='deficit';
       V=ld(KV,{w:[],t:[]}); if(!V.w)V.w=[]; if(!V.t)V.t=[];
       U=ld(KU,{}); if(!U.fsx)U.fsx=0.85; applyFs(); renderFs();
@@ -1143,7 +1255,7 @@ document.getElementById('wipe').addEventListener('click',function(){
   var ks=[];
   for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(k.indexOf('plan.v1.')===0) ks.push(k); }
   ks.forEach(function(k){ localStorage.removeItem(k); });
-  S={lvl:{},log:[],done:{},day:tdy()}; A={fav:{},mode:'deficit'}; V={w:[],t:[]}; U={fsx:0.85};
+  S={lvl:{},log:[],done:{},day:tdy(),reps:{},last:{},snap:{}}; A={fav:{},mode:'deficit'}; V={w:[],t:[]}; U={fsx:0.85};
   W={done:{}}; loadSemaine();
   applyFs(); renderFs();
   renderW(); renderT(); renderHist(); renderFav(); renderSeance('A'); renderSeance('B');
