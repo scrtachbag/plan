@@ -213,6 +213,20 @@ if (!P) {
   expect('before the plan: blocIdx', P.blocIdx(), -1);
   expect('before the plan: carbs target', P.targetFor('normal').v[2][0], '2');
 
+  /* the start date setting lays the blocks out again with the same lengths */
+  const ref = P.buildBlocs(P.DEBUT_DEFAUT);
+  expect('default start reproduces the original calendar', JSON.stringify(ref.map(b => [b[1], b[2]])),
+    JSON.stringify([['2026-09-07', '2026-10-04'], ['2026-10-05', '2026-12-06'], ['2026-12-07', '2027-01-03'],
+      ['2027-01-04', '2027-02-28'], ['2027-03-01', '2027-03-28']]));
+  const shifted = P.buildBlocs('2026-09-21');
+  expect('shifted start: first block starts on the new date', shifted[0][1], '2026-09-21');
+  const nextDay = d => new RealDate(new RealDate(d).getTime() + DAY).toISOString().slice(0, 10);
+  expect('shifted start: blocks stay contiguous',
+    shifted.every((b, i) => i === 0 || b[1] === nextDay(shifted[i - 1][2])), true);
+  expect('shifted start: every block keeps its length',
+    shifted.every((b, i) => (new RealDate(b[2]) - new RealDate(b[1])) === (new RealDate(ref[i][2]) - new RealDate(ref[i][1]))), true);
+  expect('shifted start: plan ends two weeks later', shifted[4][2], '2027-04-11');
+
   P.V.w = []; P.V.t = [];
   global.Date = RealDate;
 }

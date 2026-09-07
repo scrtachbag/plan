@@ -380,7 +380,7 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
     </div>
     <div class="card tl">
       <h3>L'objectif</h3>
-      <p style="margin:0">0,4 kg par semaine, soit 6 à 8 kg entre le 7 septembre et le 28 mars. Pas plus vite : au-delà, la part de muscle perdue augmente nettement.</p>
+      <p style="margin:0">0,4 kg par semaine, soit 6 à 8 kg <span id="objdates">entre le 7 septembre et le 28 mars</span>. Pas plus vite : au-delà, la part de muscle perdue augmente nettement.</p>
     </div>
   </div>
 
@@ -679,6 +679,15 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
       <p style="margin:0">Deux paumes de protéines, deux poings de légumes, une main en coupe de féculents, un pouce de gras. C'est le format d'un repas.</p>
     </div>
 
+    <h2>Le calendrier du plan</h2>
+    <p class="sm mut">La date du premier jour. Les cinq blocs se décalent avec elle en gardant leur durée, vingt-neuf semaines en tout. Si tu la déplaces beaucoup, la trêve ne tombera plus sur les fêtes.</p>
+    <div class="form" style="margin-bottom:12px">
+      <label for="debut">Premier jour du plan</label>
+      <div class="r"><input type="date" id="debut"><button type="button" id="debutb">Enregistrer</button></div>
+      <div class="msg" id="debutmsg"></div>
+    </div>
+    <div class="rowlist" id="debutlist"></div>
+
     <h2>L'application</h2>
     <div id="installwrap"></div>
     <button type="button" class="wide" id="diagb" style="margin-top:6px">Diagnostic d'installation</button>
@@ -795,12 +804,13 @@ var RULES=[
  ["8 000 pas par jour hors sport","Sur une semaine, ça pèse plus lourd qu'une séance de plus."],
  ["Sept heures de sommeil","Heure de coucher fixe. Mal dormir, c'est perdre du muscle au lieu du gras."]
 ];
+/* Dates come from BLOCS at render time (see renderPhases). */
 var PHASES=[
- ["1. Mise en place","7 sept → 4 oct","Aucun déficit. Tu installes les deux séances, les protéines à chaque repas, la pesée et le tour de taille. Le but est que les habitudes tiennent, pas que la balance bouge.","Poids stable"],
- ["2. Première perte","5 oct → 6 déc","Déficit actif, neuf semaines. Le bloc qui fait le gros du travail, avec une semaine de décharge à mi-parcours.","−3,5 kg"],
- ["3. Trêve","7 déc → 3 janv","Retour à l'équilibre, volontairement. Tenir le poids, pas en perdre. Le renforcement continue.","±1 kg"],
- ["4. Deuxième perte","4 janv → 28 févr","Deuxième bloc, mêmes règles. C'est là que le ventre et le bas du dos changent visiblement.","−3 kg"],
- ["5. Sortie","1 mars → 28 mars","Remontée progressive vers l'équilibre, environ 100 kcal de plus par semaine. La phase qui décide si la perte tient.","Poids stable"]
+ ["1. Mise en place","Aucun déficit. Tu installes les deux séances, les protéines à chaque repas, la pesée et le tour de taille. Le but est que les habitudes tiennent, pas que la balance bouge.","Poids stable"],
+ ["2. Première perte","Déficit actif, neuf semaines. Le bloc qui fait le gros du travail, avec une semaine de décharge à mi-parcours.","−3,5 kg"],
+ ["3. Trêve","Retour à l'équilibre, volontairement. Tenir le poids, pas en perdre. Le renforcement continue.","±1 kg"],
+ ["4. Deuxième perte","Deuxième bloc, mêmes règles. C'est là que le ventre et le bas du dos changent visiblement.","−3 kg"],
+ ["5. Sortie","Remontée progressive vers l'équilibre, environ 100 kcal de plus par semaine. La phase qui décide si la perte tient.","Poids stable"]
 ];
 var HANDS=[
  ["Protéines","1 paume, doigts non compris","L'épaisseur et la largeur de ta paume. Un blanc de poulet, un pavé de poisson, un steak, trois œufs, ou 200 g de skyr.",
@@ -1027,13 +1037,36 @@ document.querySelectorAll('#tabbar button').forEach(function(b){
 /* =========================================================
    ACCUEIL
    ========================================================= */
-var BLOCS=[
-  ["Mise en place","2026-09-07","2026-10-04",false,"Aucun déficit. Tu installes les habitudes : deux séances, une protéine à chaque repas, la pesée quotidienne. Un poids stable ce mois-ci est un succès, pas un échec."],
-  ["Première perte","2026-10-05","2026-12-06",true,"Déficit actif. Une seule main en coupe de féculents par repas, deux les jours de sport. C'est le bloc qui fait le gros du travail."],
-  ["Trêve des fêtes","2026-12-07","2027-01-03",false,"Retour à l'équilibre, volontairement. L'objectif est de tenir le poids, pas d'en perdre. Deux mains en coupe de féculents, et le renforcement continue."],
-  ["Deuxième perte","2027-01-04","2027-02-28",true,"Deuxième bloc de déficit, mêmes règles que le premier. C'est ici que le ventre et le bas du dos changent visiblement."],
-  ["Sortie","2027-03-01","2027-03-28",false,"Remontée progressive vers l'équilibre, environ 100 kcal de plus par semaine. La phase qui décide si la perte tient dans le temps."]
+/* The five blocks are laid out from the start date in plan.v1.ui.debut, each
+   keeping its length in weeks. Moving the start moves every block, including
+   the "Trêve des fêtes", which then may no longer fall on the holidays. */
+var DEBUT_DEFAUT='2026-09-07';
+if(!/^\d{4}-\d{2}-\d{2}$/.test(String(U.debut))) U.debut=DEBUT_DEFAUT;
+var BLOCS_DEF=[
+  ["Mise en place",4,false,"Aucun déficit. Tu installes les habitudes : deux séances, une protéine à chaque repas, la pesée quotidienne. Un poids stable ce mois-ci est un succès, pas un échec."],
+  ["Première perte",9,true,"Déficit actif. Une seule main en coupe de féculents par repas, deux les jours de sport. C'est le bloc qui fait le gros du travail."],
+  ["Trêve des fêtes",4,false,"Retour à l'équilibre, volontairement. L'objectif est de tenir le poids, pas d'en perdre. Deux mains en coupe de féculents, et le renforcement continue."],
+  ["Deuxième perte",8,true,"Deuxième bloc de déficit, mêmes règles que le premier. C'est ici que le ventre et le bas du dos changent visiblement."],
+  ["Sortie",4,false,"Remontée progressive vers l'équilibre, environ 100 kcal de plus par semaine. La phase qui décide si la perte tient dans le temps."]
 ];
+function addDays(iso,n){ var d=new Date(iso+'T00:00:00Z'); d.setUTCDate(d.getUTCDate()+n); return d.toISOString().slice(0,10); }
+var MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+var MOISC=['janv','févr','mars','avr','mai','juin','juil','août','sept','oct','nov','déc'];
+function frl(iso){ var p=iso.split('-'); var j=parseInt(p[2],10); return (j===1?'1er':j)+' '+MOIS[parseInt(p[1],10)-1]+' '+p[0]; }
+function frm(iso){ var p=iso.split('-'); var j=parseInt(p[2],10); return (j===1?'1er':j)+' '+MOIS[parseInt(p[1],10)-1]; }
+function frs(iso){ var p=iso.split('-'); var j=parseInt(p[2],10); return (j===1?'1er':j)+' '+MOISC[parseInt(p[1],10)-1]; }
+/* -> [name, start, end, isDeficit, description] */
+function buildBlocs(debut){
+  var out=[], cur=debut;
+  BLOCS_DEF.forEach(function(b){
+    var fin=addDays(cur, b[1]*7-1);
+    out.push([b[0], cur, fin, b[2], b[3]]);
+    cur=addDays(fin,1);
+  });
+  return out;
+}
+var BLOCS=buildBlocs(U.debut);
+function finPlan(){ return BLOCS[BLOCS.length-1][2]; }
 function blocIdx(){
   var now=new Date();
   for(var i=0;i<BLOCS.length;i++){
@@ -1043,17 +1076,18 @@ function blocIdx(){
 }
 function enDeficit(){ var i=blocIdx(); return i>=0 && BLOCS[i][3]; }
 
-(function(){
+function renderProg(){
   var now=new Date(), idx=blocIdx();
   var bar=BLOCS.map(function(b,i){
     var cls = i<idx ? 'past' : (i===idx ? 'now' : '');
     return '<i class="'+cls+'"></i>';
   }).join('');
   var label, sub;
+  var old=document.getElementById('blocnew'); if(old) old.remove();
   if(idx===-1 && now<new Date(BLOCS[0][1])){
     var j=Math.ceil((new Date(BLOCS[0][1])-now)/86400000);
     label='Départ dans '+j+(j>1?' jours':' jour');
-    sub='Bloc 1, mise en place, à partir du 7 septembre';
+    sub='Bloc 1, mise en place, à partir du '+frm(BLOCS[0][1]);
   } else if(idx===-1){
     label='Plan terminé'; sub='Six mois bouclés';
   } else {
@@ -1076,18 +1110,28 @@ function enDeficit(){ var i=blocIdx(); return i>=0 && BLOCS[i][3]; }
       var c=document.getElementById('blocnew'); if(c) c.remove();
     });
   }
-})();
+}
+renderProg();
+function renderObj(){
+  var el=document.getElementById('objdates'); if(!el) return;
+  el.textContent='entre le '+frm(BLOCS[0][1])+' et le '+frm(finPlan());
+}
+renderObj();
 
 document.getElementById('week').innerHTML = WEEK.map(function(w){
   return '<div><b>'+w[0]+'</b><span>'+w[1]+'</span></div>'; }).join('');
 document.getElementById('rules').innerHTML = RULES.map(function(r){
   return '<div><b>'+r[0]+'</b><span>'+r[1]+'</span></div>'; }).join('');
-document.getElementById('phases').innerHTML = PHASES.map(function(p){
-  return '<div class="acc"><button type="button"><span class="name">'+p[0]+'<br><span style="font-weight:400;color:var(--mut);font-size:calc(16px * var(--fsx))">'+p[1]+'</span></span><span class="chev">›</span></button>'+
-  '<div class="body"><p style="margin-top:14px">'+p[2]+'</p><p style="margin:0"><b>Repère : '+p[3]+'</b></p></div></div>'; }).join('');
-document.querySelectorAll('#phases .acc').forEach(function(a){
-  a.querySelector('button').addEventListener('click', function(){ a.classList.toggle('open'); });
-});
+function renderPhases(){
+  document.getElementById('phases').innerHTML = PHASES.map(function(p,i){
+    var dates=frs(BLOCS[i][1])+' → '+frs(BLOCS[i][2]);
+    return '<div class="acc"><button type="button"><span class="name">'+p[0]+'<br><span style="font-weight:400;color:var(--mut);font-size:calc(16px * var(--fsx))">'+dates+'</span></span><span class="chev">›</span></button>'+
+    '<div class="body"><p style="margin-top:14px">'+p[1]+'</p><p style="margin:0"><b>Repère : '+p[2]+'</b></p></div></div>'; }).join('');
+  document.querySelectorAll('#phases .acc').forEach(function(a){
+    a.querySelector('button').addEventListener('click', function(){ a.classList.toggle('open'); });
+  });
+}
+renderPhases();
 
 /* =========================================================
    ASSIETTE
@@ -1650,6 +1694,8 @@ document.getElementById('impf').addEventListener('change',function(e){
       A=ld(KA,{}); if(!A.fav)A.fav={}; if(!A.mode)A.mode='deficit';
       V=ld(KV,{w:[],t:[]}); if(!V.w)V.w=[]; if(!V.t)V.t=[]; if(!V.s)V.s=[]; if(!V.a)V.a=[];
       U=ld(KU,{}); if(!U.fsx)U.fsx=0.85; applyFs(); renderFs();
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(String(U.debut))) U.debut=DEBUT_DEFAUT;
+      BLOCS=buildBlocs(U.debut); renderProg(); renderObj(); renderPhases(); renderDebut(); renderTarget(A.mode);
       W=ld(KW,{}); if(!W.done)W.done={}; if(!W.extra)W.extra=[]; if(!W.xdone)W.xdone={}; loadSemaine();
       renderW(); renderT(); renderSleep(); renderDrink(); renderHist(); renderFav();
       renderQuick(); renderWaist(); renderSleepQuick(); renderDrinkQuick(); renderCoach();
@@ -1664,8 +1710,9 @@ document.getElementById('wipe').addEventListener('click',function(){
   var ks=[];
   for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(k.indexOf('plan.v1.')===0) ks.push(k); }
   ks.forEach(function(k){ localStorage.removeItem(k); });
-  S={lvl:{},log:[],done:{},day:tdy(),reps:{},last:{},snap:{}}; A={fav:{},mode:'deficit'}; V={w:[],t:[],s:[],a:[]}; U={fsx:0.85};
+  S={lvl:{},log:[],done:{},day:tdy(),reps:{},last:{},snap:{}}; A={fav:{},mode:'deficit'}; V={w:[],t:[],s:[],a:[]}; U={fsx:0.85,debut:DEBUT_DEFAUT};
   W={done:{},extra:[],xdone:{}}; loadSemaine();
+  BLOCS=buildBlocs(U.debut); renderProg(); renderObj(); renderPhases(); renderDebut(); renderTarget(A.mode);
   applyFs(); renderFs();
   renderW(); renderT(); renderSleep(); renderDrink(); renderHist(); renderFav();
   renderQuick(); renderWaist(); renderSleepQuick(); renderDrinkQuick(); renderCoach();
@@ -2220,13 +2267,13 @@ function renderCoach(){
 
   var p=document.getElementById('proj'); if(!p) return;
   if(A.etat==='debut'){ p.innerHTML=''; return; }
-  var fin=new Date('2027-03-28'), sem=Math.max(0,(fin-new Date())/86400000/7);
+  var fin=new Date(finPlan()), sem=Math.max(0,(fin-new Date())/86400000/7);
   var proj = (A.rythme4!==null) ? A.cur + A.rythme4*sem : null;
   var perdu = A.debut - A.cur;
   p.innerHTML=
     '<div><div class="n">'+(perdu>0?'−':'+')+num(Math.abs(perdu))+' kg</div><div class="l">depuis le début</div></div>'+
     '<div><div class="n">'+(A.rythme4!==null?(A.rythme4>0?'+':'')+num(A.rythme4)+' kg':'—')+'</div><div class="l">par semaine, sur 4 semaines</div></div>'+
-    (proj!==null?'<div><div class="n">'+num(proj)+' kg</div><div class="l">projection au 28 mars</div></div>':'');
+    (proj!==null?'<div><div class="n">'+num(proj)+' kg</div><div class="l">projection au '+frm(finPlan())+'</div></div>':'');
 }
 function renderBilan(){
   var box=document.getElementById('coachwrap'); if(!box) return;
@@ -2291,6 +2338,31 @@ function renderFs(){
   });
 }
 renderFs();
+
+/* start date of the plan */
+function renderDebut(){
+  var inp=document.getElementById('debut'), list=document.getElementById('debutlist');
+  if(inp) inp.value=U.debut;
+  if(list) list.innerHTML = BLOCS.map(function(b,i){
+    return '<div><b>Bloc '+(i+1)+' · '+b[0]+(b[3]?' <span style="color:var(--amber)">· déficit</span>':'')+'</b>'+
+           '<span>Du '+frl(b[1])+' au '+frl(b[2])+'</span></div>';
+  }).join('');
+}
+function appliquerDebut(debut){
+  U.debut=debut; BLOCS=buildBlocs(debut);
+  U.bloc=blocIdx(); svU();                 // no "new block" card for a date change
+  renderProg(); renderObj(); renderPhases(); renderDebut();
+  renderTarget(A.mode); renderCoach(); if(SEM) refreshCmp();
+  if(current==='assiette') goView('assiette');   // refresh the portion strip
+}
+document.getElementById('debutb').addEventListener('click', function(){
+  var v=document.getElementById('debut').value, m=document.getElementById('debutmsg');
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(v) || isNaN(new Date(v).getTime())){ m.style.color='#C4503C'; m.textContent='Entre une date.'; return; }
+  appliquerDebut(v);
+  m.style.color='#0E8B84'; m.textContent='Plan recalé : du '+frm(BLOCS[0][1])+' au '+frl(finPlan())+'.';
+  setTimeout(function(){ m.textContent=''; },5000);
+});
+renderDebut();
 
 /* ---------- installation ---------- */
 if('serviceWorker' in navigator){
@@ -2396,8 +2468,8 @@ renderQuick(); renderWaist(); renderSleepQuick(); renderDrinkQuick(); renderSean
 renderSleep(); renderDrink(); renderCoach(); renderBilan(); renderBackup();
 /* Test hook: test.js freezes the date and checks that the blocks drive the
    portion targets and the coach in the right direction. Harmless in the app. */
-if(typeof window!=='undefined') window.__plan={BLOCS:BLOCS, blocIdx:blocIdx, enDeficit:enDeficit,
-  targetFor:targetFor, analyse:analyse, coachTexte:coachTexte, V:V, S:S, U:U};
+if(typeof window!=='undefined') window.__plan={BLOCS:BLOCS, buildBlocs:buildBlocs, DEBUT_DEFAUT:DEBUT_DEFAUT,
+  blocIdx:blocIdx, enDeficit:enDeficit, targetFor:targetFor, analyse:analyse, coachTexte:coachTexte, V:V, S:S, U:U};
 document.getElementById('sdate').value=tdy();
 (function(){
   var r=document.getElementById('svalr'), v=document.getElementById('svalv'), h=document.getElementById('sval');

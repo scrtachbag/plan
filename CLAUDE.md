@@ -57,7 +57,8 @@ Read it in this order; the script is one long IIFE-free block and order matters.
   1. storage helpers: ld / st, keys KS KA KV KU KW KR
   2. static data: WEEK, RULES, HANDS, MEALS, EX
   3. router: VIEWS, TABLABELS, goView, goSub
-  4. accueil: BLOCS, blocIdx, enDeficit, progress bar, block-change card
+  4. accueil: BLOCS_DEF, buildBlocs, BLOCS, finPlan, blocIdx, enDeficit,
+     renderProg (progress bar + block-change card), renderObj, renderPhases
   5. assiette: targetFor, renderTarget, favourites, base meal list
   6. séances: runStart… guided mode, renderSeance, checkComplete,
      renderHist, renderEvo, spark
@@ -71,7 +72,8 @@ Read it in this order; the script is one long IIFE-free block and order matters.
  10. sommeil / alcool
  11. feedback loop: analyse, tailleTrend, coachTexte, renderQuick, renderWaist,
      renderSleepQuick, renderDrinkQuick, renderSeanceQuick, renderCoach, renderBilan
- 12. install prompt + diagnostic
+ 12. réglages: renderFs, renderDebut / appliquerDebut (plan start date);
+     install prompt + diagnostic
  13. init: seed date inputs, call every render*, expose window.__plan for
      test.js, goView('accueil')
 </script>
@@ -84,7 +86,7 @@ Read it in this order; the script is one long IIFE-free block and order matters.
 | `plan.v1.seances` | `lvl` (level per exercise), `reps` (per exercise+level), `last`, `snap` (per-session snapshots), `log`, `done`, `day` |
 | `plan.v1.assiette` | `fav` (favourite meals), `mode` |
 | `plan.v1.suivi` | `w` weight, `t` waist, `s` sleep hours, `a` drinks — all `[{d:'YYYY-MM-DD', v:Number}]` |
-| `plan.v1.ui` | `fsx` text scale, `v` migration version, `bloc` last acknowledged plan block, `exp` date of the last backup |
+| `plan.v1.ui` | `fsx` text scale, `v` migration version, `bloc` last acknowledged plan block, `exp` date of the last backup, `debut` first day of the plan (default `2026-09-07`, editable in Settings) |
 | `plan.v1.semaine` | `sem` (week label), `done` (meal and shopping checkboxes), `extra` (fridge items added by hand), `xdone` (those consumed). `extra`/`xdone` survive a week change |
 | `plan.v1.repas` | `{at, data}` — a `repas.json` imported from the Settings tab, overrides the fetched file |
 
@@ -94,7 +96,11 @@ included automatically.
 ## The plan blocks
 
 `BLOCS` drives real behaviour, not just display. Each entry is
-`[name, start, end, isDeficit, description]`.
+`[name, start, end, isDeficit, description]`. It is built by `buildBlocs()`
+from `BLOCS_DEF` (name, length in weeks, isDeficit, description) and the start
+date in `plan.v1.ui.debut`; changing the date in Settings shifts every block and
+keeps the lengths. Never hardcode a plan date elsewhere: use `BLOCS`,
+`finPlan()` and the `frl` / `frm` / `frs` formatters.
 
 - Portion targets: `targetFor()` returns one cupped hand of carbs in a deficit
   block, two otherwise.
