@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#16222B">
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%2316222B%22%2F%3E%3Cpolyline%20points%3D%2213%2C17%2026%2C30%2038%2C25%2051%2C47%22%20fill%3D%22none%22%20stroke%3D%22%230E8B84%22%20stroke-width%3D%226%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Ccircle%20cx%3D%2251%22%20cy%3D%2247%22%20r%3D%225.5%22%20fill%3D%22%23C97416%22%2F%3E%3C%2Fsvg%3E">
+<link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%2316222B%22%2F%3E%3Cpolyline%20points%3D%2213%2C17%2026%2C30%2038%2C25%2051%2C47%22%20fill%3D%22none%22%20stroke%3D%22%230E8B84%22%20stroke-width%3D%226%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Ccircle%20cx%3D%2251%22%20cy%3D%2247%22%20r%3D%225.5%22%20fill%3D%22%23C97416%22%2F%3E%3C%2Fsvg%3E">
 <title>Mon plan</title>
 <style>
@@ -241,6 +242,17 @@ table.t td.x button{font:inherit;font-size:calc(20px * var(--fsx));background:no
 .chips span{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px;
   font-size:calc(14px * var(--fsx));}
 .chips span.used{background:var(--surf);color:var(--mut);border-color:var(--surf);text-decoration:line-through;}
+.ctx{background:var(--ambersoft);padding:9px 16px 11px;border-bottom:1px solid #F0DFC4;}
+.ctx .cx1{font-size:calc(12.5px * var(--fsx));font-weight:700;color:#8B4F0B;letter-spacing:.2px;}
+.ctx .cx2{display:flex;gap:6px;margin-top:5px;}
+.ctx .cx2 div{flex:1;background:#fff;border-radius:9px;padding:6px 4px;text-align:center;}
+.ctx .cx2 b{display:block;font-size:calc(17px * var(--fsx));font-weight:800;line-height:1.05;color:#8B4F0B;}
+.ctx .cx2 span{display:block;font-size:calc(10.5px * var(--fsx));color:var(--mut);line-height:1.2;margin-top:1px;}
+.porhead{font-size:calc(12.5px * var(--fsx));font-weight:700;color:var(--mut);margin-top:12px;}
+.cmp{font-size:calc(13.5px * var(--fsx));padding:7px 10px;border-radius:9px;margin-top:6px;line-height:1.4;}
+.cmp.ok{background:var(--tealsoft);color:#0A6C66;}
+.cmp.sous,.cmp.manque{background:var(--coralsoft);color:#8E3526;}
+.cmp.sur{background:var(--ambersoft);color:#8B4F0B;}
 .shop{display:flex;flex-direction:column;gap:2px;}
 .shopit{display:flex;align-items:center;gap:11px;width:100%;text-align:left;font:inherit;
   font-size:calc(15.5px * var(--fsx));background:none;border:0;padding:9px 0;cursor:pointer;color:var(--ink);
@@ -324,6 +336,7 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
   <div class="txt"><div class="k" id="hk"></div><h1 id="hh"></h1></div>
 </header>
 <div class="pills" id="pills"></div>
+<div id="ctxbar"></div>
 <main>
 
 <!-- ================= ACCUEIL ================= -->
@@ -643,6 +656,17 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
       <p style="margin:0">Deux paumes de protéines, deux poings de légumes, une main en coupe de féculents, un pouce de gras. C'est le format d'un repas.</p>
     </div>
 
+    <h2>L'application</h2>
+    <div id="installwrap"></div>
+
+    <h2>Les repas de la semaine</h2>
+    <div id="repasinfo"></div>
+    <button type="button" class="wide" id="impr">Charger un fichier de repas</button>
+    <input type="file" id="imprf" accept="application/json,.json" hidden>
+    <button type="button" class="wide" id="relr">Recharger depuis le site</button>
+    <div class="msg" id="rpmsg"></div>
+    <p class="sm mut">Chaque semaine, dépose ici le nouveau <b>repas.json</b> — pas besoin de passer par le dépôt. Le fichier chargé remplace celui du site jusqu'à ce que tu en charges un autre.</p>
+
     <h2>Sauvegarde</h2>
     <p class="sm">Tes pesées, tes tours de taille, tes niveaux d'exercices, l'historique des séances et tes repas favoris vivent dans le navigateur de ce téléphone, et nulle part ailleurs. Rien n'est envoyé sur internet. En contrepartie, vider les données de navigation ou changer d'appareil les efface. Exporte de temps en temps.</p>
     <button type="button" class="wide" id="exp">Exporter mes données</button>
@@ -669,6 +693,14 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
 <footer>Plan d'hygiène de vie générale, pas un avis médical. En cas de douleur persistante, de prise de poids récente inexpliquée ou de traitement en cours, parles-en à ton médecin. Pour l'alimentation de tes enfants, l'interlocuteur est leur pédiatre.</footer>
 
 <div class="tabbar" id="tabbar"></div>
+
+<div class="run" id="courses">
+  <div class="runtop" style="background:var(--amber)">
+    <div class="rt"><div class="r1">Intendance</div><div class="r2">Frigo et courses</div></div>
+    <button type="button" id="coursesclose">Fermer</button>
+  </div>
+  <div class="runbody" id="coursesbody"></div>
+</div>
 
 <div class="run" id="run">
   <div class="runtop">
@@ -937,6 +969,16 @@ function goView(k){
   document.querySelectorAll('.view').forEach(function(x){x.classList.remove('on');});
   document.getElementById('v-'+k).classList.add('on');
   document.querySelectorAll('#tabbar button').forEach(function(b){ b.classList.toggle('on', b.dataset.v===k); });
+  var cx=document.getElementById('ctxbar');
+  if(k==='assiette'){
+    var i=blocIdx(), t=targetFor('deficit'==='x'?'x':'normal');
+    var noms=['paume','poing','main en coupe','pouce'];
+    cx.innerHTML='<div class="ctx"><div class="cx1">'+
+      (i>=0 ? 'Bloc '+(i+1)+' · '+BLOCS[i][0]+(BLOCS[i][3]?' · en déficit':' · à l\'équilibre') : 'Hors période du plan')+
+      ' — portions par repas</div><div class="cx2">'+
+      t.v.map(function(x,j){ return '<div><b>'+x[0]+'</b><span>'+noms[j]+'</span></div>'; }).join('')+
+      '</div></div>';
+  } else { cx.innerHTML=''; }
   document.getElementById('pills').style.display = v.subs.length>1 ? 'flex' : 'none';
   document.getElementById('pills').innerHTML = v.subs.map(function(s,i){
     return '<button type="button" data-s="'+s[0]+'"'+(i===0?' class="on"':'')+'>'+s[1]+'</button>';
@@ -1029,7 +1071,7 @@ document.getElementById('hands').innerHTML = HANDS.map(function(h){
   '<div><div class="t">'+h[0]+'</div><div class="u">'+h[1]+'</div><div class="d">'+h[2]+'</div></div></div>'; }).join('');
 
 function renderTarget(m){
-  var t=targetFor(m);
+  var t=targetFor(m==='sport'?'sport':'normal');
   var i=blocIdx(), ban=document.getElementById('blocban');
   if(ban){
     ban.innerHTML = (i<0) ? '' :
@@ -1582,14 +1624,16 @@ function usedSet(){
   return used;
 }
 function refreshSem(){
+  if(!SEM) return;
   var used=usedSet(), n=0;
-  document.querySelectorAll('#semwrap .chips span').forEach(function(el){
+  document.querySelectorAll('#coursesbody .chips span[data-p]').forEach(function(el){
     var on = !!used[el.dataset.p];
     el.classList.toggle('used', on);
   });
   (SEM.frigo||[]).forEach(function(p){ if(used[p]) n++; });
   var faits=0, total=(SEM.repas||[]).length;
   for(var i=0;i<total;i++){ if(W.done['r'+i]) faits++; }
+  refreshCmp();
   var t=document.getElementById('tally');
   if(t) t.innerHTML =
     '<div><div class="n">'+faits+' / '+total+'</div><div class="l">repas faits</div></div>'+
@@ -1602,27 +1646,24 @@ function renderSemaine(d){
   SEM=d;
   if(W.sem!==d.semaine){ W.sem=d.semaine; W.done={}; svW(); }
 
+  /* --- page principale : les repas, rien d'autre --- */
   var h='<div class="wk">'+esc(d.semaine||'Cette semaine')+'</div>'+
-        '<div class="wkh">Ce qu\'il y a dans le frigo</div>';
+        '<div class="wkh">Les repas de la semaine</div>';
   if(d.note) h+='<p class="sm mut">'+esc(d.note)+'</p>';
-  if(d.frigo && d.frigo.length)
-    h+='<div class="chips">'+d.frigo.map(function(x){
-        return '<span data-p="'+esc(x)+'">'+esc(x)+'</span>'; }).join('')+'</div>';
-  h+='<div class="tally" id="tally"></div>';
-  if(d.congelo && d.congelo.length)
-    h+='<div class="card tl" style="margin-top:16px"><h3>À congeler dès ce soir</h3>'+
-       '<p style="margin:0 0 8px">'+esc(d.congeloNote||'')+'</p>'+
-       '<div class="chips">'+d.congelo.map(function(x){return '<span>'+esc(x)+'</span>';}).join('')+'</div></div>';
+  h+='<button type="button" class="wide" id="opencourses" style="margin-bottom:14px">'+
+     'Frigo et liste de courses ›</button>';
+  h+='<div class="tally" id="tally"></div><div style="height:14px"></div>';
 
-  h+='<h2>Les repas</h2>';
   (d.repas||[]).forEach(function(r,i){
     h+='<div class="rec" data-k="r'+i+'"><div class="top">'+
        '<button type="button" class="chk" aria-label="fait">'+chkSvg()+'</button>'+
        '<button type="button" class="ttl"><span class="nm">'+esc(r.titre)+'</span>'+
        (r.quand?'<span class="qd">'+esc(r.quand)+'</span>':'')+'</button>'+
        '<span class="chev">›</span></div><div class="body">'+
+       '<div class="porhead">Ce que ça fait dans l\'assiette</div>'+
        '<div class="por">'+(r.portions||[]).map(function(p){return '<span>'+esc(p)+'</span>';}).join('')+'</div>'+
        (r.prot?'<div class="prot">'+esc(r.prot)+'</div>':'')+
+       '<div class="porcmp" data-r="'+i+'"></div>'+
        (r.note?'<p style="margin:10px 0 0">'+esc(r.note)+'</p>':'')+
        ((r.utilise&&r.utilise.length)?'<div class="use">Utilise : '+esc(r.utilise.join(', '))+'</div>':'')+
        '</div></div>';
@@ -1640,6 +1681,78 @@ function renderSemaine(d){
          '</div></div>';
     });
   }
+  h+='<button type="button" class="wide" id="rstsem" style="margin-top:14px">Tout décocher</button>';
+  document.getElementById('semwrap').innerHTML=h;
+
+  bindRecs();
+  document.getElementById('opencourses').addEventListener('click', ouvrirCourses);
+  document.getElementById('rstsem').addEventListener('click', function(){
+    W.done={}; svW();
+    document.querySelectorAll('.rec').forEach(function(el){ el.classList.remove('done'); });
+    document.querySelectorAll('.shopit').forEach(function(b){ b.classList.remove('got'); });
+    refreshSem(); window.scrollTo(0,0);
+  });
+  refreshSem();
+}
+
+function bindRecs(){
+  document.querySelectorAll('#semwrap .rec').forEach(function(el){
+    var k=el.dataset.k;
+    if(W.done[k]) el.classList.add('done');
+    el.querySelector('.ttl').addEventListener('click', function(){ el.classList.toggle('open'); });
+    el.querySelector('.chev').addEventListener('click', function(){ el.classList.toggle('open'); });
+    el.querySelector('.chk').addEventListener('click', function(){
+      el.classList.toggle('done');
+      W.done[k]=el.classList.contains('done'); svW(); refreshSem();
+    });
+  });
+}
+
+/* --- comparaison portion du repas / cible du bloc --- */
+function cmpPortions(r){
+  var cible=targetFor('normal').v;
+  function compte(mot){
+    var n=0;
+    (r.portions||[]).forEach(function(p){
+      var m=p.match(/^([0-9½]+(?:,5)?)\s/);
+      if(p.indexOf(mot)!==-1){ n += m ? (m[1]==='½'?0.5:parseFloat(m[1].replace(',','.'))) : 1; }
+    });
+    return n;
+  }
+  var out=[];
+  [['paume',0,'protéines'],['poing',1,'légumes'],['main en coupe',2,'féculents']].forEach(function(x){
+    var a=compte(x[0]), b=parseFloat(cible[x[1]][0]);
+    if(a===0) out.push({t:'manque', l:'Pas de '+x[2]+' dans ce repas'});
+    else if(a < b-0.4) out.push({t:'sous', l:x[2].charAt(0).toUpperCase()+x[2].slice(1)+' un peu justes : '+num(a)+' au lieu de '+b});
+    else if(a > b+0.4 && x[1]===2) out.push({t:'sur', l:'Féculents au-dessus de la cible du bloc : '+num(a)+' au lieu de '+b});
+  });
+  return out;
+}
+function refreshCmp(){
+  document.querySelectorAll('.porcmp').forEach(function(el){
+    var r=(SEM.repas||[])[parseInt(el.dataset.r,10)];
+    if(!r) return;
+    var d=cmpPortions(r);
+    el.innerHTML = d.length
+      ? d.map(function(x){ return '<div class="cmp '+x.t+'">'+x.l+'</div>'; }).join('')
+      : '<div class="cmp ok">Aligné sur les portions du bloc en cours</div>';
+  });
+}
+
+/* --- page frigo et courses --- */
+function ouvrirCourses(){
+  var d=SEM; if(!d) return;
+  var h='';
+  if(d.frigo && d.frigo.length){
+    h+='<div class="wkh" style="margin-top:4px">Le frigo</div>'+
+       '<p class="sm mut">Un produit se grise quand tous les repas qui l\'utilisent sont cochés.</p>'+
+       '<div class="chips">'+d.frigo.map(function(x){
+         return '<span data-p="'+esc(x)+'">'+esc(x)+'</span>'; }).join('')+'</div>';
+  }
+  if(d.congelo && d.congelo.length)
+    h+='<div class="card tl" style="margin-top:16px"><h3>À congeler dès ce soir</h3>'+
+       '<p style="margin:0 0 8px">'+esc(d.congeloNote||'')+'</p>'+
+       '<div class="chips">'+d.congelo.map(function(x){return '<span>'+esc(x)+'</span>';}).join('')+'</div></div>';
   if(d.courses && d.courses.length){
     h+='<h2>La liste de courses</h2>';
     if(d.coursesNote) h+='<p class="sm mut">'+esc(d.coursesNote)+'</p>';
@@ -1651,40 +1764,29 @@ function renderSemaine(d){
          }).join('')+'</div></div>';
     });
   }
-  h+='<button type="button" class="wide" id="rstsem" style="margin-top:14px">Tout décocher</button>';
-
-  document.getElementById('semwrap').innerHTML=h;
-
-  document.querySelectorAll('#semwrap .rec').forEach(function(el){
-    var k=el.dataset.k;
-    if(W.done[k]) el.classList.add('done');
-    el.querySelector('.ttl').addEventListener('click', function(){ el.classList.toggle('open'); });
-    el.querySelector('.chev').addEventListener('click', function(){ el.classList.toggle('open'); });
-    el.querySelector('.chk').addEventListener('click', function(){
-      el.classList.toggle('done');
-      W.done[k]=el.classList.contains('done'); svW(); refreshSem();
-    });
-  });
-  document.querySelectorAll('#semwrap .shopit').forEach(function(b){
+  h+='<div style="height:20px"></div>';
+  document.getElementById('coursesbody').innerHTML=h;
+  document.querySelectorAll('#coursesbody .shopit').forEach(function(b){
     var k=b.dataset.c;
     if(W.done[k]) b.classList.add('got');
     b.addEventListener('click', function(){
-      b.classList.toggle('got');
-      W.done[k]=b.classList.contains('got'); svW();
+      b.classList.toggle('got'); W.done[k]=b.classList.contains('got'); svW();
     });
   });
-  document.getElementById('rstsem').addEventListener('click', function(){
-    W.done={}; svW();
-    document.querySelectorAll('#semwrap .shopit').forEach(function(b){ b.classList.remove('got'); });
-    document.querySelectorAll('#semwrap .rec').forEach(function(el){ el.classList.remove('done'); });
-    refreshSem(); window.scrollTo(0,0);
-  });
   refreshSem();
+  document.getElementById('courses').classList.add('on');
 }
+document.getElementById('coursesclose').addEventListener('click', function(){
+  document.getElementById('courses').classList.remove('on');
+});
+
 function loadSemaine(){
+  var st=ld(KR,null);
+  if(st && st.data){ renderSemaine(st.data); renderRepasInfo(); return; }
   fetch('repas.json',{cache:'no-cache'}).then(function(r){
     if(!r.ok) throw 0; return r.json();
-  }).then(renderSemaine).catch(function(){
+  }).then(function(d){ renderSemaine(d); renderRepasInfo(); }).catch(function(){
+    renderRepasInfo();
     document.getElementById('semwrap').innerHTML =
       '<div class="wkh">Pas de repas cette semaine</div>'+
       '<div class="card am"><h3>Le fichier repas.json est absent</h3>'+
@@ -1950,6 +2052,36 @@ function renderBilan(){
     '<p style="margin:0">Alcool : '+sem+' verre'+(sem>1?'s':'')+(sem>4?', au-dessus du plafond':', dans le plafond')+'.</p></div>');
 }
 
+document.getElementById('impr').addEventListener('click', function(){ document.getElementById('imprf').click(); });
+document.getElementById('imprf').addEventListener('change', function(e){
+  var f=e.target.files[0]; if(!f) return;
+  var r=new FileReader(), m=document.getElementById('rpmsg');
+  r.onload=function(){
+    try{
+      var d=JSON.parse(r.result);
+      if(!d.repas || !d.repas.length) throw 0;
+      st(KR,{at:tdy(), data:d});
+      W.done={}; W.sem=null; svW();
+      renderSemaine(d); renderRepasInfo();
+      m.style.color='#0E8B84';
+      m.textContent='Chargé : '+(d.semaine||'nouvelle semaine')+', '+d.repas.length+' repas.';
+    }catch(err){
+      m.style.color='#C4503C';
+      m.textContent="Ce fichier n'est pas un repas.json valide.";
+    }
+  };
+  r.readAsText(f);
+  e.target.value='';
+});
+document.getElementById('relr').addEventListener('click', function(){
+  try{ localStorage.removeItem(KR); }catch(e){}
+  var m=document.getElementById('rpmsg');
+  fetch('repas.json',{cache:'no-cache'}).then(function(r){ if(!r.ok) throw 0; return r.json(); })
+    .then(function(d){ renderSemaine(d); renderRepasInfo();
+      m.style.color='#0E8B84'; m.textContent='Repas rechargés depuis le site.'; })
+    .catch(function(){ m.style.color='#C4503C'; m.textContent='Le site est injoignable ou le fichier est absent.'; });
+});
+
 /* ---------- réglages ---------- */
 var FSOPTS=[[0.78,'Compact','Aa'],[0.85,'Normal','Aa'],[0.93,'Confortable','Aa'],[1.05,'Grand','Aa']];
 function renderFs(){
@@ -1966,6 +2098,38 @@ function renderFs(){
   });
 }
 renderFs();
+
+/* ---------- installation ---------- */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
+var deferredPrompt=null;
+window.addEventListener('beforeinstallprompt', function(e){
+  e.preventDefault(); deferredPrompt=e; renderInstall();
+});
+window.addEventListener('appinstalled', function(){ deferredPrompt=null; renderInstall(); });
+function estInstallee(){
+  return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone===true;
+}
+function renderInstall(){
+  var box=document.getElementById('installwrap'); if(!box) return;
+  if(estInstallee()){
+    box.innerHTML='<div class="card tl" style="padding:12px 16px"><div class="sm">Installée sur cet appareil. Tu peux couper le réseau : tout fonctionne hors ligne, sauf le chargement d\'un nouveau fichier de repas.</div></div>';
+    return;
+  }
+  if(!deferredPrompt){
+    box.innerHTML='<div class="card surf" style="padding:12px 16px"><div class="sm">Pour l\'installer : menu ⋮ de Chrome, puis « Installer l\'application ». Elle s\'ouvrira alors en plein écran, sans barre de navigateur, et fonctionnera hors ligne.</div></div>';
+    return;
+  }
+  box.innerHTML='<button type="button" class="wide" id="instb" style="background:var(--teal);border-color:var(--teal);color:#fff">Installer l\'application</button>';
+  document.getElementById('instb').addEventListener('click', function(){
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function(){ deferredPrompt=null; renderInstall(); });
+  });
+}
+renderInstall();
 
 /* ---------- init ---------- */
 document.getElementById('wdate').value=tdy();
