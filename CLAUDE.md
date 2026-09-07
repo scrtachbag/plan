@@ -13,7 +13,7 @@ workouts, and daily measurement tracking. Installed on Android as a standalone a
 | `sw.js` | Service worker. Cache-first shell, network-first for `index.html` and `repas.json`. | On every `index.html` change (bump `VERSION`) |
 | `manifest.json` | PWA manifest. | Rarely |
 | `icon-192.png`, `icon-512.png`, `icon-maskable-512.png` | App icons: a descending curve on dark navy. | Rarely |
-| `test.js` | Headless smoke test: `node test.js`. Run before every commit. | When adding new containers |
+| `test.js` | Headless smoke test: `node test.js`. Run before every commit. Also freezes the date in each block and checks that targets and coaching go the right way. | When adding new containers or changing block logic |
 | `CLAUDE.md` | This file. | When conventions change |
 
 ## Hard rules
@@ -61,15 +61,19 @@ Read it in this order; the script is one long IIFE-free block and order matters.
   5. assiette: targetFor, renderTarget, favourites, base meal list
   6. séances: runStart… guided mode, renderSeance, checkComplete,
      renderHist, renderEvo, spark
-  7. suivi: avg7, chart, renderW, renderT
-  8. semaine: esc, usedSet, refreshSem, renderSemaine, bindRecs,
-     cmpPortions, refreshCmp, ouvrirCourses, KR, renderRepasInfo, loadSemaine
+  7. suivi: avg7, chart, renderW, renderT, addVal;
+     backup: exporter (share sheet, download fallback), renderBackup, import, wipe
+  8. semaine: esc, usedSet, refreshSem, renderSemaine, resumeSemaine /
+     copierResume (next-week summary to clipboard), bindRecs, cmpPortions,
+     refreshCmp, ouvrirCourses, renderExtras / ajouterExtra (hand-added fridge
+     items), KR, renderRepasInfo, loadSemaine
   9. meal-file import handlers
  10. sommeil / alcool
- 11. feedback loop: analyse, coachTexte, renderQuick, renderWaist,
-     renderSleepQuick, renderDrinkQuick, renderCoach, renderBilan
+ 11. feedback loop: analyse, tailleTrend, coachTexte, renderQuick, renderWaist,
+     renderSleepQuick, renderDrinkQuick, renderSeanceQuick, renderCoach, renderBilan
  12. install prompt + diagnostic
- 13. init: seed date inputs, call every render*, goView('accueil')
+ 13. init: seed date inputs, call every render*, expose window.__plan for
+     test.js, goView('accueil')
 </script>
 ```
 
@@ -80,8 +84,8 @@ Read it in this order; the script is one long IIFE-free block and order matters.
 | `plan.v1.seances` | `lvl` (level per exercise), `reps` (per exercise+level), `last`, `snap` (per-session snapshots), `log`, `done`, `day` |
 | `plan.v1.assiette` | `fav` (favourite meals), `mode` |
 | `plan.v1.suivi` | `w` weight, `t` waist, `s` sleep hours, `a` drinks — all `[{d:'YYYY-MM-DD', v:Number}]` |
-| `plan.v1.ui` | `fsx` text scale, `v` migration version, `bloc` last acknowledged plan block |
-| `plan.v1.semaine` | `sem` (week label), `done` (meal and shopping checkboxes) |
+| `plan.v1.ui` | `fsx` text scale, `v` migration version, `bloc` last acknowledged plan block, `exp` date of the last backup |
+| `plan.v1.semaine` | `sem` (week label), `done` (meal and shopping checkboxes), `extra` (fridge items added by hand), `xdone` (those consumed). `extra`/`xdone` survive a week change |
 | `plan.v1.repas` | `{at, data}` — a `repas.json` imported from the Settings tab, overrides the fetched file |
 
 Export/import in Settings serialises every `plan.v1.*` key, so any new key is
@@ -95,15 +99,22 @@ included automatically.
 - Portion targets: `targetFor()` returns one cupped hand of carbs in a deficit
   block, two otherwise.
 - Coaching: during a non-deficit block a flat weight is reported as success, and
-  losing weight triggers a warning to eat more. Getting this backwards would tell
-  the user to cut calories during the maintenance block, which is the opposite of
-  the plan.
+  losing more than 0.3 kg/week triggers a warning to eat more. Getting this
+  backwards would tell the user to cut calories during the maintenance block,
+  which is the opposite of the plan. `test.js` checks both directions.
+- A flat or slightly rising weight with the waist down 1 cm or more over three
+  weeks (`tailleTrend`) is reported as recomposition, not a plateau.
 - Entering a new block shows a one-time card on the home screen.
 
 ## Weekly ritual
 
 The user describes what is in his fridge; the assistant returns a new
 `repas.json`. He can either commit it or load it from Settings on the phone.
+The Semaine sub-tab has a "Copier le résumé pour la semaine suivante" button
+that puts on the clipboard: the current block and its portions, meals done and
+not done, fridge items not yet used, hand-added items (unplanned shopping, from
+the Frigo page), favourites and the 7-day weight trend. Start the new file from
+that text.
 
 ```jsonc
 {

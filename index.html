@@ -242,6 +242,19 @@ table.t td.x button{font:inherit;font-size:calc(20px * var(--fsx));background:no
 .chips span{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px;
   font-size:calc(14px * var(--fsx));}
 .chips span.used{background:var(--surf);color:var(--mut);border-color:var(--surf);text-decoration:line-through;}
+.chips span.xt{display:inline-flex;align-items:center;gap:8px;padding-right:6px;cursor:pointer;background:var(--ambersoft);border-color:var(--ambersoft);}
+.chips span.xt.used{background:var(--surf);border-color:var(--surf);}
+.chips span.xt i{font-style:normal;font-weight:800;color:var(--mut);width:26px;height:26px;border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;background:rgba(22,34,43,.07);text-decoration:none;}
+.addrow{display:flex;gap:8px;margin-top:10px;}
+.addrow input{flex:1;min-width:0;font:inherit;font-size:calc(16px * var(--fsx));padding:11px 12px;min-height:48px;
+  border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);}
+.addrow button{font:inherit;font-size:calc(15px * var(--fsx));font-weight:700;padding:11px 16px;min-height:48px;
+  border:0;border-radius:12px;background:var(--amber);color:#fff;cursor:pointer;white-space:nowrap;}
+.sq{display:flex;gap:8px;margin-top:10px;}
+.sq button{flex:1;font:inherit;font-size:calc(15px * var(--fsx));font-weight:700;padding:11px 8px;min-height:46px;
+  border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);cursor:pointer;}
+.sq button.done{background:var(--tealsoft);border-color:var(--tealsoft);color:#0A6C66;}
 .ctx{background:var(--ambersoft);padding:9px 16px 11px;border-bottom:1px solid #F0DFC4;}
 .ctx .cx1{font-size:calc(12.5px * var(--fsx));font-weight:700;color:#8B4F0B;letter-spacing:.2px;}
 .ctx .cx2{display:flex;gap:6px;margin-top:5px;}
@@ -355,7 +368,9 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
     <div id="waistwrap"></div>
     <div id="sleepwrap"></div>
     <div id="drinkwrap"></div>
+    <div id="seancewrap"></div>
     <div id="coachwrap"></div>
+    <div id="backupwrap"></div>
     <div class="rowlist" id="week"></div>
     <h2>Les six choses qui font le résultat</h2>
     <div class="rowlist" id="rules"></div>
@@ -678,8 +693,9 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
     <p class="sm mut">Chaque semaine, dépose ici le nouveau <b>repas.json</b> — pas besoin de passer par le dépôt. Le fichier chargé remplace celui du site jusqu'à ce que tu en charges un autre.</p>
 
     <h2>Sauvegarde</h2>
-    <p class="sm">Tes pesées, tes tours de taille, tes niveaux d'exercices, l'historique des séances et tes repas favoris vivent dans le navigateur de ce téléphone, et nulle part ailleurs. Rien n'est envoyé sur internet. En contrepartie, vider les données de navigation ou changer d'appareil les efface. Exporte de temps en temps.</p>
-    <button type="button" class="wide" id="exp">Exporter mes données</button>
+    <p class="sm">Tes pesées, tes tours de taille, tes niveaux d'exercices, l'historique des séances et tes repas favoris vivent dans le navigateur de ce téléphone, et nulle part ailleurs. Rien n'est envoyé sur internet. En contrepartie, vider les données de navigation ou changer d'appareil les efface. Sauvegarde toutes les deux semaines : l'accueil te le rappellera.</p>
+    <div id="expinfo" class="sm mut" style="margin:-4px 0 10px"></div>
+    <button type="button" class="wide" id="exp">Sauvegarder mes données</button>
     <button type="button" class="wide" id="imp">Importer une sauvegarde</button>
     <input type="file" id="impf" accept="application/json" hidden>
     <div class="msg" id="rmsg"></div>
@@ -1393,7 +1409,7 @@ function checkComplete(key){
     svS();
   }
   if(c<n && already){ S.log=S.log.filter(function(x){return !(x.d===d && x.s===key);}); svS(); }
-  renderHist();
+  renderHist(); renderSeanceQuick();
 }
 function renderHist(){
   var log=S.log.slice().sort(function(a,b){return a.d<b.d?1:-1;});
@@ -1576,13 +1592,50 @@ document.getElementById('aplus').addEventListener('click',function(){ setVerres(
 document.getElementById('wval').addEventListener('keydown',function(e){ if(e.key==='Enter') document.getElementById('wadd').click(); });
 document.getElementById('tval').addEventListener('keydown',function(e){ if(e.key==='Enter') document.getElementById('tadd').click(); });
 
-document.getElementById('exp').addEventListener('click',function(){
+/* Backup: the native share sheet when available (reliable on an installed
+   Android app: Drive, mail, messaging), a plain download otherwise. */
+function exporter(m){
   var all={};
   for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(k.indexOf('plan.v1.')===0) all[k]=localStorage.getItem(k); }
-  var b=new Blob([JSON.stringify(all,null,2)],{type:'application/json'});
-  var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='mon-plan-'+tdy()+'.json'; a.click();
-  var m=document.getElementById('rmsg'); m.style.color='#0E8B84'; m.textContent='Sauvegarde téléchargée.';
-});
+  var json=JSON.stringify(all,null,2), nom='mon-plan-'+tdy()+'.json';
+  function ok(txt){ U.exp=tdy(); svU(); renderBackup(); if(m){ m.style.color='#0E8B84'; m.textContent=txt; } }
+  function telecharger(){
+    var b=new Blob([json],{type:'application/json'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=nom; a.click();
+    ok('Sauvegarde téléchargée.');
+  }
+  var f=null;
+  try{ f=new File([json],nom,{type:'application/json'}); }catch(e){}
+  if(f && navigator.share && navigator.canShare && navigator.canShare({files:[f]})){
+    navigator.share({files:[f], title:'Mon plan — sauvegarde du '+frd(tdy())})
+      .then(function(){ ok('Sauvegarde partagée.'); })
+      .catch(function(err){
+        if(err && err.name==='AbortError'){ if(m){ m.style.color='#5B6B75'; m.textContent='Partage annulé.'; } return; }
+        telecharger();
+      });
+    return;
+  }
+  telecharger();
+}
+function joursDepuisExport(){
+  if(!U.exp) return null;
+  return Math.floor((new Date()-new Date(U.exp))/86400000);
+}
+function renderBackup(){
+  var box=document.getElementById('backupwrap');
+  var info=document.getElementById('expinfo');
+  var j=joursDepuisExport();
+  if(info) info.textContent = j===null ? 'Aucune sauvegarde pour l\'instant.' : (j===0 ? 'Dernière sauvegarde aujourd\'hui.' : 'Dernière sauvegarde il y a '+j+' jour'+(j>1?'s':'')+'.');
+  if(!box) return;
+  var pts=V.w.length+V.t.length+V.s.length+S.log.length;
+  if(pts<5 || (j!==null && j<14)){ box.innerHTML=''; return; }
+  box.innerHTML='<div class="card am"><h3>'+(j===null?'Tes données n\'ont jamais été sauvegardées':'Quinze jours sans sauvegarde')+'</h3>'+
+    '<p style="margin:0 0 12px">Tout vit dans ce téléphone. Un fichier vers Drive ou par mail, et un appareil perdu ne coûte plus rien.</p>'+
+    '<button type="button" class="wide" id="bkb" style="margin:0;background:var(--amber);border-color:var(--amber);color:#fff">Sauvegarder maintenant</button>'+
+    '<div class="msg" id="bkmsg" style="margin-top:6px"></div></div>';
+  document.getElementById('bkb').addEventListener('click', function(){ exporter(document.getElementById('bkmsg')); });
+}
+document.getElementById('exp').addEventListener('click',function(){ exporter(document.getElementById('rmsg')); });
 document.getElementById('imp').addEventListener('click',function(){ document.getElementById('impf').click(); });
 document.getElementById('impf').addEventListener('change',function(e){
   var f=e.target.files[0]; if(!f) return;
@@ -1597,10 +1650,10 @@ document.getElementById('impf').addEventListener('change',function(e){
       A=ld(KA,{}); if(!A.fav)A.fav={}; if(!A.mode)A.mode='deficit';
       V=ld(KV,{w:[],t:[]}); if(!V.w)V.w=[]; if(!V.t)V.t=[]; if(!V.s)V.s=[]; if(!V.a)V.a=[];
       U=ld(KU,{}); if(!U.fsx)U.fsx=0.85; applyFs(); renderFs();
-      W=ld(KW,{}); if(!W.done)W.done={}; loadSemaine();
+      W=ld(KW,{}); if(!W.done)W.done={}; if(!W.extra)W.extra=[]; if(!W.xdone)W.xdone={}; loadSemaine();
       renderW(); renderT(); renderSleep(); renderDrink(); renderHist(); renderFav();
       renderQuick(); renderWaist(); renderSleepQuick(); renderDrinkQuick(); renderCoach();
-      renderSeance('A'); renderSeance('B');
+      renderSeance('A'); renderSeance('B'); renderSeanceQuick(); renderBackup();
       m.style.color='#0E8B84'; m.textContent='Sauvegarde restaurée.';
     }catch(err){ m.style.color='#C4503C'; m.textContent='Fichier illisible.'; }
   };
@@ -1612,17 +1665,20 @@ document.getElementById('wipe').addEventListener('click',function(){
   for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(k.indexOf('plan.v1.')===0) ks.push(k); }
   ks.forEach(function(k){ localStorage.removeItem(k); });
   S={lvl:{},log:[],done:{},day:tdy(),reps:{},last:{},snap:{}}; A={fav:{},mode:'deficit'}; V={w:[],t:[],s:[],a:[]}; U={fsx:0.85};
-  W={done:{}}; loadSemaine();
+  W={done:{},extra:[],xdone:{}}; loadSemaine();
   applyFs(); renderFs();
   renderW(); renderT(); renderSleep(); renderDrink(); renderHist(); renderFav();
   renderQuick(); renderWaist(); renderSleepQuick(); renderDrinkQuick(); renderCoach();
-  renderSeance('A'); renderSeance('B');
+  renderSeance('A'); renderSeance('B'); renderSeanceQuick(); renderBackup();
   var m=document.getElementById('rmsg'); m.style.color='#C4503C'; m.textContent='Données effacées.';
 });
 
 /* ---------- repas de la semaine ---------- */
 var KW='plan.v1.semaine';
 var W = ld(KW,{}); if(!W.done) W.done={};
+/* extra: fridge items added by hand (unplanned shopping); xdone: those consumed.
+   Both survive a week change — the next repas.json is written from the summary. */
+if(!W.extra) W.extra=[]; if(!W.xdone) W.xdone={};
 function svW(){ st(KW,W); }
 var SEM=null;
 function esc(x){ return String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -1692,10 +1748,16 @@ function renderSemaine(d){
     });
   }
   h+='<button type="button" class="wide" id="rstsem" style="margin-top:14px">Tout décocher</button>';
+  h+='<h2>La semaine suivante</h2>'+
+     '<p class="sm mut">Un résumé de ce qui reste dans le frigo, des repas faits et de tes favoris, prêt à coller dans la conversation qui prépare le prochain fichier de repas.</p>'+
+     '<button type="button" class="wide" id="prepsem">Copier le résumé pour la semaine suivante</button>'+
+     '<div class="msg" id="prepmsg"></div>'+
+     '<textarea id="preptxt" hidden readonly style="width:100%;min-height:180px;font:inherit;font-size:calc(14px * var(--fsx));line-height:1.45;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);margin-bottom:10px"></textarea>';
   document.getElementById('semwrap').innerHTML=h;
 
   bindRecs();
   document.getElementById('opencourses').addEventListener('click', ouvrirCourses);
+  document.getElementById('prepsem').addEventListener('click', copierResume);
   document.getElementById('rstsem').addEventListener('click', function(){
     W.done={}; svW();
     document.querySelectorAll('.rec').forEach(function(el){ el.classList.remove('done'); });
@@ -1703,6 +1765,44 @@ function renderSemaine(d){
     refreshSem(); window.scrollTo(0,0);
   });
   refreshSem();
+}
+
+/* --- summary for next week's meal file --- */
+function resumeSemaine(){
+  var d=SEM||{}, used=usedSet(), L=[];
+  L.push('Semaine écoulée : '+(d.semaine||'sans fichier de repas'));
+  var bi=blocIdx();
+  if(bi>=0){
+    var t=targetFor('normal').v;
+    L.push('Bloc en cours : bloc '+(bi+1)+' · '+BLOCS[bi][0]+' ('+(BLOCS[bi][3]?'déficit':'équilibre')+
+           ') → '+t.map(function(x){return x[0]+' '+x[1];}).join(', '));
+  }
+  var repas=d.repas||[], faits=[], pasFaits=[];
+  repas.forEach(function(r,i){ (W.done['r'+i]?faits:pasFaits).push(r.titre); });
+  L.push('Repas faits : '+faits.length+' sur '+repas.length+(pasFaits.length?'. Pas faits : '+pasFaits.join(', '):''));
+  var reste=(d.frigo||[]).filter(function(x){return !used[x];});
+  var extras=W.extra.filter(function(x){return !W.xdone[x];});
+  L.push('Reste dans le frigo : '+(reste.length?reste.join(', '):'rien du fichier'));
+  if(extras.length) L.push('Ajouté à la main, pas encore utilisé : '+extras.join(', '));
+  var favs=Object.keys(A.fav).filter(function(k){return A.fav[k];});
+  if(favs.length) L.push('Repas favoris : '+favs.join(', '));
+  var an=analyse();
+  if(an.etat!=='debut'){
+    var r=an.rythme, tend = r===null ? 'tendance non calculable'
+      : (Math.abs(r)<0.05 ? 'stable sur la semaine' : (r<0?'−':'+')+num(Math.abs(r))+' kg sur la semaine');
+    L.push('Poids : moyenne 7 jours '+num(an.cur)+' kg, '+tend+(an.taille!==null?', tour de taille '+(an.taille<0?'−':'+')+num(Math.abs(an.taille))+' cm sur trois semaines ou plus':''));
+  }
+  return L.join('\n');
+}
+function copierResume(){
+  var txt=resumeSemaine(), m=document.getElementById('prepmsg'), ta=document.getElementById('preptxt');
+  function montrer(){ ta.value=txt; ta.hidden=false; m.style.color='#5B6B75'; m.textContent='Copie impossible ici : sélectionne le texte ci-dessous.'; }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(function(){
+      ta.value=txt; ta.hidden=false;
+      m.style.color='#0E8B84'; m.textContent='Copié. Colle-le dans la conversation.';
+    }).catch(montrer);
+  } else montrer();
 }
 
 function bindRecs(){
@@ -1759,6 +1859,11 @@ function ouvrirCourses(){
        '<div class="chips">'+d.frigo.map(function(x){
          return '<span data-p="'+esc(x)+'">'+esc(x)+'</span>'; }).join('')+'</div>';
   }
+  h+='<div class="wkh" style="margin-top:18px">Ajouté à la main</div>'+
+     '<p class="sm mut">Courses imprévues, restes, un panier de légumes : note-les ici, ils apparaîtront dans le résumé de la semaine suivante. Touche un produit quand il est consommé ; la croix le retire.</p>'+
+     '<div class="chips" id="xchips"></div>'+
+     '<div class="addrow"><input type="text" id="xin" placeholder="Courgettes" autocomplete="off" enterkeyhint="done">'+
+     '<button type="button" id="xadd">Ajouter</button></div>';
   if(d.congelo && d.congelo.length)
     h+='<div class="card tl" style="margin-top:16px"><h3>À congeler dès ce soir</h3>'+
        '<p style="margin:0 0 8px">'+esc(d.congeloNote||'')+'</p>'+
@@ -1783,12 +1888,39 @@ function ouvrirCourses(){
       b.classList.toggle('got'); W.done[k]=b.classList.contains('got'); svW();
     });
   });
+  renderExtras();
+  document.getElementById('xadd').addEventListener('click', ajouterExtra);
+  document.getElementById('xin').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); ajouterExtra(); } });
   refreshSem();
   document.getElementById('courses').classList.add('on');
 }
 document.getElementById('coursesclose').addEventListener('click', function(){
   document.getElementById('courses').classList.remove('on');
 });
+function renderExtras(){
+  var box=document.getElementById('xchips'); if(!box) return;
+  box.innerHTML = W.extra.length
+    ? W.extra.map(function(x,i){
+        return '<span class="xt'+(W.xdone[x]?' used':'')+'" data-i="'+i+'">'+esc(x)+'<i aria-label="retirer">×</i></span>'; }).join('')
+    : '<span class="used" style="text-decoration:none">Rien pour l\'instant</span>';
+  box.querySelectorAll('span.xt').forEach(function(el){
+    var x=W.extra[parseInt(el.dataset.i,10)];
+    el.querySelector('i').addEventListener('click', function(e){
+      e.stopPropagation();
+      W.extra=W.extra.filter(function(y){return y!==x;}); delete W.xdone[x]; svW(); renderExtras();
+    });
+    el.addEventListener('click', function(){
+      if(W.xdone[x]) delete W.xdone[x]; else W.xdone[x]=true;
+      svW(); renderExtras();
+    });
+  });
+}
+function ajouterExtra(){
+  var inp=document.getElementById('xin'), v=String(inp.value||'').trim();
+  if(!v) return;
+  if(W.extra.indexOf(v)===-1){ W.extra.push(v); svW(); }
+  inp.value=''; renderExtras(); inp.focus();
+}
 
 var KR='plan.v1.repas';
 function renderRepasInfo(){
@@ -1915,12 +2047,24 @@ function analyse(){
   if(j21!==null && Math.abs(cur-j21)<0.3) etat='plateau';
   else if(rythme!==null && rythme<-0.7) etat='vite';
   else if(rythme!==null && rythme>0.2) etat='hausse';
-  return {etat:etat, cur:cur, rythme:rythme, rythme4:rythme4, n:a.length, debut:mv[0].v};
+  return {etat:etat, cur:cur, rythme:rythme, rythme4:rythme4, n:a.length, debut:mv[0].v, taille:tailleTrend()};
+}
+/* Waist change in cm between the latest measure and one at least three weeks
+   older; null when there is no such pair. With strength work, weight can stall
+   while the waist keeps dropping: that is a recomposition, not a plateau. */
+function tailleTrend(){
+  var a=sortBy(V.t); if(a.length<2) return null;
+  var last=a[a.length-1], ref=null;
+  for(var i=a.length-2;i>=0;i--){
+    if((new Date(last.d)-new Date(a[i].d))/86400000>=21){ ref=a[i]; break; }
+  }
+  return ref ? last.v-ref.v : null;
 }
 function coachTexte(A){
   var bi=blocIdx();
   if(bi>=0 && !BLOCS[bi][3] && A.etat!=='debut'){
-    if(A.etat==='vite')
+    var r4 = (A.rythme4!==null) ? A.rythme4 : A.rythme;
+    if(A.etat==='vite' || (r4!==null && r4<-0.3))
       return {c:'warn', h:'Tu perds alors que ce bloc ne le demande pas',
               b:"Bloc « "+BLOCS[bi][0]+" » : l'objectif est de tenir le poids. Remonte les portions, en particulier les féculents. Perdre ici se paie plus tard, en fatigue et en muscle."};
     if(A.etat==='hausse' && A.rythme>0.5)
@@ -1932,6 +2076,9 @@ function coachTexte(A){
   if(A.etat==='debut')
     return {c:'', h:'Encore '+(3-A.n)+' pesée'+((3-A.n)>1?'s':'')+' avant la première lecture',
             b:"La moyenne sur sept jours a besoin de quelques jours pour dire quelque chose. Pèse-toi chaque matin à jeun, sans regarder le chiffre du jour."};
+  if((A.etat==='plateau' || A.etat==='hausse') && A.taille!==null && A.taille<=-1)
+    return {c:'', h:'La balance stagne, le tour de taille descend',
+            b:'Moins '+num(Math.abs(A.taille)).toString().replace('.',',')+' cm en trois semaines ou plus, à poids quasi constant : c\'est une recomposition, le muscle prend la place du gras. Ne touche à rien, ni aux portions ni aux séances. C\'est le meilleur résultat possible.'};
   if(A.etat==='plateau'){
     var m7=moyenne(V.s,7), sem=verresSemaine();
     var pointe='';
@@ -2036,6 +2183,32 @@ function renderDrinkQuick(){
   });
   document.getElementById('qam').addEventListener('click', function(){
     setVerres(tdy(), verresJour(tdy())-1); renderDrinkQuick(); renderDrink(); renderCoach();
+  });
+}
+
+/* The week's two sessions, on the home screen: which is done, which is left,
+   and a shortcut to each. Weeks run Monday to Sunday like the drinks ceiling. */
+function renderSeanceQuick(){
+  var box=document.getElementById('seancewrap'); if(!box) return;
+  var l=lundi(tdy()), faites={};
+  S.log.forEach(function(x){ if(lundi(x.d)===l) faites[x.s]=x.d; });
+  var n=Object.keys(faites).length;
+  var dim=new Date(l); dim.setDate(dim.getDate()+6);
+  var reste=Math.round((dim-new Date(tdy()))/86400000);
+  var jours=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+  var h;
+  if(n>=2) h='Les deux séances de la semaine sont faites. La prochaine attend lundi.';
+  else if(n===1){
+    var f=Object.keys(faites)[0], o=(f==='A'?'B':'A');
+    h='Séance '+f+' faite '+jours[new Date(faites[f]).getDay()]+'. Il reste la '+o+' à placer'+
+      (reste<=0?' aujourd\'hui, dernier jour de la semaine':(reste===1?' d\'ici demain':' d\'ici dimanche'))+'.';
+  } else h='Deux séances cette semaine, aucune faite pour l\'instant. La A plutôt le lundi, la B du mercredi au vendredi.';
+  box.innerHTML='<div class="quick"><div class="qh">Les séances de la semaine</div><div class="sm mut">'+h+'</div>'+
+    '<div class="sq">'+['A','B'].map(function(k){
+      return '<button type="button" data-go="'+k+'" class="'+(faites[k]?'done':'')+'">Séance '+k+(faites[k]?' ✓':' ›')+'</button>';
+    }).join('')+'</div></div>';
+  document.querySelectorAll('#seancewrap .sq button').forEach(function(b){
+    b.addEventListener('click', function(){ goView('seances'); goSub(b.dataset.go); });
   });
 }
 
@@ -2219,8 +2392,12 @@ document.getElementById('diagb').addEventListener('click', diagnostic);
 document.getElementById('wdate').value=tdy();
 document.getElementById('tdate').value=tdy();
 renderW(); renderT();
-renderQuick(); renderWaist(); renderSleepQuick(); renderDrinkQuick();
-renderSleep(); renderDrink(); renderCoach(); renderBilan();
+renderQuick(); renderWaist(); renderSleepQuick(); renderDrinkQuick(); renderSeanceQuick();
+renderSleep(); renderDrink(); renderCoach(); renderBilan(); renderBackup();
+/* Test hook: test.js freezes the date and checks that the blocks drive the
+   portion targets and the coach in the right direction. Harmless in the app. */
+if(typeof window!=='undefined') window.__plan={BLOCS:BLOCS, blocIdx:blocIdx, enDeficit:enDeficit,
+  targetFor:targetFor, analyse:analyse, coachTexte:coachTexte, V:V, S:S, U:U};
 document.getElementById('sdate').value=tdy();
 (function(){
   var r=document.getElementById('svalr'), v=document.getElementById('svalv'), h=document.getElementById('sval');

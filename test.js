@@ -141,6 +141,7 @@ global.localStorage = {
 global.fetch = () => Promise.resolve({ ok: true, json: () => Promise.resolve(repas || {}) });
 global.FileReader = function () {};
 global.Blob = function () {};
+global.File = function () {};
 global.URL = { createObjectURL: () => '' };
 global.confirm = () => false;
 global.setInterval = () => 0;
@@ -156,13 +157,73 @@ try {
   fail('exception: ' + e.message + '\n        ' + (e.stack.split('\n')[1] || '').trim());
 }
 
+/* ---------- 6. the plan blocks drive targets and coaching ---------- */
+/*
+ * Getting this backwards would tell the user to cut calories during a maintenance
+ * block, the opposite of the plan. "now" is frozen on the first and last day of
+ * each block and the coach is fed synthetic weight series.
+ */
+console.log('\nPlan blocks');
+const P = global.window.__plan;
+if (!P) {
+  fail('window.__plan test hook is missing from index.html');
+} else {
+  const RealDate = Date;
+  let frozen = RealDate.now();
+  global.Date = class extends RealDate {
+    constructor(...a) { if (a.length) super(...a); else super(frozen); }
+    static now() { return frozen; }
+  };
+  const freeze = iso => { frozen = new RealDate(iso + 'T12:00:00').getTime(); };
+  const iso = ms => new RealDate(ms).toISOString().slice(0, 10);
+  const DAY = 86400000;
+  /* one weigh-in a day for `days` days ending today, moving `perWeek` kg a week */
+  const weights = (startKg, perWeek, days) => {
+    const out = [];
+    for (let i = days; i >= 0; i--) out.push({ d: iso(frozen - i * DAY), v: startKg - perWeek * (days - i) / 7 });
+    return out;
+  };
+  const coach = (w, t) => { P.V.w = w; P.V.t = t || []; return P.coachTexte(P.analyse()); };
+  const expect = (label, got, want) => got === want ? pass(label) : fail(label + ' — got ' + JSON.stringify(got) + ', want ' + JSON.stringify(want));
+
+  P.BLOCS.forEach((b, i) => {
+    const def = b[3];
+    [b[1], b[2]].forEach(day => {
+      freeze(day);
+      const tag = 'bloc ' + (i + 1) + ' (' + b[0] + ') on ' + day + ': ';
+      expect(tag + 'blocIdx', P.blocIdx(), i);
+      expect(tag + 'enDeficit', P.enDeficit(), def);
+      expect(tag + 'carbs target', P.targetFor('normal').v[2][0], def ? '1' : '2');
+      expect(tag + 'carbs target on sport days', P.targetFor('sport').v[2][0], def ? '2' : '3');
+    });
+    freeze(b[1]);
+    const tag = 'bloc ' + (i + 1) + ' coach, ';
+    expect(tag + 'losing 0.8 kg/week', coach(weights(85, 0.8, 35)).c, def ? 'bad' : 'warn');
+    expect(tag + 'losing 0.4 kg/week', coach(weights(85, 0.4, 35)).c, def ? '' : 'warn');
+    expect(tag + 'flat for five weeks', coach(weights(85, 0, 35)).c, def ? 'warn' : '');
+    expect(tag + 'gaining 0.3 kg/week', coach(weights(85, -0.3, 35)).c, def ? 'warn' : '');
+    if (def) {
+      const r = coach(weights(85, 0, 35), [{ d: iso(frozen - 28 * DAY), v: 96 }, { d: iso(frozen), v: 94 }]);
+      expect(tag + 'flat weight but waist down 2 cm is not a plateau', r.c, '');
+      /taille/i.test(r.h) ? pass(tag + 'recomposition message names the waist') : fail(tag + 'recomposition message should name the waist: ' + r.h);
+    }
+  });
+
+  freeze('2026-08-01');
+  expect('before the plan: blocIdx', P.blocIdx(), -1);
+  expect('before the plan: carbs target', P.targetFor('normal').v[2][0], '2');
+
+  P.V.w = []; P.V.t = [];
+  global.Date = RealDate;
+}
+
 /* containers that must receive content, checked after the fetch promise settles */
 realSetTimeout(() => {
   console.log('\nRendered containers');
   const MUST_FILL = ['prog', 'week', 'rules', 'phases', 'hands', 'tgt', 'ctxbar',
     'semwrap', 'repasinfo', 'quickwrap', 'waistwrap', 'sleepwrap', 'drinkwrap',
-    'coachwrap', 'wstats', 'sstats', 'astats', 'hstats', 'evowrap', 'fsopts',
-    's-seances-A', 's-seances-B'];
+    'seancewrap', 'coachwrap', 'backupwrap', 'wstats', 'sstats', 'astats', 'hstats',
+    'evowrap', 'fsopts', 's-seances-A', 's-seances-B'];
   MUST_FILL.forEach(id => {
     if (!staticIds.has(id)) fail(id + ' is referenced but absent from the markup');
     else if (!filled.includes(id)) fail(id + ' was never filled — a render function did not run');
