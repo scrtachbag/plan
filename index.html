@@ -253,6 +253,14 @@ table.t td.x button{font:inherit;font-size:calc(20px * var(--fsx));background:no
 .cmp.ok{background:var(--tealsoft);color:#0A6C66;}
 .cmp.sous,.cmp.manque{background:var(--coralsoft);color:#8E3526;}
 .cmp.sur{background:var(--ambersoft);color:#8B4F0B;}
+.diag{border:1px solid var(--line);border-radius:14px;padding:4px 14px;margin-top:10px;}
+.diag > div{display:flex;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);
+  font-size:calc(14.5px * var(--fsx));line-height:1.4;}
+.diag > div:last-child{border-bottom:0;}
+.diag .p{flex:0 0 auto;font-weight:800;}
+.diag .oui .p{color:var(--teal);} .diag .non .p{color:var(--coral);} .diag .att .p{color:var(--amber);}
+.diag b{display:block;}
+.diag .sub2{color:var(--mut);font-size:calc(13px * var(--fsx));}
 .shop{display:flex;flex-direction:column;gap:2px;}
 .shopit{display:flex;align-items:center;gap:11px;width:100%;text-align:left;font:inherit;
   font-size:calc(15.5px * var(--fsx));background:none;border:0;padding:9px 0;cursor:pointer;color:var(--ink);
@@ -658,6 +666,8 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
 
     <h2>L'application</h2>
     <div id="installwrap"></div>
+    <button type="button" class="wide" id="diagb" style="margin-top:6px">Diagnostic d'installation</button>
+    <div id="diagwrap"></div>
 
     <h2>Les repas de la semaine</h2>
     <div id="repasinfo"></div>
@@ -1780,6 +1790,16 @@ document.getElementById('coursesclose').addEventListener('click', function(){
   document.getElementById('courses').classList.remove('on');
 });
 
+var KR='plan.v1.repas';
+function renderRepasInfo(){
+  var box=document.getElementById('repasinfo'); if(!box) return;
+  var st=ld(KR,null);
+  box.innerHTML='<div class="card '+(st?'am':'surf')+'" style="padding:12px 16px">'+
+    '<div style="font-weight:700;font-size:calc(15.5px * var(--fsx))">'+
+      (SEM&&SEM.semaine ? esc(SEM.semaine) : 'Aucun fichier chargé')+'</div>'+
+    '<div class="sm mut" style="margin-top:3px">'+
+      (st ? 'Fichier importé le '+frd(st.at) : 'Fichier du site')+'</div></div>';
+}
 function loadSemaine(){
   var st=ld(KR,null);
   if(st && st.data){ renderSemaine(st.data); renderRepasInfo(); return; }
@@ -2130,6 +2150,70 @@ function renderInstall(){
   });
 }
 renderInstall();
+
+/* ---------- diagnostic ---------- */
+function ligne(etat, titre, detail){
+  var p = etat==='oui' ? '✓' : (etat==='non' ? '✕' : '!');
+  return '<div class="'+etat+'"><span class="p">'+p+'</span><span><b>'+titre+'</b>'+
+         (detail?'<span class="sub2">'+detail+'</span>':'')+'</span></div>';
+}
+function diagnostic(){
+  var box=document.getElementById('diagwrap');
+  box.innerHTML='<div class="diag"><div class="att"><span class="p">…</span><span><b>Vérification en cours</b></span></div></div>';
+  var out=[];
+
+  out.push(location.protocol==='https:'
+    ? ligne('oui','Connexion sécurisée','HTTPS, condition obligatoire')
+    : ligne('non','Pas en HTTPS','Chrome n\'installe que les sites en https. Ouvre l\'adresse complète, pas un fichier local.'));
+
+  if(estInstallee()) out.push(ligne('oui','Déjà installée','Tu es dans l\'application, pas dans le navigateur'));
+
+  var tests=[];
+
+  tests.push(fetch('manifest.json',{cache:'no-cache'}).then(function(r){
+    if(!r.ok) throw new Error(r.status);
+    return r.json();
+  }).then(function(m){
+    var ic=(m.icons||[]).map(function(i){return i.sizes;}).join(', ');
+    out.push(ligne('oui','manifest.json trouvé','Nom : '+(m.name||'?')+' · icônes : '+(ic||'aucune')+' · affichage : '+(m.display||'?')));
+    return Promise.all((m.icons||[]).map(function(i){
+      return fetch(i.src,{cache:'no-cache'}).then(function(r){ return {s:i.sizes, ok:r.ok}; })
+             .catch(function(){ return {s:i.sizes, ok:false}; });
+    })).then(function(res){
+      var ko=res.filter(function(x){return !x.ok;});
+      out.push(ko.length
+        ? ligne('non','Icônes manquantes', ko.map(function(x){return x.s;}).join(', ')+' — dépose les fichiers icon-192.png, icon-512.png et icon-maskable-512.png dans le dépôt')
+        : ligne('oui','Icônes présentes', res.length+' fichiers accessibles'));
+    });
+  }).catch(function(e){
+    out.push(ligne('non','manifest.json introuvable','Erreur '+e.message+'. Le fichier doit être à côté de index.html dans le dépôt.'));
+  }));
+
+  tests.push(fetch('sw.js',{cache:'no-cache'}).then(function(r){
+    out.push(r.ok ? ligne('oui','sw.js trouvé','Le fichier répond correctement')
+                  : ligne('non','sw.js introuvable','Erreur '+r.status+'. Sans lui, Chrome ne propose pas l\'installation.'));
+  }).catch(function(){
+    out.push(ligne('non','sw.js introuvable','Dépose-le à côté de index.html.'));
+  }));
+
+  if('serviceWorker' in navigator){
+    tests.push(navigator.serviceWorker.getRegistration().then(function(reg){
+      if(!reg) out.push(ligne('att','Service worker pas encore enregistré','Recharge la page une fois de plus, puis relance ce diagnostic.'));
+      else if(reg.active) out.push(ligne('oui','Service worker actif','Tout est en place côté technique'));
+      else out.push(ligne('att','Service worker en cours d\'installation','Recharge la page dans quelques secondes.'));
+    }));
+  } else {
+    out.push(ligne('non','Navigateur sans service worker','Ouvre le site dans Chrome, pas dans un navigateur intégré à une autre application.'));
+  }
+
+  Promise.all(tests).then(function(){
+    out.push(deferredPrompt
+      ? ligne('oui','Chrome propose l\'installation','Le bouton vert ci-dessus est actif')
+      : ligne('att','Chrome n\'a pas encore proposé l\'installation','Si tout est vert au-dessus : recharge la page, attends dix secondes, puis menu ⋮ → Installer l\'application. Chrome ne propose parfois rien tant que la page n\'a pas été visitée deux fois.'));
+    box.innerHTML='<div class="diag">'+out.join('')+'</div>';
+  });
+}
+document.getElementById('diagb').addEventListener('click', diagnostic);
 
 /* ---------- init ---------- */
 document.getElementById('wdate').value=tdy();
