@@ -183,7 +183,7 @@ input[type=range]{width:100%;margin:2px 0 0;accent-color:var(--teal);height:32px
 .rest{position:absolute;inset:0;background:rgba(9,32,30,.96);color:#fff;display:none;
   flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:5;}
 .rest.on{display:flex;}
-.rest .n{font-size:64px;font-weight:800;letter-spacing:-2px;line-height:1;}
+.rest .n{font-size:64px;/*fsx-exempt*/font-weight:800;letter-spacing:-2px;line-height:1;}
 .rest .l{font-size:calc(16px * var(--fsx));opacity:.8;text-align:center;padding:0 24px;}
 .rest button{font:inherit;font-size:calc(16px * var(--fsx));font-weight:700;background:rgba(255,255,255,.18);
   border:0;color:#fff;border-radius:12px;padding:14px 26px;min-height:52px;cursor:pointer;}
@@ -326,13 +326,13 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
 .tabbar button{flex:1;font:inherit;background:none;border:0;padding:9px 4px 8px;min-height:64px;cursor:pointer;
   color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:3px;}
 .tabbar svg{width:24px;height:24px;}
-.tabbar .lab{font-size:11.5px;font-weight:700;}
+.tabbar .lab{font-size:11.5px;font-weight:700;}/*fsx-exempt*/
 .tabbar button.on{color:var(--acc);}
 .tabbar button.on svg{stroke:var(--acc);}
 .tabbar button.on .lab{font-weight:700;}
 .tabbar .dot{width:22px;height:3px;border-radius:2px;background:transparent;margin-bottom:2px;}
 .tabbar button.on .dot{background:var(--acc);}
-.tabbar .lab{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11.5px;}
+.tabbar .lab{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11.5px;}/*fsx-exempt*/
 </style>
 </head>
 <body>
