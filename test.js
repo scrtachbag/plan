@@ -71,14 +71,15 @@ try {
 
 if (repas) {
   const fridge = new Set(repas.frigo || []);
+  const bought = new Set((repas.courses || []).flatMap(g => g.items || []));
   const referenced = new Set();
   [...(repas.repas || []), ...(repas.aparte || [])].forEach(r => {
     (r.utilise || []).forEach(x => referenced.add(x));
   });
-  const unknown = [...referenced].filter(x => !fridge.has(x));
+  const unknown = [...referenced].filter(x => !fridge.has(x) && !bought.has(x));
   unknown.length
-    ? fail('utilise labels absent from frigo (they will never grey out): ' + unknown.join(', '))
-    : pass('every utilise label matches a frigo entry');
+    ? fail('utilise labels absent from frigo and courses (they will never grey out): ' + unknown.join(', '))
+    : pass('every utilise label matches a frigo entry or a shopping item');
 
   const orphans = [...fridge].filter(x => !referenced.has(x));
   orphans.length
@@ -156,6 +157,40 @@ try {
 } catch (e) {
   fail('exception: ' + e.message + '\n        ' + (e.stack.split('\n')[1] || '').trim());
 }
+
+/*
+ * Second run with data in localStorage. Many render paths only execute when
+ * there is something to show (favourites, weights, sessions, hand-added fridge
+ * items), and a top-level call made before a `var` is assigned only blows up
+ * on those paths. This run keeps the empty-storage run's `filled` list intact.
+ */
+const day = n => new Date(Date.now() - n * 86400000).toISOString().slice(0, 10);
+const SEEDED = {
+  'plan.v1.suivi': JSON.stringify({
+    w: [...Array(30)].map((_, i) => ({ d: day(29 - i), v: 82 - i * 0.05 })),
+    t: [{ d: day(28), v: 96 }, { d: day(0), v: 95 }],
+    s: [...Array(10)].map((_, i) => ({ d: day(9 - i), v: 7 })),
+    a: [{ d: day(3), v: 2 }, { d: day(10), v: 3 }]
+  }),
+  'plan.v1.seances': JSON.stringify({
+    lvl: { A0: 2, B0: 1 }, log: [{ d: day(1), s: 'A' }, { d: day(4), s: 'B' }], done: {}, day: day(0),
+    reps: { 'A0:2': 10 }, last: { 'A0:2': 10 },
+    snap: { [day(1)]: { A0: { l: 2, r: 10 } }, [day(4)]: { B0: { l: 1, r: 8 } } }
+  }),
+  'plan.v1.assiette': JSON.stringify({ fav: { 'Poulet, ratatouille, quinoa': true, 'Un œuf dur': true }, mode: 'sport', sportDay: day(3) }),
+  'plan.v1.semaine': JSON.stringify({ sem: 'x', done: { r0: true, c0_1: true }, extra: ['Courgettes'], xdone: {}, next: { 'Poulet, ratatouille, quinoa': 2 }, nb: { pd: 4, dej: 5, din: 6 } }),
+  'plan.v1.ui': JSON.stringify({ fsx: 0.85, v: 2, bloc: 0, debut: day(20), exp: day(30) })
+};
+const savedFilled = filled.slice();
+global.localStorage._d = Object.assign({}, SEEDED);
+try {
+  new Function(script)();
+  pass('script runs to completion with data in storage');
+} catch (e) {
+  fail('exception with data in storage: ' + e.message + '\n        ' + (e.stack.split('\n')[1] || '').trim());
+}
+filled.length = 0; filled.push(...savedFilled);
+global.localStorage._d = {};
 
 /* ---------- 6. the plan blocks drive targets and coaching ---------- */
 /*
@@ -261,13 +296,55 @@ if (P && P.EX) {
   }));
 } else fail('EX not exposed on window.__plan');
 
+/* ---------- 7b. every sub-tab in the router has its markup ---------- */
+console.log('\nRouter');
+if (P && P.VIEWS) {
+  Object.keys(P.VIEWS).forEach(v => {
+    if (!staticIds.has('v-' + v)) fail('view ' + v + ' has no <div id="v-' + v + '">');
+    P.VIEWS[v].subs.forEach(s => {
+      const id = 's-' + v + '-' + s[0];
+      staticIds.has(id) ? pass(v + ' › ' + s[1] + ' → #' + id) : fail(v + ' › ' + s[1] + ': no <div id="' + id + '"> — the pill would show an empty page');
+    });
+  });
+} else fail('VIEWS not exposed on window.__plan');
+
+/* ---------- 8. base meals and adaptive portions ---------- */
+console.log('\nMeals');
+if (P && P.MEALS) {
+  P.MEALS.forEach(g => g.items.forEach(m => {
+    if (!Array.isArray(m.ing)) fail(m.n + ': no ingredient list (needed for the favourites shopping list)');
+    else if (!m.ing.length && !/restes/i.test(m.n)) fail(m.n + ': empty ingredient list');
+  }));
+  pass('every base meal carries an ingredient list');
+  /* carbs adapt to the target, protein and vegetables never move */
+  const r = { portions: ['2 paumes de poulet', '1 main en coupe de riz', '2 poings de légumes'] };
+  const ap = P.adaptPortions(r);
+  const cible = P.targetFor('normal').v[2][0];
+  ap[0].adj || ap[2].adj ? fail('adaptPortions touched protein or vegetables') : pass('adaptPortions leaves protein and vegetables alone');
+  const want = cible === '1' ? '1 main en coupe de riz' : cible + ' mains en coupe de riz';
+  ap[1].t === want ? pass('adaptPortions carbs → ' + want) : fail('adaptPortions carbs got ' + ap[1].t + ', want ' + want);
+  const two = P.adaptPortions({ portions: ['1 main en coupe de riz', '1 main en coupe de pain'] });
+  two.some(x => x.adj) ? fail('adaptPortions must not rewrite recipes with two carbs lines') : pass('adaptPortions leaves two-carbs recipes untouched');
+
+  /* the request copied for Claude must stand alone */
+  const req = P.resumeSemaine();
+  ['## Où j\'en suis', '## Règles', '## Repas de base', '## Format exact du JSON', '"utilise"', 'main en coupe']
+    .forEach(s => req.includes(s) ? pass('request carries ' + s) : fail('request lacks ' + s));
+  P.MEALS.forEach(g => g.items.forEach(m => { if (!req.includes(m.n)) fail('request lacks base meal ' + m.n); }));
+  /* pasted answers come with code fences and prose around them */
+  const sample = 'Voici le fichier :\n```json\n' + JSON.stringify({ semaine: 'Semaine test', repas: [{ titre: 'T', portions: ['2 paumes de x'] }] }) + '\n```\nBon appétit.';
+  P.chargerRepas(sample) ? pass('chargerRepas accepts a fenced JSON answer') : fail('chargerRepas rejected a fenced JSON answer');
+  P.chargerRepas('pas du json') ? fail('chargerRepas accepted garbage') : pass('chargerRepas rejects garbage');
+  global.localStorage.removeItem('plan.v1.repas');
+} else fail('MEALS not exposed on window.__plan');
+
 /* containers that must receive content, checked after the fetch promise settles */
 realSetTimeout(() => {
   console.log('\nRendered containers');
   const MUST_FILL = ['prog', 'week', 'rules', 'phases', 'hands', 'tgt', 'ctxbar',
     'semwrap', 'repasinfo', 'quickwrap', 'waistwrap', 'sleepwrap', 'drinkwrap',
     'seancewrap', 'coachwrap', 'backupwrap', 'wstats', 'sstats', 'astats', 'hstats',
-    'evowrap', 'fsopts', 's-seances-A', 's-seances-B'];
+    'hcal', 'evowrap', 'fsopts', 'debutlist', 'frigowrap', 'nxcounts', 'nxcat', 'nxcourses', 's-seances-A', 's-seances-B'];
   MUST_FILL.forEach(id => {
     if (!staticIds.has(id)) fail(id + ' is referenced but absent from the markup');
     else if (!filled.includes(id)) fail(id + ' was never filled — a render function did not run');

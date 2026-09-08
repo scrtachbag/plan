@@ -16,15 +16,20 @@
 body[data-acc="amber"]{--acc:#C97416;--accsoft:#FCF0E1;--accdeep:#8B4F0B;}
 body[data-acc="teal"]{--acc:#0E8B84;--accsoft:#E1F4F2;--accdeep:#0A6C66;}
 body[data-acc="ink"]{--acc:#16222B;--accsoft:#E9EEF1;--accdeep:#16222B;}
+/* Plan is blue, Suivi is violet: the header, the active pill and the active tab share the colour. */
+body[data-acc="blue"]{--acc:#1E88E5;--accsoft:#E3F1FC;--accdeep:#1565C0;}
+body[data-acc="violet"]{--acc:#6D4FC2;--accsoft:#EDE8FA;--accdeep:#4A3590;}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{margin:0;padding:0;}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:calc(18px * var(--fsx));
      line-height:1.55;color:var(--ink);background:#fff;padding-bottom:calc(78px + env(safe-area-inset-bottom));}
 
+#top{position:sticky;top:0;z-index:30;}
 header{color:#fff;background:var(--ink);overflow:hidden;
-  padding:14px 16px 14px;padding-top:calc(14px + env(safe-area-inset-top));
+  padding:10px 16px 10px;padding-top:calc(10px + env(safe-area-inset-top));
   display:flex;align-items:center;gap:14px;}
 header.a{background:var(--amber);} header.t{background:var(--teal);}
+header.b{background:#1E88E5;} header.v{background:#6D4FC2;}
 header .mark{flex:0 0 40px;width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.16);
   display:flex;align-items:center;justify-content:center;}
 header .mark svg{width:26px;height:26px;display:block;}
@@ -33,9 +38,10 @@ header .k{font-size:calc(12.5px * var(--fsx));font-weight:700;opacity:.85;letter
 header h1{font-size:calc(clamp(19px,6.4vw,26px) * var(--fsx));line-height:1.14;margin:2px 0 0;letter-spacing:-.5px;
   overflow-wrap:break-word;hyphens:auto;}
 
-.pills{display:flex;gap:8px;padding:10px 16px;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto;}
-.pills button{flex:0 0 auto;font:inherit;font-size:calc(16px * var(--fsx));font-weight:700;border:1px solid var(--line);
-  background:#fff;color:var(--mut);border-radius:999px;padding:10px 18px;min-height:44px;cursor:pointer;}
+/* Sub-tabs never scroll sideways: they share the width and wrap on a second row if the text size demands it. */
+.pills{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px;background:#fff;border-bottom:1px solid var(--line);}
+.pills button{flex:1 1 auto;min-width:0;font:inherit;font-size:calc(15px * var(--fsx));font-weight:700;border:1px solid var(--line);
+  background:#fff;color:var(--mut);border-radius:999px;padding:9px 10px;min-height:40px;cursor:pointer;white-space:nowrap;text-align:center;}
 .pills button.on{background:var(--acc);border-color:var(--acc);color:#fff;}
 .pills::-webkit-scrollbar{display:none;}
 
@@ -70,8 +76,31 @@ ol.steps{margin:0 0 4px;padding-left:22px;} ol.steps li{margin-bottom:8px;}
 .acc .name{font-size:calc(18px * var(--fsx));font-weight:700;line-height:1.3;}
 .acc .chev{font-size:calc(22px * var(--fsx));color:var(--mut);transition:transform .15s;}
 .acc.open .chev{transform:rotate(90deg);}
-.acc .body{display:none;padding:0 18px 18px;border-top:1px solid var(--line);}
-.acc.open .body{display:block;}
+.acc > .body{display:none;padding:0 18px 18px;border-top:1px solid var(--line);}
+.acc.open > .body{display:block;}
+.acc .sub2{font-weight:400;color:var(--mut);font-size:calc(15px * var(--fsx));}
+.acc.grp > .body{padding-top:14px;}
+.acc.grp > .body > h2:first-child{margin-top:4px;}
+.acc.grp > .body > p:first-child{margin-top:0;}
+/* sessions calendar */
+.cal{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 12px 10px;margin-bottom:14px;}
+.cal .chead{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.cal .chead b{font-size:calc(16px * var(--fsx));text-transform:capitalize;}
+.cal .chead button{font:inherit;font-size:calc(20px * var(--fsx));font-weight:700;width:40px;height:40px;border:1px solid var(--line);
+  background:#fff;color:var(--ink);border-radius:12px;cursor:pointer;}
+.cal .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal .dow{text-align:center;font-size:calc(11.5px * var(--fsx));font-weight:700;color:var(--mut);padding-bottom:2px;}
+.cal .d{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;
+  font-size:calc(13px * var(--fsx));color:var(--ink);background:var(--surf);line-height:1;}
+.cal .d.out{opacity:.35;background:none;}
+.cal .d.fut{background:none;color:var(--mut);}
+.cal .d.today{box-shadow:inset 0 0 0 2px var(--ink);}
+.cal .d.sa{background:var(--tealsoft);color:#0A6C66;font-weight:800;}
+.cal .d.sb{background:var(--ambersoft);color:#8B4F0B;font-weight:800;}
+.cal .d.sab{background:linear-gradient(135deg,var(--tealsoft) 50%,var(--ambersoft) 50%);color:var(--ink);font-weight:800;}
+.cal .d .s{font-size:calc(10px * var(--fsx));margin-top:3px;letter-spacing:.3px;}
+.cal .cfoot{display:flex;gap:14px;justify-content:center;font-size:calc(13px * var(--fsx));color:var(--mut);margin-top:10px;}
+.cal .cfoot i{display:inline-block;width:12px;height:12px;border-radius:4px;vertical-align:-2px;margin-right:5px;}
 
 .meta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
 .meta div{flex:1 1 90px;background:var(--surf);border-radius:14px;padding:11px 13px;}
@@ -256,7 +285,28 @@ table.t td.x button{font:inherit;font-size:calc(20px * var(--fsx));background:no
   border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);cursor:pointer;}
 .sq button.done{background:var(--tealsoft);border-color:var(--tealsoft);color:#0A6C66;}
 .ctx{background:var(--ambersoft);padding:9px 16px 11px;border-bottom:1px solid #F0DFC4;}
-.ctx .cx1{font-size:calc(12.5px * var(--fsx));font-weight:700;color:#8B4F0B;letter-spacing:.2px;}
+.ctx .cx1{font-size:calc(12.5px * var(--fsx));font-weight:700;color:#8B4F0B;letter-spacing:.2px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.ctx .cx1 button{font:inherit;font-size:calc(12px * var(--fsx));font-weight:700;border:1px solid #E6CFA9;background:#fff;color:#8B4F0B;border-radius:999px;padding:5px 11px;min-height:30px;cursor:pointer;white-space:nowrap;}
+.ctx .cx1 button.on{background:var(--amber);border-color:var(--amber);color:#fff;}
+.ctx .cx3{font-size:calc(12px * var(--fsx));color:#8B4F0B;margin-top:6px;line-height:1.35;}
+.por span.adj{background:#fff;border:1.5px solid var(--amber);}
+/* Semaine prochaine */
+.step{display:flex;gap:12px;margin-bottom:20px;}
+.stepn{flex:0 0 30px;width:30px;height:30px;border-radius:50%;background:var(--amber);color:#fff;font-weight:800;font-size:calc(15px * var(--fsx));
+  display:flex;align-items:center;justify-content:center;margin-top:1px;}
+.stepb{flex:1;min-width:0;} .stepb h3{margin:4px 0 8px;}
+.cnt{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:calc(16px * var(--fsx));}
+.cnt:last-child{border-bottom:0;}
+.qty{display:flex;align-items:center;gap:6px;flex:0 0 auto;}
+.qty button{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:#fff;font:inherit;font-size:calc(18px * var(--fsx));font-weight:700;color:var(--ink);cursor:pointer;padding:0;}
+.qty button:disabled{opacity:.3;}
+.qty b{min-width:24px;text-align:center;font-size:calc(17px * var(--fsx));} .qty b.zero{color:var(--mut);font-weight:400;}
+.catg{display:flex;justify-content:space-between;gap:10px;font-size:calc(13px * var(--fsx));font-weight:700;color:var(--mut);letter-spacing:.3px;margin:16px 0 2px;}
+.mrow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);}
+.mrow .mn{flex:1;min-width:0;font-size:calc(15.5px * var(--fsx));line-height:1.3;}
+.mrow .mn small{display:block;color:var(--mut);font-size:calc(12.5px * var(--fsx));line-height:1.35;margin-top:1px;}
+.mrow.sel .mn{font-weight:700;} .mrow.sel .qty b{color:#8B4F0B;}
+.cmp.adj{background:var(--ambersoft);color:#8B4F0B;}
 .ctx .cx2{display:flex;gap:6px;margin-top:5px;}
 .ctx .cx2 div{flex:1;background:#fff;border-radius:9px;padding:6px 4px;text-align:center;}
 .ctx .cx2 b{display:block;font-size:calc(17px * var(--fsx));font-weight:800;line-height:1.05;color:#8B4F0B;}
@@ -285,6 +335,9 @@ table.t td.x button{font:inherit;font-size:calc(20px * var(--fsx));background:no
 .shopit.got{color:var(--mut);text-decoration:line-through;}
 .shopit.got .box{background:var(--amber);border-color:var(--amber);}
 .shopit.got .box svg{opacity:1;}
+.shoprow{display:flex;align-items:center;gap:4px;} .shoprow .shopit{flex:1;min-width:0;}
+.shopx{flex:0 0 36px;width:36px;height:36px;font:inherit;font-size:calc(20px * var(--fsx));background:none;border:0;color:var(--mut);cursor:pointer;line-height:1;border-radius:10px;}
+.lnk{font:inherit;font-size:inherit;font-weight:700;background:none;border:0;color:var(--amber);cursor:pointer;padding:0;text-decoration:underline;}
 .tally{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 0;}
 .tally div{flex:1 1 120px;background:var(--surf);border-radius:14px;padding:11px 13px;}
 .tally .n{font-size:calc(20px * var(--fsx));font-weight:800;letter-spacing:-.5px;line-height:1.1;color:#8B4F0B;}
@@ -350,6 +403,7 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
 </head>
 <body>
 
+<div id="top">
 <header id="hd">
   <div class="mark"><svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <polyline points="13,17 26,30 38,25 51,47" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
@@ -357,6 +411,7 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
   <div class="txt"><div class="k" id="hk"></div><h1 id="hh"></h1></div>
 </header>
 <div class="pills" id="pills"></div>
+</div>
 <div id="ctxbar"></div>
 <main>
 
@@ -371,56 +426,209 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
     <div id="seancewrap"></div>
     <div id="coachwrap"></div>
     <div id="backupwrap"></div>
-    <div class="rowlist" id="week"></div>
-    <h2>Les six choses qui font le résultat</h2>
-    <div class="rowlist" id="rules"></div>
-    <div class="card co">
-      <h3>Ce qu'on ne fait pas</h3>
-      <p style="margin:0">Des abdos pour le ventre. Ils renforcent le muscle sous la couche de gras, ils ne la font pas fondre. Le ventre et le bas du dos sont les dernières zones à céder : elles suivront le total, avec plusieurs semaines de retard sur la balance.</p>
-    </div>
-    <div class="card tl">
-      <h3>L'objectif</h3>
+  </div>
+
+  <div class="sub" id="s-accueil-plan">
+    <p class="sm mut">Le cadre du plan, à relire quand tu doutes. Rien ici ne change d'un jour à l'autre.</p>
+    <div class="acc grp"><button type="button"><span class="name">L'objectif<br><span class="sub2">0,4 kg par semaine, pas plus</span></span><span class="chev">›</span></button>
+    <div class="body">
       <p style="margin:0">0,4 kg par semaine, soit 6 à 8 kg <span id="objdates">entre le 7 septembre et le 28 mars</span>. Pas plus vite : au-delà, la part de muscle perdue augmente nettement.</p>
-    </div>
+    </div></div>
+    <div class="acc grp"><button type="button"><span class="name">Les six choses qui font le résultat</span><span class="chev">›</span></button>
+    <div class="body">
+      <div class="rowlist" id="rules"></div>
+    </div></div>
+    <div class="acc grp"><button type="button"><span class="name">La semaine type<br><span class="sub2">Deux séances, une pesée par jour</span></span><span class="chev">›</span></button>
+    <div class="body">
+      <div class="rowlist" id="week"></div>
+    </div></div>
+    <div class="acc grp"><button type="button"><span class="name">Le calendrier des blocs<br><span class="sub2">Deux pertes séparées par une trêve</span></span><span class="chev">›</span></button>
+    <div class="body">
+      <p class="sm mut">Deux périodes de perte séparées par une trêve volontaire. C'est plus tenable qu'un tunnel de six mois, et ça évite de se battre contre décembre — un combat que presque personne ne gagne.</p>
+      <div id="phases"></div>
+      <div class="card surf">
+        <h3>Ce que « déficit » veut dire</h3>
+        <p style="margin:0">Autour de 2 200 à 2 400 kcal par jour pendant les blocs 2 et 4. Tu n'es pas obligé de compter : appliquer les six règles y amène naturellement. Si tu stagnes, compter une seule semaine te dira où ça fuit. Ne descends pas sous 2 000 kcal.</p>
+      </div>
+    </div></div>
+    <div class="acc grp"><button type="button"><span class="name">Ce qu'on ne fait pas<br><span class="sub2">Des abdos pour le ventre</span></span><span class="chev">›</span></button>
+    <div class="body">
+      <p style="margin:0">Des abdos pour le ventre. Ils renforcent le muscle sous la couche de gras, ils ne la font pas fondre. Le ventre et le bas du dos sont les dernières zones à céder : elles suivront le total, avec plusieurs semaines de retard sur la balance.</p>
+    </div></div>
+    <div class="acc grp"><button type="button"><span class="name">À table en famille<br><span class="sub2">Les repas se partagent, le plan non</span></span><span class="chev">›</span></button>
+    <div class="body">
+      <p class="sm mut">Les repas de ce plan sont bons pour des enfants de 9 et 12 ans. Le cadre qui les entoure, non.</p>
+      <div class="card tl">
+        <h3>Ce qui se partage sans réserve</h3>
+        <p>Les mêmes plats, à la même table. Un enfant n'a pas besoin d'un menu séparé.</p>
+        <p>Des légumes à chaque repas, un petit-déjeuner avec de vraies protéines, de l'eau comme boisson par défaut, de la cuisine maison.</p>
+        <p style="margin:0">Aucun aliment interdit. Le gâteau d'anniversaire reste un gâteau d'anniversaire.</p>
+      </div>
+      <div class="card co">
+        <h3>Ce qui ne se partage jamais</h3>
+        <p><b>Le déficit calorique.</b> Un enfant en croissance qui mange en restriction ralentit sa croissance.</p>
+        <p><b>Les portions contrôlées.</b> Eux mangent à leur faim et s'arrêtent quand ils n'ont plus faim. C'est leur régulation qui décide.</p>
+        <p style="margin:0"><b>Les cibles chiffrées, la balance, le suivi.</b> Rien de tout ça n'entre dans leur champ de vision.</p>
+      </div>
+      <div class="card surf">
+        <h3>Le point le plus important, et il n'est pas alimentaire</h3>
+        <p style="margin:0">Ce qui installe durablement un rapport compliqué à la nourriture, ce sont les mots autour. « Je fais attention », « c'est trop gras », les commentaires sur les corps. À cet âge, ces phrases s'enregistrent. Le plus sûr est que ton plan reste invisible pour eux : tu manges la même chose, tu te sers différemment, sans commentaire.</p>
+      </div>
+      <h2>Ce sur quoi il vaut la peine d'agir</h2>
+      <div class="rowlist">
+        <div><b>Bouger</b><span>Le vrai levier chez l'enfant. Une heure par jour, sous n'importe quelle forme.</span></div>
+        <div><b>Dormir</b><span>9 à 11 heures à cet âge. Ça pèse plus que la plupart des ajustements alimentaires.</span></div>
+        <div><b>Boire de l'eau</b><span>Sodas et jus : le seul poste où restreindre est justifié et sans risque.</span></div>
+      </div>
+      <div class="card am">
+        <h3>Si tu t'inquiètes pour le poids de l'un des deux</h3>
+        <p style="margin:0">C'est une conversation avec le pédiatre, pas un ajustement à la maison. La corpulence d'un enfant se lit sur une courbe, en tenant compte de l'âge et du stade de croissance. Un enfant peut prendre du poids un an avant une poussée de taille : c'est une étape normale.</p>
+      </div>
+    </div></div>
   </div>
 
-  <div class="sub" id="s-accueil-calendrier">
-    <p class="sm mut">Deux périodes de perte séparées par une trêve volontaire. C'est plus tenable qu'un tunnel de six mois, et ça évite de se battre contre décembre — un combat que presque personne ne gagne.</p>
-    <div id="phases"></div>
-    <div class="card surf">
-      <h3>Ce que « déficit » veut dire</h3>
-      <p style="margin:0">Autour de 2 200 à 2 400 kcal par jour pendant les blocs 2 et 4. Tu n'es pas obligé de compter : appliquer les six règles y amène naturellement. Si tu stagnes, compter une seule semaine te dira où ça fuit. Ne descends pas sous 2 000 kcal.</p>
-    </div>
-  </div>
+  <div class="sub" id="s-accueil-reperes">
+    <p class="sm mut">Les explications détaillées, par thème. Utiles au début, puis de temps en temps.</p>
+    <div class="acc grp"><button type="button"><span class="name">Les portions à la main<br><span class="sub2">Le guide des mains, jour normal ou jour de sport</span></span><span class="chev">›</span></button>
+    <div class="body">
+      <p>Ta main est proportionnée à ton corps. C'est pour ça qu'elle marche comme unité de mesure : elle s'ajuste toute seule, et elle est toujours avec toi.</p>
+      <div id="hands"></div>
+      <h2>Ce que ça donne par repas</h2>
+      <div id="blocban"></div>
+      <div class="seg" id="seg">
+        <button type="button" data-mode="deficit">Jour normal</button>
+        <button type="button" data-mode="sport">Jour de sport</button>
+      </div>
+      <div class="target" id="tgt"></div>
+      <p class="sm mut" id="tgtnote" style="margin-top:12px"></p>
+      <h2>Et dans l'assiette</h2>
+      <svg class="plate" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="96" fill="#F4F8F9"/>
+        <path d="M100 8a92 92 0 0 0 0 184z" fill="#E1F4F2"/>
+        <path d="M100 8a92 92 0 0 1 92 92h-92z" fill="#FCF0E1"/>
+        <path d="M100 100h92a92 92 0 0 1-92 92z" fill="#EFE7DA"/>
+        <circle cx="100" cy="100" r="96" fill="none" stroke="#16222B" stroke-width="2.5"/>
+        <line x1="100" y1="4" x2="100" y2="196" stroke="#16222B" stroke-width="2"/>
+        <line x1="100" y1="100" x2="196" y2="100" stroke="#16222B" stroke-width="2"/>
+        <text x="52" y="98" font-size="13" font-weight="700" fill="#0E8B84" text-anchor="middle" font-family="sans-serif">Légumes</text>
+        <text x="52" y="114" font-size="12" fill="#5B6B75" text-anchor="middle" font-family="sans-serif">la moitié</text>
+        <text x="148" y="56" font-size="13" font-weight="700" fill="#C97416" text-anchor="middle" font-family="sans-serif">Protéines</text>
+        <text x="148" y="150" font-size="13" font-weight="700" fill="#7A6A52" text-anchor="middle" font-family="sans-serif">Féculents</text>
+      </svg>
+      <div class="card co"><h3>Le seul repère à ne pas lâcher</h3>
+        <p style="margin:0">Une protéine à chaque repas, sans exception, petit-déjeuner compris. Si tu ne devais retenir qu'une chose, c'est celle-là.</p></div>
+    </div></div>
+    <div class="acc grp"><button type="button"><span class="name">Le sandwich<br><span class="sub2">Le repas de midi, sans cuisine</span></span><span class="chev">›</span></button>
+    <div class="body">
+      <p>Le pain n'est pas le problème. C'est la combinaison habituelle : baguette blanche, garniture pauvre en protéines, sauce grasse, chips, soda.</p>
+      <div class="vs">
+        <div class="surf">
+          <div class="lbl" style="margin-top:0">Le réflexe actuel</div>
+          <div class="sm" style="margin-bottom:10px">Baguette jambon-beurre, chips, soda.</div>
+          <div class="big">1 000 <small>kcal</small></div>
+          <div class="big" style="font-size:calc(21px * var(--fsx))">25 g <small>de protéines</small></div>
+        </div>
+        <div class="tl">
+          <div class="lbl" style="margin-top:0">Le sandwich qui marche</div>
+          <div class="sm" style="margin-bottom:10px">Pain complet, 2 paumes de poulet ou thon, crudités, moutarde. Salade, eau.</div>
+          <div class="big">550 <small>kcal</small></div>
+          <div class="big" style="font-size:calc(21px * var(--fsx))">35 g <small>de protéines</small></div>
+        </div>
+      </div>
+      <h2>Les cinq réglages, du plus au moins rentable</h2>
+      <div class="rowlist">
+        <div><b>L'accompagnement décide</b><span>Salade ou crudités à la place des chips. À lui seul, ce changement retire plus de calories que tout le reste réuni.</span></div>
+        <div><b>De l'eau, rien d'autre</b><span>Un soda ajoute l'équivalent d'un tiers de sandwich sans rassasier une seconde.</span></div>
+        <div><b>Une protéine franche, doublée</b><span>Deux paumes de poulet, thon, œuf ou rosbif. Fuis ceux dont la garniture est surtout du fromage et de la sauce.</span></div>
+        <div><b>Pain complet ou aux céréales</b><span>Plus de fibres, satiété plus longue. Si seule la baguette blanche est là, ce n'est pas grave.</span></div>
+        <div><b>Moutarde plutôt que mayonnaise</b><span>Ou sauce à part. Une dose de mayo, c'est un pouce et demi de gras invisible.</span></div>
+      </div>
+      <h2>Le rythme de la semaine</h2>
+      <div class="card am"><h3>2 jours de sandwich acheté</h3><p style="margin:0">Avec les cinq réglages. C'est la solution pratique, elle a le droit d'exister.</p></div>
+      <div class="card surf"><h3>3 jours de boîte préparée</h3><p style="margin:0">Tu cuisines en double le dimanche et un soir en semaine : le déjeuner du lendemain est réglé.</p></div>
+      <div class="card tl"><h3>Le meilleur rapport : le sandwich maison</h3><p style="margin:0">Pain complet, deux paumes de blanc de poulet, crudités, moutarde. Trois minutes le matin, deux fois moins cher.</p></div>
+    </div></div>
+    <div class="acc grp"><button type="button"><span class="name">Où trouver des recettes<br><span class="sub2">Quatre sources qui tiennent la route</span></span><span class="chev">›</span></button>
+    <div class="body">
+      <p>Quatre sources qui tiennent la route. Les deux premières sont françaises et officielles, les deux autres sont anglaises mais nettement meilleures dès qu'on cherche des recettes vraiment protéinées.</p>
 
-  <div class="sub" id="s-accueil-famille">
-    <p class="sm mut">Les repas de ce plan sont bons pour des enfants de 9 et 12 ans. Le cadre qui les entoure, non.</p>
-    <div class="card tl">
-      <h3>Ce qui se partage sans réserve</h3>
-      <p>Les mêmes plats, à la même table. Un enfant n'a pas besoin d'un menu séparé.</p>
-      <p>Des légumes à chaque repas, un petit-déjeuner avec de vraies protéines, de l'eau comme boisson par défaut, de la cuisine maison.</p>
-      <p style="margin:0">Aucun aliment interdit. Le gâteau d'anniversaire reste un gâteau d'anniversaire.</p>
-    </div>
-    <div class="card co">
-      <h3>Ce qui ne se partage jamais</h3>
-      <p><b>Le déficit calorique.</b> Un enfant en croissance qui mange en restriction ralentit sa croissance.</p>
-      <p><b>Les portions contrôlées.</b> Eux mangent à leur faim et s'arrêtent quand ils n'ont plus faim. C'est leur régulation qui décide.</p>
-      <p style="margin:0"><b>Les cibles chiffrées, la balance, le suivi.</b> Rien de tout ça n'entre dans leur champ de vision.</p>
-    </div>
-    <div class="card surf">
-      <h3>Le point le plus important, et il n'est pas alimentaire</h3>
-      <p style="margin:0">Ce qui installe durablement un rapport compliqué à la nourriture, ce sont les mots autour. « Je fais attention », « c'est trop gras », les commentaires sur les corps. À cet âge, ces phrases s'enregistrent. Le plus sûr est que ton plan reste invisible pour eux : tu manges la même chose, tu te sers différemment, sans commentaire.</p>
-    </div>
-    <h2>Ce sur quoi il vaut la peine d'agir</h2>
-    <div class="rowlist">
-      <div><b>Bouger</b><span>Le vrai levier chez l'enfant. Une heure par jour, sous n'importe quelle forme.</span></div>
-      <div><b>Dormir</b><span>9 à 11 heures à cet âge. Ça pèse plus que la plupart des ajustements alimentaires.</span></div>
-      <div><b>Boire de l'eau</b><span>Sodas et jus : le seul poste où restreindre est justifié et sans risque.</span></div>
-    </div>
-    <div class="card am">
-      <h3>Si tu t'inquiètes pour le poids de l'un des deux</h3>
-      <p style="margin:0">C'est une conversation avec le pédiatre, pas un ajustement à la maison. La corpulence d'un enfant se lit sur une courbe, en tenant compte de l'âge et du stade de croissance. Un enfant peut prendre du poids un an avant une poussée de taille : c'est une étape normale.</p>
-    </div>
+      <div class="card am">
+        <h3>La Fabrique à Menus</h3>
+        <p class="sm mut" style="margin:-4px 0 10px">Santé publique France, gratuit et sans compte</p>
+        <p>Plus de 2 000 recettes équilibrées, un générateur de menus pour la semaine, et la liste de courses qui va avec, téléchargeable. C'est l'outil le plus directement utile pour tes trois jours de boîte préparée.</p>
+        <p style="margin:0"><b>Le réflexe à garder :</b> ces menus visent l'équilibre au sens des recommandations françaises, pas ton objectif protéines. Prends la recette, double la portion de protéine.</p>
+        <p style="margin:12px 0 0"><a href="https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/recettes" target="_blank" rel="noopener" style="color:#C97416;font-weight:700;text-decoration:none">mangerbouger.fr &rsaquo;</a></p>
+      </div>
+
+      <div class="card surf">
+        <h3>La table Ciqual</h3>
+        <p class="sm mut" style="margin:-4px 0 10px">Anses, la référence officielle française</p>
+        <p>La composition nutritionnelle de plus de 3 000 aliments consommés en France. C'est là que tu vérifies en dix secondes combien de protéines il y a vraiment dans un aliment, quand tu improvises ou que tu hésites entre deux produits.</p>
+        <p style="margin:0"><a href="https://ciqual.anses.fr/" target="_blank" rel="noopener" style="color:#0E8B84;font-weight:700;text-decoration:none">ciqual.anses.fr &rsaquo;</a></p>
+      </div>
+
+      <div class="card surf">
+        <h3>Waitrose, rubrique High protein</h3>
+        <p class="sm mut" style="margin:-4px 0 10px">En anglais</p>
+        <p>Une grosse collection de plats protéinés, vrais plats de tous les jours plutôt que recettes de salle de sport. Beaucoup de poisson, de poulet et de légumineuses, avec des légumes systématiquement présents.</p>
+        <p style="margin:0"><a href="https://www.waitrose.com/ecom/recipes/healthy/high-protein" target="_blank" rel="noopener" style="color:#0E8B84;font-weight:700;text-decoration:none">waitrose.com &rsaquo;</a></p>
+      </div>
+
+      <div class="card surf">
+        <h3>delicious. magazine, rubrique High protein</h3>
+        <p class="sm mut" style="margin:-4px 0 10px">En anglais</p>
+        <p>Sélection plus petite mais bien construite : steak, poulet, œufs, poisson, et une bonne part de protéines végétales. Utile quand tu veux une idée sans y passer un quart d'heure.</p>
+        <p style="margin:0"><a href="https://www.deliciousmagazine.co.uk/collections/high-protein-recipes/" target="_blank" rel="noopener" style="color:#0E8B84;font-weight:700;text-decoration:none">deliciousmagazine.co.uk &rsaquo;</a></p>
+      </div>
+
+      <div class="card co">
+        <h3>Ce que j'ai volontairement écarté</h3>
+        <p style="margin:0">La plupart des sites français qui affichent « recettes protéinées » sont des boutiques de compléments déguisées en blogs, ou des pages écrites pour le référencement. Les recettes y sont approximatives et l'objectif est de te vendre de la whey. Mieux vaut une recette classique dont tu doubles la protéine.</p>
+      </div>
+
+      <h2>La règle qui marche sur n'importe quelle recette</h2>
+      <div class="rowlist">
+        <div><b>Double la protéine</b><span>Presque toutes les recettes grand public en sous-dosent. Vise deux paumes par personne.</span></div>
+        <div><b>Ajoute deux poings de légumes</b><span>Même si la recette n'en prévoit aucun. Ils passent presque toujours dans la poêle sans rien changer d'autre.</span></div>
+        <div><b>Divise la crème par deux</b><span>Fromage blanc, ricotta ou eau de cuisson font le même travail crémeux pour beaucoup moins de gras.</span></div>
+        <div><b>Une seule main en coupe de féculents</b><span>C'est le poste le plus facile à surdoser sans s'en apercevoir.</span></div>
+      </div>
+    </div></div>
+    <div class="acc grp"><button type="button"><span class="name">Progresser sans matériel<br><span class="sub2">Variantes, niveaux, quand monter ou descendre</span></span><span class="chev">›</span></button>
+    <div class="body">
+      <h2>Ce qu'est une variante</h2>
+      <p>Sans haltères, tu ne peux pas ajouter de kilos quand un exercice devient facile. Alors on change de version du même mouvement : c'est ça, une variante. Le même exercice, rendu plus dur ou plus facile en modifiant l'angle, l'appui, la vitesse ou le nombre de points de contact.</p>
+      <p>Exemple avec les pompes. Contre un mur, c'est très facile. Mains sur un plan de travail, un peu moins. Sur une chaise, encore moins. Au sol, c'est la version classique. Pieds surélevés, c'est plus dur. Le mouvement ne change pas — seule l'inclinaison change, et avec elle la part de ton poids que tes bras doivent pousser.</p>
+      <p>Au-delà des variantes d'appui, les derniers crans de chaque exercice jouent sur trois leviers qui ne coûtent rien aux articulations : <b>le tempo</b> (descendre en trois secondes), <b>la pause</b> (deux ou trois secondes au point le plus dur), et <b>le bras de levier</b> (pieds surélevés, jambe tendue, buste dans le vide). Ils sont plus durs qu'ils n'en ont l'air.</p>
+      <div class="card tl"><h3>Quand monter d'un cran</h3>
+        <p style="margin:0">Quand tu atteins le haut de la fourchette sur <em>toutes</em> tes séries, deux séances de suite. Exemple : 4 × 8–15, et tu fais 15, 15, 15, 15 sans être en difficulté. Tu passes au niveau au-dessus, tu retombes à 8 répétitions, et tu recommences à grimper.</p></div>
+      <div class="card co"><h3>Quand descendre d'un cran</h3>
+        <p style="margin:0">Quand tu n'atteins pas le bas de la fourchette, quand la technique se casse, ou quand ça réveille une douleur. Descendre n'est pas un échec : c'est le seul moyen de continuer à progresser sans se blesser.</p></div>
+      <h2>Les règles communes</h2>
+      <ul>
+        <li><b>3 à 4 séries</b> par exercice, dans l'ordre de la liste.</li>
+        <li><b>90 secondes</b> de récupération entre chaque série.</li>
+        <li><b>On s'arrête deux répétitions avant l'échec.</b> Tu dois sentir qu'il t'en restait deux.</li>
+        <li><b>Toutes les six à huit semaines</b>, une semaine plus légère : moitié moins de séries.</li>
+      </ul>
+      <div class="card am"><h3>Ton coude et ton dos</h3>
+        <p>Les dips et le rowing australien ont été retirés : l'un écrase le poignet en extension, l'autre demande de serrer fort. Ce sont les deux gestes qui entretiennent une douleur de coude.</p>
+        <p style="margin:0">Si un exercice réveille une douleur, tu l'arrêtes et tu descends d'un cran. Si ça persiste, tu le remplaces. Et si tu dois sauter une séance entière, saute la A : la B protège le dos.</p></div>
+    </div></div>
+    <div class="acc grp"><button type="button"><span class="name">Lire le suivi<br><span class="sub2">Les courbes, et quand corriger</span></span><span class="chev">›</span></button>
+    <div class="body">
+      <h2>Quand corriger</h2>
+      <div class="rowlist">
+        <div><b>Moyenne stable trois semaines de suite</b><span>Retire environ 150 kcal par jour, ou ajoute 2 000 pas. Un seul changement à la fois.</span></div>
+        <div><b>Perte supérieure à 0,7 kg par semaine</b><span>Tu vas trop vite et tu perds du muscle. Remonte les portions.</span></div>
+        <div><b>Force en chute deux semaines de suite</b><span>Même signal, même correction.</span></div>
+      </div>
+      <div class="card tl"><h3>Lire les deux courbes</h3>
+        <p>Sur le poids, la ligne pâle relie tes pesées quotidiennes et la ligne foncée est la moyenne sur sept jours. Seule la foncée compte : c'est elle qui te dit si tu descends.</p>
+        <p style="margin:0">Sur le tour de taille, une seule ligne suffit — tu ne mesures que tous les quinze jours, il n'y a pas de bruit à lisser.</p></div>
+      <div class="card am"><h3>Les courbes apparaissent à partir de deux mesures</h3>
+        <p style="margin:0">Avant ça, il n'y a rien à tracer. À partir de la deuxième pesée, le graphique s'affiche tout seul au-dessus du tableau.</p></div>
+    </div></div>
   </div>
 </div>
 
@@ -428,159 +636,56 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
 <div class="view" id="v-assiette">
   <div class="sub on" id="s-assiette-semaine"><div id="semwrap"></div></div>
 
-  <div class="sub" id="s-assiette-portions">
-    <p>Ta main est proportionnée à ton corps. C'est pour ça qu'elle marche comme unité de mesure : elle s'ajuste toute seule, et elle est toujours avec toi.</p>
-    <div id="hands"></div>
-    <h2>Ce que ça donne par repas</h2>
-    <div id="blocban"></div>
-    <div class="seg" id="seg">
-      <button type="button" data-mode="deficit">Jour normal</button>
-      <button type="button" data-mode="sport">Jour de sport</button>
-    </div>
-    <div class="target" id="tgt"></div>
-    <p class="sm mut" id="tgtnote" style="margin-top:12px"></p>
-    <h2>Et dans l'assiette</h2>
-    <svg class="plate" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="100" cy="100" r="96" fill="#F4F8F9"/>
-      <path d="M100 8a92 92 0 0 0 0 184z" fill="#E1F4F2"/>
-      <path d="M100 8a92 92 0 0 1 92 92h-92z" fill="#FCF0E1"/>
-      <path d="M100 100h92a92 92 0 0 1-92 92z" fill="#EFE7DA"/>
-      <circle cx="100" cy="100" r="96" fill="none" stroke="#16222B" stroke-width="2.5"/>
-      <line x1="100" y1="4" x2="100" y2="196" stroke="#16222B" stroke-width="2"/>
-      <line x1="100" y1="100" x2="196" y2="100" stroke="#16222B" stroke-width="2"/>
-      <text x="52" y="98" font-size="13" font-weight="700" fill="#0E8B84" text-anchor="middle" font-family="sans-serif">Légumes</text>
-      <text x="52" y="114" font-size="12" fill="#5B6B75" text-anchor="middle" font-family="sans-serif">la moitié</text>
-      <text x="148" y="56" font-size="13" font-weight="700" fill="#C97416" text-anchor="middle" font-family="sans-serif">Protéines</text>
-      <text x="148" y="150" font-size="13" font-weight="700" fill="#7A6A52" text-anchor="middle" font-family="sans-serif">Féculents</text>
-    </svg>
-    <div class="card co"><h3>Le seul repère à ne pas lâcher</h3>
-      <p style="margin:0">Une protéine à chaque repas, sans exception, petit-déjeuner compris. Si tu ne devais retenir qu'une chose, c'est celle-là.</p></div>
+  <div class="sub" id="s-assiette-frigo"><div id="frigowrap"></div></div>
+
+  <div class="sub" id="s-assiette-prochaine">
+    <p class="sm mut">Le rituel de fin de semaine, en quatre étapes. Tu choisis, Claude complète et écrit le fichier de repas.</p>
+    <div class="step"><div class="stepn">1</div><div class="stepb">
+      <h3>Combien de repas à prévoir</h3>
+      <div id="nxcounts"></div>
+    </div></div>
+    <div class="step"><div class="stepn">2</div><div class="stepb">
+      <h3>Ce que tu veux manger</h3>
+      <p class="sm mut">Parmi les repas de base. Un même repas peut revenir plusieurs fois. Claude complète jusqu'au nombre demandé.</p>
+      <div id="nxcat"></div>
+    </div></div>
+    <div class="step"><div class="stepn">3</div><div class="stepb">
+      <h3>Copier la demande pour Claude</h3>
+      <p class="sm mut">Un texte complet : tes choix, ce qui reste au frigo, tes mesures, les règles et le format attendu. Colle-le dans n'importe quelle conversation Claude, il répond avec le fichier.</p>
+      <button type="button" class="wide" id="prepsem">Copier la demande</button>
+      <div class="msg" id="prepmsg"></div>
+      <textarea id="preptxt" hidden readonly style="width:100%;min-height:180px;font:inherit;font-size:calc(14px * var(--fsx));line-height:1.45;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);margin-bottom:10px"></textarea>
+    </div></div>
+    <div class="step"><div class="stepn">4</div><div class="stepb">
+      <h3>Charger la réponse de Claude</h3>
+      <div id="repasinfo"></div>
+      <textarea id="pastejson" placeholder="Colle ici le JSON reçu" style="width:100%;min-height:96px;font:inherit;font-size:calc(14px * var(--fsx));line-height:1.45;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);margin-bottom:8px"></textarea>
+      <button type="button" class="wide" id="pasteb" style="background:var(--amber);border-color:var(--amber);color:#fff">Charger le texte collé</button>
+      <button type="button" class="wide" id="impr">… ou choisir un fichier .json</button>
+      <input type="file" id="imprf" accept="application/json,.json" hidden>
+      <div class="msg" id="rpmsg"></div>
+      <p class="sm mut">La réponse remplace la semaine en cours dans « Cette semaine » et « Frigo ». Tes choix de l'étape 2 se vident, prêts pour la fois suivante.</p>
+    </div></div>
+    <div class="step"><div class="stepn">5</div><div class="stepb">
+      <h3>Faire les courses</h3>
+      <p class="sm mut">Coche ce que tu achètes : ça remplit le frigo. La croix retire un produit que tu as déjà ou que tu ne veux pas.</p>
+      <div id="nxcourses"></div>
+    </div></div>
   </div>
 
-  <div class="sub" id="s-assiette-repas">
-    <p class="mut sm">Touche un repas pour voir ses portions. Aucune quantité à peser.</p>
-    <div id="favwrap"></div>
-    <div id="mealwrap"></div>
-    <p class="sm mut">Repères si tu improvises : 150 g de viande ou de poisson font 30 g de protéines. Trois œufs, 19 g. 200 g de skyr, 20 g. 100 g de légumineuses cuites, 8 g.</p>
-  </div>
-
-  <div class="sub" id="s-assiette-sandwich">
-    <p>Le pain n'est pas le problème. C'est la combinaison habituelle : baguette blanche, garniture pauvre en protéines, sauce grasse, chips, soda.</p>
-    <div class="vs">
-      <div class="surf">
-        <div class="lbl" style="margin-top:0">Le réflexe actuel</div>
-        <div class="sm" style="margin-bottom:10px">Baguette jambon-beurre, chips, soda.</div>
-        <div class="big">1 000 <small>kcal</small></div>
-        <div class="big" style="font-size:calc(21px * var(--fsx))">25 g <small>de protéines</small></div>
-      </div>
-      <div class="tl">
-        <div class="lbl" style="margin-top:0">Le sandwich qui marche</div>
-        <div class="sm" style="margin-bottom:10px">Pain complet, 2 paumes de poulet ou thon, crudités, moutarde. Salade, eau.</div>
-        <div class="big">550 <small>kcal</small></div>
-        <div class="big" style="font-size:calc(21px * var(--fsx))">35 g <small>de protéines</small></div>
-      </div>
-    </div>
-    <h2>Les cinq réglages, du plus au moins rentable</h2>
-    <div class="rowlist">
-      <div><b>L'accompagnement décide</b><span>Salade ou crudités à la place des chips. À lui seul, ce changement retire plus de calories que tout le reste réuni.</span></div>
-      <div><b>De l'eau, rien d'autre</b><span>Un soda ajoute l'équivalent d'un tiers de sandwich sans rassasier une seconde.</span></div>
-      <div><b>Une protéine franche, doublée</b><span>Deux paumes de poulet, thon, œuf ou rosbif. Fuis ceux dont la garniture est surtout du fromage et de la sauce.</span></div>
-      <div><b>Pain complet ou aux céréales</b><span>Plus de fibres, satiété plus longue. Si seule la baguette blanche est là, ce n'est pas grave.</span></div>
-      <div><b>Moutarde plutôt que mayonnaise</b><span>Ou sauce à part. Une dose de mayo, c'est un pouce et demi de gras invisible.</span></div>
-    </div>
-    <h2>Le rythme de la semaine</h2>
-    <div class="card am"><h3>2 jours de sandwich acheté</h3><p style="margin:0">Avec les cinq réglages. C'est la solution pratique, elle a le droit d'exister.</p></div>
-    <div class="card surf"><h3>3 jours de boîte préparée</h3><p style="margin:0">Tu cuisines en double le dimanche et un soir en semaine : le déjeuner du lendemain est réglé.</p></div>
-    <div class="card tl"><h3>Le meilleur rapport : le sandwich maison</h3><p style="margin:0">Pain complet, deux paumes de blanc de poulet, crudités, moutarde. Trois minutes le matin, deux fois moins cher.</p></div>
-  </div>
-
-  <div class="sub" id="s-assiette-ressources">
-    <p>Quatre sources qui tiennent la route. Les deux premières sont françaises et officielles, les deux autres sont anglaises mais nettement meilleures dès qu'on cherche des recettes vraiment protéinées.</p>
-
-    <div class="card am">
-      <h3>La Fabrique à Menus</h3>
-      <p class="sm mut" style="margin:-4px 0 10px">Santé publique France, gratuit et sans compte</p>
-      <p>Plus de 2 000 recettes équilibrées, un générateur de menus pour la semaine, et la liste de courses qui va avec, téléchargeable. C'est l'outil le plus directement utile pour tes trois jours de boîte préparée.</p>
-      <p style="margin:0"><b>Le réflexe à garder :</b> ces menus visent l'équilibre au sens des recommandations françaises, pas ton objectif protéines. Prends la recette, double la portion de protéine.</p>
-      <p style="margin:12px 0 0"><a href="https://www.mangerbouger.fr/manger-mieux/la-fabrique-a-menus/recettes" target="_blank" rel="noopener" style="color:#C97416;font-weight:700;text-decoration:none">mangerbouger.fr &rsaquo;</a></p>
-    </div>
-
-    <div class="card surf">
-      <h3>La table Ciqual</h3>
-      <p class="sm mut" style="margin:-4px 0 10px">Anses, la référence officielle française</p>
-      <p>La composition nutritionnelle de plus de 3 000 aliments consommés en France. C'est là que tu vérifies en dix secondes combien de protéines il y a vraiment dans un aliment, quand tu improvises ou que tu hésites entre deux produits.</p>
-      <p style="margin:0"><a href="https://ciqual.anses.fr/" target="_blank" rel="noopener" style="color:#0E8B84;font-weight:700;text-decoration:none">ciqual.anses.fr &rsaquo;</a></p>
-    </div>
-
-    <div class="card surf">
-      <h3>Waitrose, rubrique High protein</h3>
-      <p class="sm mut" style="margin:-4px 0 10px">En anglais</p>
-      <p>Une grosse collection de plats protéinés, vrais plats de tous les jours plutôt que recettes de salle de sport. Beaucoup de poisson, de poulet et de légumineuses, avec des légumes systématiquement présents.</p>
-      <p style="margin:0"><a href="https://www.waitrose.com/ecom/recipes/healthy/high-protein" target="_blank" rel="noopener" style="color:#0E8B84;font-weight:700;text-decoration:none">waitrose.com &rsaquo;</a></p>
-    </div>
-
-    <div class="card surf">
-      <h3>delicious. magazine, rubrique High protein</h3>
-      <p class="sm mut" style="margin:-4px 0 10px">En anglais</p>
-      <p>Sélection plus petite mais bien construite : steak, poulet, œufs, poisson, et une bonne part de protéines végétales. Utile quand tu veux une idée sans y passer un quart d'heure.</p>
-      <p style="margin:0"><a href="https://www.deliciousmagazine.co.uk/collections/high-protein-recipes/" target="_blank" rel="noopener" style="color:#0E8B84;font-weight:700;text-decoration:none">deliciousmagazine.co.uk &rsaquo;</a></p>
-    </div>
-
-    <div class="card co">
-      <h3>Ce que j'ai volontairement écarté</h3>
-      <p style="margin:0">La plupart des sites français qui affichent « recettes protéinées » sont des boutiques de compléments déguisées en blogs, ou des pages écrites pour le référencement. Les recettes y sont approximatives et l'objectif est de te vendre de la whey. Mieux vaut une recette classique dont tu doubles la protéine.</p>
-    </div>
-
-    <h2>La règle qui marche sur n'importe quelle recette</h2>
-    <div class="rowlist">
-      <div><b>Double la protéine</b><span>Presque toutes les recettes grand public en sous-dosent. Vise deux paumes par personne.</span></div>
-      <div><b>Ajoute deux poings de légumes</b><span>Même si la recette n'en prévoit aucun. Ils passent presque toujours dans la poêle sans rien changer d'autre.</span></div>
-      <div><b>Divise la crème par deux</b><span>Fromage blanc, ricotta ou eau de cuisson font le même travail crémeux pour beaucoup moins de gras.</span></div>
-      <div><b>Une seule main en coupe de féculents</b><span>C'est le poste le plus facile à surdoser sans s'en apercevoir.</span></div>
-    </div>
-  </div>
 </div>
 
 <!-- ================= SÉANCES ================= -->
 <div class="view" id="v-seances">
   <div class="sub on" id="s-seances-A"></div>
   <div class="sub" id="s-seances-B"></div>
-  <div class="sub" id="s-seances-hist">
-    <div class="meta" id="hstats"></div>
-    <h2>Tes séances</h2>
-    <div id="hlist"></div>
-    <p class="sm mut" style="margin-top:16px">Une séance s'inscrit ici dès que tu as coché tous ses exercices. Ton niveau et tes répétitions sont enregistrés au même moment.</p>
-    <h2>Évolution par exercice</h2>
-    <p class="sm mut">La courbe combine le niveau et les répétitions : elle monte quand tu ajoutes des répétitions, et elle fait un bond quand tu passes au cran suivant.</p>
-    <div id="evowrap"></div>
-  </div>
-  <div class="sub" id="s-seances-guide">
-    <h2>Ce qu'est une variante</h2>
-    <p>Sans haltères, tu ne peux pas ajouter de kilos quand un exercice devient facile. Alors on change de version du même mouvement : c'est ça, une variante. Le même exercice, rendu plus dur ou plus facile en modifiant l'angle, l'appui, la vitesse ou le nombre de points de contact.</p>
-    <p>Exemple avec les pompes. Contre un mur, c'est très facile. Mains sur un plan de travail, un peu moins. Sur une chaise, encore moins. Au sol, c'est la version classique. Pieds surélevés, c'est plus dur. Le mouvement ne change pas — seule l'inclinaison change, et avec elle la part de ton poids que tes bras doivent pousser.</p>
-    <p>Au-delà des variantes d'appui, les derniers crans de chaque exercice jouent sur trois leviers qui ne coûtent rien aux articulations : <b>le tempo</b> (descendre en trois secondes), <b>la pause</b> (deux ou trois secondes au point le plus dur), et <b>le bras de levier</b> (pieds surélevés, jambe tendue, buste dans le vide). Ils sont plus durs qu'ils n'en ont l'air.</p>
-    <div class="card tl"><h3>Quand monter d'un cran</h3>
-      <p style="margin:0">Quand tu atteins le haut de la fourchette sur <em>toutes</em> tes séries, deux séances de suite. Exemple : 4 × 8–15, et tu fais 15, 15, 15, 15 sans être en difficulté. Tu passes au niveau au-dessus, tu retombes à 8 répétitions, et tu recommences à grimper.</p></div>
-    <div class="card co"><h3>Quand descendre d'un cran</h3>
-      <p style="margin:0">Quand tu n'atteins pas le bas de la fourchette, quand la technique se casse, ou quand ça réveille une douleur. Descendre n'est pas un échec : c'est le seul moyen de continuer à progresser sans se blesser.</p></div>
-    <h2>Les règles communes</h2>
-    <ul>
-      <li><b>3 à 4 séries</b> par exercice, dans l'ordre de la liste.</li>
-      <li><b>90 secondes</b> de récupération entre chaque série.</li>
-      <li><b>On s'arrête deux répétitions avant l'échec.</b> Tu dois sentir qu'il t'en restait deux.</li>
-      <li><b>Toutes les six à huit semaines</b>, une semaine plus légère : moitié moins de séries.</li>
-    </ul>
-    <div class="card am"><h3>Ton coude et ton dos</h3>
-      <p>Les dips et le rowing australien ont été retirés : l'un écrase le poignet en extension, l'autre demande de serrer fort. Ce sont les deux gestes qui entretiennent une douleur de coude.</p>
-      <p style="margin:0">Si un exercice réveille une douleur, tu l'arrêtes et tu descends d'un cran. Si ça persiste, tu le remplaces. Et si tu dois sauter une séance entière, saute la A : la B protège le dos.</p></div>
-  </div>
 </div>
 
 <!-- ================= SUIVI ================= -->
 <div class="view" id="v-suivi">
   <div class="sub on" id="s-suivi-poids">
+    <div id="wchart"></div>
     <div class="stats" id="wstats"></div>
-    <div class="proj" id="proj"></div>
     <div id="coachfull"></div>
     <div class="form">
       <label for="wdate">Date</label>
@@ -594,12 +699,12 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
     </div>
     <div class="card tl"><h3>Ne regarde que la moyenne</h3>
       <p style="margin:0">Ton poids varie de plus ou moins 1,5 kg d'un jour à l'autre pour des raisons qui n'ont rien à voir avec le gras. La courbe foncée est la moyenne sur sept jours : c'est la seule qui dit la vérité.</p></div>
-    <div id="wchart"></div>
     <h2>Les dernières pesées</h2>
     <div id="wlist"></div>
   </div>
 
   <div class="sub" id="s-suivi-taille">
+    <div id="tchart"></div>
     <div class="stats" id="tstats"></div>
     <div class="form">
       <label for="tdate">Date</label>
@@ -613,12 +718,12 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
     </div>
     <div class="card am"><h3>Tous les quinze jours suffit</h3>
       <p style="margin:0">C'est ta vraie mesure : elle bougera avant la balance, surtout pour le ventre et le bas du dos. Toujours au même endroit, le matin, sans serrer le mètre.</p></div>
-    <div id="tchart"></div>
     <h2>Les dernières mesures</h2>
     <div id="tlist"></div>
   </div>
 
   <div class="sub" id="s-suivi-sommeil">
+    <div id="schart"></div>
     <div class="stats" id="sstats"></div>
     <div class="form">
       <label for="sdate">Nuit du</label>
@@ -633,12 +738,12 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
     </div>
     <div class="card tl"><h3>Pourquoi ça compte ici</h3>
       <p style="margin:0">À déficit égal, une nuit courte fait perdre davantage de muscle et moins de gras, et augmente la faim le lendemain. Sept heures, ce n'est pas un bonus de confort : c'est un poste du plan au même titre que les protéines.</p></div>
-    <div id="schart"></div>
     <h2>Les dernières nuits</h2>
     <div id="slist"></div>
   </div>
 
   <div class="sub" id="s-suivi-alcool">
+    <div id="achart"></div>
     <div class="stats" id="astats"></div>
     <div class="card line" style="text-align:center">
       <div id="acount" style="font-size:calc(40px * var(--fsx));font-weight:800;letter-spacing:-1.5px;line-height:1;"></div>
@@ -654,18 +759,13 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
     <div id="alist"></div>
   </div>
 
-  <div class="sub" id="s-suivi-reperes">
-    <h2>Quand corriger</h2>
-    <div class="rowlist">
-      <div><b>Moyenne stable trois semaines de suite</b><span>Retire environ 150 kcal par jour, ou ajoute 2 000 pas. Un seul changement à la fois.</span></div>
-      <div><b>Perte supérieure à 0,7 kg par semaine</b><span>Tu vas trop vite et tu perds du muscle. Remonte les portions.</span></div>
-      <div><b>Force en chute deux semaines de suite</b><span>Même signal, même correction.</span></div>
-    </div>
-    <div class="card tl"><h3>Lire les deux courbes</h3>
-      <p>Sur le poids, la ligne pâle relie tes pesées quotidiennes et la ligne foncée est la moyenne sur sept jours. Seule la foncée compte : c'est elle qui te dit si tu descends.</p>
-      <p style="margin:0">Sur le tour de taille, une seule ligne suffit — tu ne mesures que tous les quinze jours, il n'y a pas de bruit à lisser.</p></div>
-    <div class="card am"><h3>Les courbes apparaissent à partir de deux mesures</h3>
-      <p style="margin:0">Avant ça, il n'y a rien à tracer. À partir de la deuxième pesée, le graphique s'affiche tout seul au-dessus du tableau.</p></div>
+  <div class="sub" id="s-suivi-seances">
+    <div class="meta" id="hstats"></div>
+    <div class="cal" id="hcal"></div>
+    <p class="sm mut">Une séance s'inscrit ici dès que tu as coché tous ses exercices. Ton niveau et tes répétitions sont enregistrés au même moment.</p>
+    <h2>Évolution par exercice</h2>
+    <p class="sm mut">La courbe combine le niveau et les répétitions : elle monte quand tu ajoutes des répétitions, et elle fait un bond quand tu passes au cran suivant.</p>
+    <div id="evowrap"></div>
   </div>
 </div>
 
@@ -694,16 +794,8 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
     <button type="button" class="wide" id="diagb" style="margin-top:6px">Diagnostic d'installation</button>
     <div id="diagwrap"></div>
 
-    <h2>Les repas de la semaine</h2>
-    <div id="repasinfo"></div>
-    <button type="button" class="wide" id="impr">Charger un fichier de repas</button>
-    <input type="file" id="imprf" accept="application/json,.json" hidden>
-    <button type="button" class="wide" id="relr">Recharger depuis le site</button>
-    <div class="msg" id="rpmsg"></div>
-    <p class="sm mut">Chaque semaine, dépose ici le nouveau <b>repas.json</b> — pas besoin de passer par le dépôt. Le fichier chargé remplace celui du site jusqu'à ce que tu en charges un autre.</p>
-
     <h2>Sauvegarde</h2>
-    <p class="sm">Tes pesées, tes tours de taille, tes niveaux d'exercices, l'historique des séances et tes repas favoris vivent dans le navigateur de ce téléphone, et nulle part ailleurs. Rien n'est envoyé sur internet. En contrepartie, vider les données de navigation ou changer d'appareil les efface. Sauvegarde toutes les deux semaines : l'accueil te le rappellera.</p>
+    <p class="sm">Tes pesées, tes tours de taille, tes niveaux d'exercices, l'historique des séances et tes choix de repas vivent dans le navigateur de ce téléphone, et nulle part ailleurs. Rien n'est envoyé sur internet. En contrepartie, vider les données de navigation ou changer d'appareil les efface. Sauvegarde toutes les deux semaines : l'accueil te le rappellera.</p>
     <div id="expinfo" class="sm mut" style="margin:-4px 0 10px"></div>
     <button type="button" class="wide" id="exp">Sauvegarder mes données</button>
     <button type="button" class="wide" id="imp">Importer une sauvegarde</button>
@@ -729,14 +821,6 @@ footer{padding:24px 16px 10px;color:var(--mut);font-size:calc(15px * var(--fsx))
 <footer>Plan d'hygiène de vie générale, pas un avis médical. En cas de douleur persistante, de prise de poids récente inexpliquée ou de traitement en cours, parles-en à ton médecin. Pour l'alimentation de tes enfants, l'interlocuteur est leur pédiatre.</footer>
 
 <div class="tabbar" id="tabbar"></div>
-
-<div class="run" id="courses">
-  <div class="runtop" style="background:var(--amber)">
-    <div class="rt"><div class="r1">Intendance</div><div class="r2">Frigo et courses</div></div>
-    <button type="button" id="coursesclose">Fermer</button>
-  </div>
-  <div class="runbody" id="coursesbody"></div>
-</div>
 
 <div class="run" id="run">
   <div class="runtop">
@@ -839,32 +923,32 @@ function targetFor(mode){
 }
 var MEALS=[
  {g:"Petit-déjeuner",note:"Le repas le plus souvent raté côté protéines. Viennoiserie et jus : beaucoup de calories, presque pas de protéines, faim à 10 h 30.",items:[
-  {n:"Œufs brouillés, pain complet, un fruit",p:["1 paume d'œufs (3)","1 main en coupe de pain","1 fruit"],k:"30 g de protéines"},
-  {n:"Skyr, flocons d'avoine, fruits rouges, amandes",p:["1 paume de skyr","1 main en coupe d'avoine","1 poing de fruits rouges","1 pouce d'amandes"],k:"30 g de protéines"},
-  {n:"Omelette au jambon et aux tomates",p:["1 paume d'œufs et de jambon","1 poing de tomates","½ main en coupe de pain"],k:"32 g de protéines"},
-  {n:"Fromage blanc, banane, miel, noix",p:["1 paume de fromage blanc","1 fruit","1 pouce de noix"],k:"28 g de protéines"},
-  {n:"Pain complet, œufs durs, avocat écrasé",p:["1 paume d'œufs (2)","1 main en coupe de pain","1 pouce d'avocat"],k:"20 g de protéines"}]},
+  {n:"Œufs brouillés, pain complet, un fruit",p:["1 paume d'œufs (3)","1 main en coupe de pain","1 fruit"],k:"30 g de protéines",ing:["Œufs","Pain complet","Fruits"]},
+  {n:"Skyr, flocons d'avoine, fruits rouges, amandes",p:["1 paume de skyr","1 main en coupe d'avoine","1 poing de fruits rouges","1 pouce d'amandes"],k:"30 g de protéines",ing:["Skyr","Flocons d'avoine","Fruits rouges","Amandes"]},
+  {n:"Omelette au jambon et aux tomates",p:["1 paume d'œufs et de jambon","1 poing de tomates","½ main en coupe de pain"],k:"32 g de protéines",ing:["Œufs","Jambon","Tomates"]},
+  {n:"Fromage blanc, banane, miel, noix",p:["1 paume de fromage blanc","1 fruit","1 pouce de noix"],k:"28 g de protéines",ing:["Fromage blanc","Bananes","Miel","Noix"]},
+  {n:"Pain complet, œufs durs, avocat écrasé",p:["1 paume d'œufs (2)","1 main en coupe de pain","1 pouce d'avocat"],k:"20 g de protéines",ing:["Pain complet","Œufs","Avocat"]}]},
  {g:"Déjeuner",note:"Deux jours de sandwich, trois jours de boîte préparée.",items:[
-  {n:"Sandwich maison ou acheté",p:["2 paumes de poulet ou thon","1 main en coupe de pain","1 poing de crudités","salade à côté"],k:"35 g de protéines"},
-  {n:"Lentilles, thon, tomates, oignon rouge",p:["1 paume de thon","1 main en coupe de lentilles","2 poings de légumes","1 pouce de vinaigrette"],k:"40 g de protéines"},
-  {n:"Poulet rôti, riz complet, légumes rôtis",p:["2 paumes de poulet","1 main en coupe de riz","2 poings de légumes"],k:"40 g de protéines"},
-  {n:"Poke bowl maison au saumon",p:["2 paumes de saumon","1 main en coupe de riz","2 poings de légumes","1 pouce d'avocat"],k:"35 g de protéines"},
-  {n:"Salade de pâtes complètes, œufs, mozzarella",p:["1 paume d'œufs et de mozzarella","1 main en coupe de pâtes","2 poings de tomates"],k:"30 g de protéines"},
-  {n:"Wrap de blé complet au poulet",p:["2 paumes de poulet","1 main en coupe (la galette)","1 poing de crudités"],k:"32 g de protéines"},
-  {n:"Les restes du dîner de la veille",p:["mêmes portions que le dîner","double les quantités à la cuisson"],k:"—"}]},
+  {n:"Sandwich maison ou acheté",p:["2 paumes de poulet ou thon","1 main en coupe de pain","1 poing de crudités","salade à côté"],k:"35 g de protéines",ing:["Pain complet","Poulet ou thon","Crudités","Salade verte"]},
+  {n:"Lentilles, thon, tomates, oignon rouge",p:["1 paume de thon","1 main en coupe de lentilles","2 poings de légumes","1 pouce de vinaigrette"],k:"40 g de protéines",ing:["Lentilles","Thon en boîte","Tomates","Oignon rouge"]},
+  {n:"Poulet rôti, riz complet, légumes rôtis",p:["2 paumes de poulet","1 main en coupe de riz","2 poings de légumes"],k:"40 g de protéines",ing:["Poulet","Riz complet","Légumes à rôtir"]},
+  {n:"Poke bowl maison au saumon",p:["2 paumes de saumon","1 main en coupe de riz","2 poings de légumes","1 pouce d'avocat"],k:"35 g de protéines",ing:["Saumon","Riz","Concombre","Avocat"]},
+  {n:"Salade de pâtes complètes, œufs, mozzarella",p:["1 paume d'œufs et de mozzarella","1 main en coupe de pâtes","2 poings de tomates"],k:"30 g de protéines",ing:["Pâtes complètes","Œufs","Mozzarella","Tomates"]},
+  {n:"Wrap de blé complet au poulet",p:["2 paumes de poulet","1 main en coupe (la galette)","1 poing de crudités"],k:"32 g de protéines",ing:["Galettes de blé complet","Poulet","Crudités"]},
+  {n:"Les restes du dîner de la veille",p:["mêmes portions que le dîner","double les quantités à la cuisson"],k:"—",ing:[]}]},
  {g:"Dîner",note:"C'est le repas que tu contrôles entièrement.",items:[
-  {n:"Poisson blanc, patate douce au four, brocolis",p:["2 paumes de poisson","1 main en coupe de patate douce","2 poings de brocolis"],k:"35 g de protéines"},
-  {n:"Poulet, ratatouille, quinoa",p:["2 paumes de poulet","1 main en coupe de quinoa","2 poings de ratatouille"],k:"40 g de protéines"},
-  {n:"Steak haché, haricots verts, pommes de terre",p:["2 paumes de steak","1 main en coupe de pommes de terre","2 poings de haricots"],k:"38 g de protéines"},
-  {n:"Chili con carne et riz",p:["2 paumes de haché et haricots rouges","1 main en coupe de riz","1 poing de légumes"],k:"40 g de protéines"},
-  {n:"Saumon, poêlée de légumes, boulgour",p:["2 paumes de saumon","1 main en coupe de boulgour","2 poings de légumes"],k:"35 g de protéines"},
-  {n:"Curry de pois chiches aux épinards, riz",p:["1 main en coupe de pois chiches","1 main en coupe de riz","2 poings d'épinards","1 pouce d'huile"],k:"22 g de protéines"},
-  {n:"Soir léger : omelette et grande salade",p:["1 paume d'œufs","2 poings de salade","½ main en coupe de pain"],k:"25 g de protéines"}]},
+  {n:"Poisson blanc, patate douce au four, brocolis",p:["2 paumes de poisson","1 main en coupe de patate douce","2 poings de brocolis"],k:"35 g de protéines",ing:["Poisson blanc","Patate douce","Brocolis"]},
+  {n:"Poulet, ratatouille, quinoa",p:["2 paumes de poulet","1 main en coupe de quinoa","2 poings de ratatouille"],k:"40 g de protéines",ing:["Poulet","Courgettes","Aubergines","Poivrons","Quinoa"]},
+  {n:"Steak haché, haricots verts, pommes de terre",p:["2 paumes de steak","1 main en coupe de pommes de terre","2 poings de haricots"],k:"38 g de protéines",ing:["Steak haché","Haricots verts","Pommes de terre"]},
+  {n:"Chili con carne et riz",p:["2 paumes de haché et haricots rouges","1 main en coupe de riz","1 poing de légumes"],k:"40 g de protéines",ing:["Bœuf haché","Haricots rouges","Tomates concassées","Oignons","Riz"]},
+  {n:"Saumon, poêlée de légumes, boulgour",p:["2 paumes de saumon","1 main en coupe de boulgour","2 poings de légumes"],k:"35 g de protéines",ing:["Saumon","Légumes à poêler","Boulgour"]},
+  {n:"Curry de pois chiches aux épinards, riz",p:["1 main en coupe de pois chiches","1 main en coupe de riz","2 poings d'épinards","1 pouce d'huile"],k:"22 g de protéines",ing:["Pois chiches","Épinards","Lait de coco","Riz"]},
+  {n:"Soir léger : omelette et grande salade",p:["1 paume d'œufs","2 poings de salade","½ main en coupe de pain"],k:"25 g de protéines",ing:["Œufs","Salade verte","Pain complet"]}]},
  {g:"Si tu as faim entre les repas",note:"Une place prévue vaut mieux qu'une envie subie.",items:[
-  {n:"Un skyr ou un fromage blanc",p:["1 paume"],k:"20 g de protéines"},
-  {n:"Une poignée d'amandes",p:["1 pouce"],k:"6 g de protéines"},
-  {n:"Un œuf dur",p:["½ paume"],k:"6 g de protéines"},
-  {n:"Deux carrés de chocolat noir prévus à l'avance",p:["1 pouce"],k:"—"}]}
+  {n:"Un skyr ou un fromage blanc",p:["1 paume"],k:"20 g de protéines",ing:["Skyr ou fromage blanc"]},
+  {n:"Une poignée d'amandes",p:["1 pouce"],k:"6 g de protéines",ing:["Amandes"]},
+  {n:"Un œuf dur",p:["½ paume"],k:"6 g de protéines",ing:["Œufs"]},
+  {n:"Deux carrés de chocolat noir prévus à l'avance",p:["1 pouce"],k:"—",ing:["Chocolat noir"]}]}
 ];
 var EX={
 A:{jour:"Lundi",focus:"Poussée et tronc",duree:"30 min",ex:[
@@ -982,14 +1066,14 @@ B:{jour:"Mercredi, jeudi ou vendredi",focus:"Dos et chaîne postérieure",duree:
    NAVIGATION
    ========================================================= */
 var VIEWS={
- accueil:{k:"Mon plan",h:"Six mois, deux leviers",acc:"ink",cls:"",
-   subs:[["semaine","La semaine"],["calendrier","Le calendrier"],["famille","À table en famille"]]},
+ accueil:{k:"Mon plan",h:"Six mois, deux leviers",acc:"blue",cls:"b",
+   subs:[["semaine","Aujourd'hui"],["plan","Le plan"],["reperes","Repères"]]},
  assiette:{k:"Mon assiette",h:"Aucune balance, juste ta main",acc:"amber",cls:"a",
-   subs:[["semaine","Cette semaine"],["portions","Les portions"],["repas","Les repas de base"],["sandwich","Le sandwich"],["ressources","Où trouver des recettes"]]},
+   subs:[["semaine","Cette semaine"],["frigo","Frigo"],["prochaine","Semaine prochaine"]]},
  seances:{k:"Mes séances",h:"Trente minutes, sans matériel",acc:"teal",cls:"t",
-   subs:[["A","Séance A"],["B","Séance B"],["hist","Historique"],["guide","Comment ça marche"]]},
- suivi:{k:"Mon suivi",h:"Poids et tour de taille",acc:"teal",cls:"",
-   subs:[["poids","Poids"],["taille","Tour de taille"],["sommeil","Sommeil"],["alcool","Alcool"],["reperes","Repères"]]},
+   subs:[["A","Séance A"],["B","Séance B"]]},
+ suivi:{k:"Mon suivi",h:"Poids et tour de taille",acc:"violet",cls:"v",
+   subs:[["poids","Poids"],["taille","Taille"],["sommeil","Sommeil"],["alcool","Alcool"],["seances","Séances"]]},
  reglages:{k:"Réglages",h:"Réglages et sauvegarde",acc:"ink",cls:"",
    subs:[["tout","Réglages"]]}
 };
@@ -1018,15 +1102,7 @@ function goView(k){
   document.getElementById('v-'+k).classList.add('on');
   document.querySelectorAll('#tabbar button').forEach(function(b){ b.classList.toggle('on', b.dataset.v===k); });
   var cx=document.getElementById('ctxbar');
-  if(k==='assiette'){
-    var i=blocIdx(), t=targetFor('deficit'==='x'?'x':'normal');
-    var noms=['paume','poing','main en coupe','pouce'];
-    cx.innerHTML='<div class="ctx"><div class="cx1">'+
-      (i>=0 ? 'Bloc '+(i+1)+' · '+BLOCS[i][0]+(BLOCS[i][3]?' · en déficit':' · à l\'équilibre') : 'Hors période du plan')+
-      ' — portions par repas</div><div class="cx2">'+
-      t.v.map(function(x,j){ return '<div><b>'+x[0]+'</b><span>'+noms[j]+'</span></div>'; }).join('')+
-      '</div></div>';
-  } else { cx.innerHTML=''; }
+  cx.innerHTML='';                     // the portion strip is drawn by goSub, only on Assiette › Cette semaine
   document.getElementById('pills').style.display = v.subs.length>1 ? 'flex' : 'none';
   document.getElementById('pills').innerHTML = v.subs.map(function(s,i){
     return '<button type="button" data-s="'+s[0]+'"'+(i===0?' class="on"':'')+'>'+s[1]+'</button>';
@@ -1036,10 +1112,13 @@ function goView(k){
   });
   goSub(v.subs[0][0]);
 }
+var curSub=null;
 function goSub(s){
+  curSub=s;
   document.querySelectorAll('#v-'+current+' .sub').forEach(function(x){x.classList.remove('on');});
   var el=document.getElementById('s-'+current+'-'+s); if(el) el.classList.add('on');
   document.querySelectorAll('#pills button').forEach(function(b){ b.classList.toggle('on', b.dataset.s===s); });
+  renderCtx();
   window.scrollTo(0,0);
 }
 document.querySelectorAll('#tabbar button').forEach(function(b){
@@ -1144,6 +1223,10 @@ function renderPhases(){
   });
 }
 renderPhases();
+/* the big accordions of "Le plan" and "Repères": the header button is the first child */
+document.querySelectorAll('.acc.grp').forEach(function(a){
+  a.firstElementChild.addEventListener('click', function(){ a.classList.toggle('open'); });
+});
 
 /* =========================================================
    ASSIETTE
@@ -1152,8 +1235,32 @@ document.getElementById('hands').innerHTML = HANDS.map(function(h){
   return '<div class="hand"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#C97416" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+h[3]+'</svg></div>'+
   '<div><div class="t">'+h[0]+'</div><div class="u">'+h[1]+'</div><div class="d">'+h[2]+'</div></div></div>'; }).join('');
 
-function renderTarget(m){
-  var t=targetFor(m==='sport'?'sport':'normal');
+/* "Jour de sport" is a per-day flag: it resets by itself the next morning. */
+function estJourSport(){ return A.sportDay===tdy(); }
+function modeJour(){ return estJourSport()?'sport':'normal'; }
+function setJourSport(on){
+  A.sportDay = on ? tdy() : null; A.mode = on ? 'sport' : 'deficit'; svA();
+  syncSeg(); renderTarget(); renderCtx(); if(SEM) refreshCmp();
+}
+function syncSeg(){
+  var on=estJourSport();
+  document.querySelectorAll('#seg button').forEach(function(b){ b.classList.toggle('on', (b.dataset.mode==='sport')===on); });
+}
+/* The strip above the Assiette view: today's portions per meal, and the sport toggle. */
+function renderCtx(){
+  var cx=document.getElementById('ctxbar'); if(!cx) return;
+  if(current!=='assiette' || curSub!=='semaine'){ cx.innerHTML=''; return; }
+  var i=blocIdx(), sport=estJourSport(), t=targetFor(modeJour());
+  var grp=['protéines','légumes','féculents','gras'];
+  var etat = i>=0 ? 'Bloc '+(i+1)+' · '+BLOCS[i][0]+(BLOCS[i][3]?', en déficit':', à l\'équilibre') : 'Hors période du plan, portions d\'équilibre';
+  cx.innerHTML='<div class="ctx"><div class="cx1"><span>Aujourd\'hui, à chaque repas</span>'+
+    '<button type="button" id="cxsport" class="'+(sport?'on':'')+'">'+(sport?'Jour de sport ✓':'Jour de sport ?')+'</button></div>'+
+    '<div class="cx2">'+t.v.map(function(x,j){ return '<div><b>'+x[0]+'</b><span>'+x[1].split(' de ')[0]+'<br>'+grp[j]+'</span></div>'; }).join('')+'</div>'+
+    '<div class="cx3">'+etat+(sport?'. Jour de sport : une main en coupe de féculents en plus, au repas qui suit l\'effort.':'. Touche « Jour de sport » les jours où tu bouges vraiment.')+'</div></div>';
+  document.getElementById('cxsport').addEventListener('click', function(){ setJourSport(!estJourSport()); });
+}
+function renderTarget(){
+  var t=targetFor(modeJour());
   var i=blocIdx(), ban=document.getElementById('blocban');
   if(ban){
     ban.innerHTML = (i<0) ? '' :
@@ -1167,37 +1274,39 @@ function renderTarget(m){
   document.getElementById('tgtnote').textContent = t.note;
 }
 document.querySelectorAll('#seg button').forEach(function(b){
-  b.classList.toggle('on', b.dataset.mode===A.mode);
-  b.addEventListener('click', function(){
-    document.querySelectorAll('#seg button').forEach(function(x){x.classList.remove('on');});
-    b.classList.add('on'); A.mode=b.dataset.mode; svA(); renderTarget(A.mode);
-  });
+  b.addEventListener('click', function(){ setJourSport(b.dataset.mode==='sport'); });
 });
-renderTarget(A.mode);
+syncSeg(); renderTarget();
 
-function renderFav(){
-  var names=Object.keys(A.fav).filter(function(k){return A.fav[k];});
-  document.getElementById('favwrap').innerHTML = names.length
-    ? '<div class="card am"><h3>Mes favoris</h3>'+names.map(function(n){return '<div class="favline">'+n+'</div>';}).join('')+'</div>' : '';
-}
-var mw=document.getElementById('mealwrap');
-MEALS.forEach(function(g){
-  var h=document.createElement('h2'); h.textContent=g.g; mw.appendChild(h);
-  var n=document.createElement('p'); n.className='sm mut'; n.textContent=g.note; mw.appendChild(n);
-  g.items.forEach(function(m){
-    var d=document.createElement('div'); d.className='meal'; var id=m.n;
-    d.innerHTML='<button type="button" class="head"><span class="name">'+m.n+'</span><span class="chev">›</span></button>'+
-      '<div class="body"><div class="por">'+m.p.map(function(x){return '<span>'+x+'</span>';}).join('')+'</div>'+
-      '<div class="botrow"><span class="prot">'+m.k+'</span><button type="button" class="fav"></button></div></div>';
-    d.querySelector('.head').addEventListener('click', function(){ d.classList.toggle('open'); });
-    var fb=d.querySelector('.fav');
-    function drawFav(){ d.classList.toggle('isfav', !!A.fav[id]);
-      fb.textContent = A.fav[id] ? '★ Dans mes favoris' : '☆ Ajouter aux favoris'; }
-    fb.addEventListener('click', function(){ A.fav[id]=!A.fav[id]; svA(); drawFav(); renderFav(); });
-    drawFav(); mw.appendChild(d);
+/* ---- Semaine prochaine: how many meals, which ones (with quantities) ---- */
+var NB_DEFS=[['pd','Petits-déjeuners','Petit-déjeuner'],['dej','Déjeuners','Déjeuner'],['din','Dîners','Dîner']];
+function renderProchaine(){
+  var c=document.getElementById('nxcounts'), cat=document.getElementById('nxcat'); if(!c||!cat) return;
+  c.innerHTML=NB_DEFS.map(function(x){
+    return '<div class="cnt"><span>'+x[1]+'</span><div class="qty"><button type="button" data-k="'+x[0]+'" data-d="-1" aria-label="moins">−</button>'+
+           '<b>'+W.nb[x[0]]+'</b><button type="button" data-k="'+x[0]+'" data-d="1" aria-label="plus">+</button></div></div>'; }).join('');
+  c.querySelectorAll('button').forEach(function(b){ b.addEventListener('click', function(){
+    var k=b.dataset.k; W.nb[k]=Math.max(0,Math.min(14,(W.nb[k]||0)+parseInt(b.dataset.d,10))); svW(); renderProchaine(); }); });
+  var h='';
+  MEALS.forEach(function(g){
+    var def=NB_DEFS.filter(function(x){return x[2]===g.g;})[0], tot=0;
+    g.items.forEach(function(m){ tot+=W.next[m.n]||0; });
+    var etat = def ? tot+' choisi'+(tot>1?'s':'')+' sur '+W.nb[def[0]] : (tot ? tot+' choisi'+(tot>1?'s':'') : '');
+    h+='<div class="catg"><span>'+esc(g.g)+'</span><span'+(def&&tot>W.nb[def[0]]?' style="color:var(--coral)"':'')+'>'+etat+'</span></div>';
+    g.items.forEach(function(m){
+      var n=W.next[m.n]||0;
+      h+='<div class="mrow'+(n?' sel':'')+'"><div class="mn">'+esc(m.n)+'<small>'+esc(m.p.join(' · '))+(m.k&&m.k!=='—'?' · '+esc(m.k):'')+'</small></div>'+
+         '<div class="qty"><button type="button" data-n="'+esc(m.n)+'" data-d="-1" aria-label="moins"'+(n?'':' disabled')+'>−</button>'+
+         '<b'+(n?'':' class="zero"')+'>'+n+'</b><button type="button" data-n="'+esc(m.n)+'" data-d="1" aria-label="plus">+</button></div></div>';
+    });
   });
-});
-renderFav();
+  cat.innerHTML=h;
+  renderCourses();
+  cat.querySelectorAll('.qty button').forEach(function(b){ b.addEventListener('click', function(){
+    var n=b.dataset.n, v=Math.max(0,(W.next[n]||0)+parseInt(b.dataset.d,10));
+    if(v) W.next[n]=v; else delete W.next[n];
+    svW(); renderProchaine(); }); });
+}
 
 /* =========================================================
    SÉANCES
@@ -1476,12 +1585,37 @@ function renderHist(){
     '<div><div class="n">'+d7+'</div><div class="l">ces 7 jours</div></div>'+
     '<div><div class="n">'+d30+'</div><div class="l">ces 30 jours</div></div>'+
     '<div><div class="n">'+log.length+'</div><div class="l">au total</div></div>';
-  document.getElementById('hlist').innerHTML = log.length
-    ? '<div class="rowlist">'+log.slice(0,30).map(function(x){
-        return '<div style="display:flex;justify-content:space-between"><b>Séance '+x.s+'</b><span>'+frd(x.d)+'</span></div>';
-      }).join('')+'</div>'
-    : '<div class="empty">Rien encore. Coche les exercices au fil de ta séance : elle s\'inscrira ici toute seule une fois terminée.</div>';
+  renderCal();
   renderEvo();
+}
+/* Month calendar of completed sessions. CAL holds the month being shown. */
+var CAL=null;
+function renderCal(){
+  var box=document.getElementById('hcal'); if(!box) return;
+  var today=tdy();
+  if(!CAL) CAL={y:parseInt(today.slice(0,4),10), m:parseInt(today.slice(5,7),10)-1};
+  var first=new Date(Date.UTC(CAL.y,CAL.m,1)), nb=new Date(Date.UTC(CAL.y,CAL.m+1,0)).getUTCDate();
+  var lead=(first.getUTCDay()+6)%7;                       // Monday first
+  var byDay={};
+  S.log.forEach(function(x){ byDay[x.d]=(byDay[x.d]||'')+x.s; });
+  var h='<div class="chead"><button type="button" id="calprev" aria-label="mois précédent">‹</button>'+
+        '<b>'+MOIS[CAL.m]+' '+CAL.y+'</b><button type="button" id="calnext" aria-label="mois suivant">›</button></div>'+
+        '<div class="grid">'+['L','M','M','J','V','S','D'].map(function(x){return '<div class="dow">'+x+'</div>';}).join('');
+  for(var i=0;i<lead;i++) h+='<div class="d out"></div>';
+  var nMois=0;
+  for(var j=1;j<=nb;j++){
+    var iso=CAL.y+'-'+String(CAL.m+1).padStart(2,'0')+'-'+String(j).padStart(2,'0');
+    var s=byDay[iso]||'', cls='d';
+    if(s.indexOf('A')!==-1 && s.indexOf('B')!==-1) cls+=' sab'; else if(s.indexOf('A')!==-1) cls+=' sa'; else if(s.indexOf('B')!==-1) cls+=' sb';
+    if(s) nMois++;
+    if(iso===today) cls+=' today'; else if(iso>today) cls+=' fut';
+    h+='<div class="'+cls+'">'+j+(s?'<span class="s">'+s.split('').join('+')+'</span>':'')+'</div>';
+  }
+  h+='</div><div class="cfoot"><span><i style="background:var(--tealsoft)"></i>Séance A</span><span><i style="background:var(--ambersoft)"></i>Séance B</span>'+
+     '<span>'+nMois+' séance'+(nMois>1?'s':'')+' ce mois</span></div>';
+  box.innerHTML=h;
+  document.getElementById('calprev').addEventListener('click', function(){ CAL.m--; if(CAL.m<0){CAL.m=11;CAL.y--;} renderCal(); });
+  document.getElementById('calnext').addEventListener('click', function(){ CAL.m++; if(CAL.m>11){CAL.m=0;CAL.y++;} renderCal(); });
 }
 
 /* Values are level index + progress within the level (0..1). The scale covers
@@ -1591,8 +1725,13 @@ function renderW(){
   var mv=avg7(a), cur=mv[mv.length-1].v, first=mv[0].v, delta=cur-first, wk=null;
   for(var i=mv.length-1;i>=0;i--){ if((new Date(mv[mv.length-1].d)-new Date(mv[i].d))/86400000>=7){ wk=mv[i].v; break; } }
   var h='<div><div class="n">'+num(cur)+' kg</div><div class="l">moyenne 7 jours</div></div>';
-  h+='<div><div class="n '+(delta<0?'dn':delta>0?'up':'')+'">'+(delta>0?'+':'')+num(delta)+' kg</div><div class="l">depuis le début</div></div>';
   if(wk!==null){ var dw=cur-wk; h+='<div><div class="n '+(dw<0?'dn':dw>0?'up':'')+'">'+(dw>0?'+':'')+num(dw)+' kg</div><div class="l">sur 7 jours</div></div>'; }
+  h+='<div><div class="n '+(delta<0?'dn':delta>0?'up':'')+'">'+(delta>0?'+':'')+num(delta)+' kg</div><div class="l">depuis le début</div></div>';
+  var an=analyse();
+  if(an.etat!=='debut' && an.rythme4!==null){
+    var sem=Math.max(0,(new Date(finPlan())-new Date())/86400000/7);
+    h+='<div><div class="n">'+num(an.cur+an.rythme4*sem)+' kg</div><div class="l">projection au '+frm(finPlan())+', au rythme des 4 dernières semaines</div></div>';
+  }
   document.getElementById('wstats').innerHTML=h;
   document.getElementById('wchart').innerHTML=chart(a,true,'#0E8B84');
   document.getElementById('wlist').innerHTML='<table class="t"><tr><th>Date</th><th>Poids</th><th></th></tr>'+
@@ -1623,6 +1762,8 @@ function renderT(){
 function bindDel(){
   document.querySelectorAll('table.t td.x button').forEach(function(b){
     b.onclick=function(){ var k=b.dataset.k;
+      var quoi = k==='w' ? 'la pesée' : (k==='t' ? 'le tour de taille' : 'la nuit');
+      if(!confirm('Supprimer '+quoi+' du '+frd(b.dataset.d)+' ?')) return;
       V[k]=V[k].filter(function(x){return x.d!==b.dataset.d;});
       svV();
       if(k==='w'){ renderW(); renderQuick(); renderCoach(); }
@@ -1712,8 +1853,8 @@ document.getElementById('impf').addEventListener('change',function(e){
       U=ld(KU,{}); if(!U.fsx)U.fsx=0.85; applyFs(); renderFs();
       if(!/^\d{4}-\d{2}-\d{2}$/.test(String(U.debut))) U.debut=DEBUT_DEFAUT;
       BLOCS=buildBlocs(U.debut); renderProg(); renderObj(); renderPhases(); renderDebut(); renderTarget(A.mode);
-      W=ld(KW,{}); if(!W.done)W.done={}; if(!W.extra)W.extra=[]; if(!W.xdone)W.xdone={}; loadSemaine();
-      renderW(); renderT(); renderSleep(); renderDrink(); renderHist(); renderFav();
+      W=ld(KW,{}); if(!W.done)W.done={}; if(!W.extra)W.extra=[]; if(!W.xdone)W.xdone={}; if(!W.next)W.next={}; if(!W.nb)W.nb={pd:5,dej:5,din:7}; if(!W.hide)W.hide={}; if(!W.gone)W.gone={}; loadSemaine();
+      renderW(); renderT(); renderSleep(); renderDrink(); renderHist(); renderProchaine();
       renderQuick(); renderWaist(); renderSleepQuick(); renderDrinkQuick(); renderCoach();
       renderSeance('A'); renderSeance('B'); renderSeanceQuick(); renderBackup();
       m.style.color='#0E8B84'; m.textContent='Sauvegarde restaurée.';
@@ -1727,10 +1868,10 @@ document.getElementById('wipe').addEventListener('click',function(){
   for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(k.indexOf('plan.v1.')===0) ks.push(k); }
   ks.forEach(function(k){ localStorage.removeItem(k); });
   S={lvl:{},log:[],done:{},day:tdy(),reps:{},last:{},snap:{}}; A={fav:{},mode:'deficit'}; V={w:[],t:[],s:[],a:[]}; U={fsx:0.85,debut:DEBUT_DEFAUT};
-  W={done:{},extra:[],xdone:{}}; loadSemaine();
+  W={done:{},extra:[],xdone:{},next:{},nb:{pd:5,dej:5,din:7},hide:{},gone:{}}; loadSemaine();
   BLOCS=buildBlocs(U.debut); renderProg(); renderObj(); renderPhases(); renderDebut(); renderTarget(A.mode);
   applyFs(); renderFs();
-  renderW(); renderT(); renderSleep(); renderDrink(); renderHist(); renderFav();
+  renderW(); renderT(); renderSleep(); renderDrink(); renderHist(); renderProchaine();
   renderQuick(); renderWaist(); renderSleepQuick(); renderDrinkQuick(); renderCoach();
   renderSeance('A'); renderSeance('B'); renderSeanceQuick(); renderBackup();
   var m=document.getElementById('rmsg'); m.style.color='#C4503C'; m.textContent='Données effacées.';
@@ -1742,12 +1883,20 @@ var W = ld(KW,{}); if(!W.done) W.done={};
 /* extra: fridge items added by hand (unplanned shopping); xdone: those consumed.
    Both survive a week change — the next repas.json is written from the summary. */
 if(!W.extra) W.extra=[]; if(!W.xdone) W.xdone={};
+/* next: meals picked for next week {title: count}, emptied when a file is loaded;
+   nb: how many breakfasts / lunches / dinners to plan, kept from week to week. */
+if(!W.next) W.next={}; if(!W.nb) W.nb={pd:5,dej:5,din:7};
+/* hide: shopping-list items removed by hand (already owned or unwanted), reset with the week */
+if(!W.hide) W.hide={};
+/* gone: fridge items removed by hand (file or bought ones; hand-added ones are simply deleted), reset with the week */
+if(!W.gone) W.gone={};
 function svW(){ st(KW,W); }
 var SEM=null;
 function esc(x){ return String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function semKey(t,i){ return t+i; }
 function usedSet(){
   var used={};
+  /* labels may come from `frigo` or from `courses` items: both end up as fridge chips */
   (SEM.repas||[]).forEach(function(r,i){ if(W.done['r'+i]) (r.utilise||[]).forEach(function(x){used[x]=1;}); });
   (SEM.aparte||[]).forEach(function(a,i){ if(W.done['a'+i]) (a.utilise||[]).forEach(function(x){used[x]=1;}); });
   return used;
@@ -1755,10 +1904,7 @@ function usedSet(){
 function refreshSem(){
   if(!SEM) return;
   var used=usedSet(), n=0;
-  document.querySelectorAll('#coursesbody .chips span[data-p]').forEach(function(el){
-    var on = !!used[el.dataset.p];
-    el.classList.toggle('used', on);
-  });
+  renderFrigo();
   (SEM.frigo||[]).forEach(function(p){ if(used[p]) n++; });
   var faits=0, total=(SEM.repas||[]).length;
   for(var i=0;i<total;i++){ if(W.done['r'+i]) faits++; }
@@ -1773,14 +1919,12 @@ function chkSvg(){
 }
 function renderSemaine(d){
   SEM=d;
-  if(W.sem!==d.semaine){ W.sem=d.semaine; W.done={}; svW(); }
+  if(W.sem!==d.semaine){ W.sem=d.semaine; W.done={}; W.hide={}; W.gone={}; svW(); }
 
   /* --- page principale : les repas, rien d'autre --- */
   var h='<div class="wk">'+esc(d.semaine||'Cette semaine')+'</div>'+
         '<div class="wkh">Les repas de la semaine</div>';
   if(d.note) h+='<p class="sm mut">'+esc(d.note)+'</p>';
-  h+='<button type="button" class="wide" id="opencourses" style="margin-bottom:14px">'+
-     'Frigo et liste de courses ›</button>';
   h+='<div class="tally" id="tally"></div><div style="height:14px"></div>';
 
   (d.repas||[]).forEach(function(r,i){
@@ -1811,28 +1955,21 @@ function renderSemaine(d){
     });
   }
   h+='<button type="button" class="wide" id="rstsem" style="margin-top:14px">Tout décocher</button>';
-  h+='<h2>La semaine suivante</h2>'+
-     '<p class="sm mut">Un résumé de ce qui reste dans le frigo, des repas faits et de tes favoris, prêt à coller dans la conversation qui prépare le prochain fichier de repas.</p>'+
-     '<button type="button" class="wide" id="prepsem">Copier le résumé pour la semaine suivante</button>'+
-     '<div class="msg" id="prepmsg"></div>'+
-     '<textarea id="preptxt" hidden readonly style="width:100%;min-height:180px;font:inherit;font-size:calc(14px * var(--fsx));line-height:1.45;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);margin-bottom:10px"></textarea>';
   document.getElementById('semwrap').innerHTML=h;
 
   bindRecs();
-  document.getElementById('opencourses').addEventListener('click', ouvrirCourses);
-  document.getElementById('prepsem').addEventListener('click', copierResume);
+  renderCourses();
   document.getElementById('rstsem').addEventListener('click', function(){
     W.done={}; svW();
     document.querySelectorAll('.rec').forEach(function(el){ el.classList.remove('done'); });
-    document.querySelectorAll('.shopit').forEach(function(b){ b.classList.remove('got'); });
     refreshSem(); window.scrollTo(0,0);
   });
   refreshSem();
 }
 
 /* --- summary for next week's meal file --- */
-function resumeSemaine(){
-  var d=SEM||{}, used=usedSet(), L=[];
+function etatSemaine(){
+  var d=SEM||{}, used=SEM?usedSet():{}, L=[];
   L.push('Semaine écoulée : '+(d.semaine||'sans fichier de repas'));
   var bi=blocIdx();
   if(bi>=0){
@@ -1843,29 +1980,53 @@ function resumeSemaine(){
   var repas=d.repas||[], faits=[], pasFaits=[];
   repas.forEach(function(r,i){ (W.done['r'+i]?faits:pasFaits).push(r.titre); });
   L.push('Repas faits : '+faits.length+' sur '+repas.length+(pasFaits.length?'. Pas faits : '+pasFaits.join(', '):''));
-  var reste=(d.frigo||[]).filter(function(x){return !used[x];});
-  var extras=W.extra.filter(function(x){return !W.xdone[x];});
-  L.push('Reste dans le frigo : '+(reste.length?reste.join(', '):'rien du fichier'));
-  if(extras.length) L.push('Ajouté à la main, pas encore utilisé : '+extras.join(', '));
-  var favs=Object.keys(A.fav).filter(function(k){return A.fav[k];});
-  if(favs.length) L.push('Repas favoris : '+favs.join(', '));
+  var reste=frigoItems().filter(function(i){ return !frigoGrise(i.l,used); }).map(function(i){ return i.l; });
+  L.push('Reste dans le frigo : '+(reste.length?reste.join(', '):'rien'));
+  L.push('Semaine prochaine : '+W.nb.pd+' petits-déjeuners, '+W.nb.dej+' déjeuners, '+W.nb.din+' dîners');
+  var choix=Object.keys(W.next).filter(function(k){return W.next[k]>0;}).map(function(k){ return k+(W.next[k]>1?' ×'+W.next[k]:''); });
+  L.push(choix.length ? 'Repas choisis : '+choix.join(', ')+'. Complète avec d\'autres repas de base jusqu\'aux nombres demandés, et écris la liste de courses en soustrayant le frigo.'
+                      : 'Aucun repas choisi : compose la semaine à partir des repas de base, et écris la liste de courses en soustrayant le frigo.');
   var an=analyse();
   if(an.etat!=='debut'){
     var r=an.rythme, tend = r===null ? 'tendance non calculable'
       : (Math.abs(r)<0.05 ? 'stable sur la semaine' : (r<0?'−':'+')+num(Math.abs(r))+' kg sur la semaine');
     L.push('Poids : moyenne 7 jours '+num(an.cur)+' kg, '+tend+(an.taille!==null?', tour de taille '+(an.taille<0?'−':'+')+num(Math.abs(an.taille))+' cm sur trois semaines ou plus':''));
   }
+  return L;
+}
+/* The request pasted into any Claude conversation. It must stand alone: the
+   reader has no access to this repo, so rules, base meals and the exact file
+   format travel with the state. */
+function resumeSemaine(){
+  var bi=blocIdx(), def=bi>=0&&BLOCS[bi][3];
+  var L=['Tu prépares mon fichier de repas de la semaine prochaine pour mon application « Mon plan ». Réponds uniquement avec le JSON demandé, dans un seul bloc de code, sans texte autour.',
+    '', '## Où j\'en suis'].concat(etatSemaine());
+  L.push('', '## Règles',
+    '- Portions à la main, jamais de grammes ni de calories. Chaque portion commence par un nombre et contient paume, poing, main en coupe ou pouce : 2 paumes de protéines, 2 poings de légumes, '+(def?'1 main en coupe':'2 mains en coupe')+' de féculents, 1 pouce de gras. Les jours de sport, l\'appli ajoute elle-même une main en coupe.',
+    '- Garde chaque repas choisi, répété autant de fois que demandé. Complète chaque catégorie jusqu\'au nombre demandé avec d\'autres repas de la liste ci-dessous, en privilégiant ce qui utilise le frigo. Varie les protéines sur la semaine.',
+    '- Les repas sont partagés avec deux enfants : des plats normaux, c\'est la portion qui change, jamais le plat.',
+    '- « frigo » : reprends exactement les libellés de « Reste dans le frigo ». « courses » : ce qu\'il manque une fois le frigo soustrait, par rayon, libellés courts.',
+    '- « utilise » : uniquement des libellés copiés caractère pour caractère depuis « frigo » ou depuis les articles de « courses ». C\'est ce lien qui grise un produit dans l\'appli.',
+    '- « quand » : Petit-déjeuner, Déjeuner ou Dîner, éventuellement suivi du jour. « prot » : une estimation comme « 35 g de protéines ». « note » : une ou deux phrases, pratiques.',
+    '- Une « semaine » du lundi au dimanche qui suit, au format « Semaine du 14 au 20 septembre ».');
+  L.push('', '## Repas de base à réutiliser ou compléter');
+  MEALS.forEach(function(g){ L.push(g.g+' : '+g.items.map(function(m){ return m.n+' ('+m.p.join(', ')+')'; }).join(' ; ')); });
+  L.push('', '## Format exact du JSON',
+    JSON.stringify({semaine:'Semaine du 14 au 20 septembre', note:'Une ligne de contexte.', frigo:['Libellé exact 1','Libellé exact 2'], congelo:['Ce qui se congèle'], congeloNote:'Pourquoi.',
+      repas:[{titre:'Nom du plat', quand:'Dîner, lundi', portions:['2 paumes de poulet','1 main en coupe de riz','2 poings de légumes'], prot:'40 g de protéines', note:'Comment faire, en deux phrases.', utilise:['Libellé exact 1']}],
+      aparte:[{titre:'Un produit à finir', texte:'Comment le caser.', utilise:['Libellé exact 2']}],
+      courses:[{rayon:'Légumes', items:['Courgettes','Salade verte']},{rayon:'Frais', items:['Œufs']}], coursesNote:'Ce qui manque et rien d\'autre.'}, null, 1));
   return L.join('\n');
 }
-function copierResume(){
-  var txt=resumeSemaine(), m=document.getElementById('prepmsg'), ta=document.getElementById('preptxt');
+/* Clipboard with a visible fallback: the text is always shown in the textarea. */
+function copier(txt, m, ta, ok){
   function montrer(){ ta.value=txt; ta.hidden=false; m.style.color='#5B6B75'; m.textContent='Copie impossible ici : sélectionne le texte ci-dessous.'; }
   if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(txt).then(function(){
-      ta.value=txt; ta.hidden=false;
-      m.style.color='#0E8B84'; m.textContent='Copié. Colle-le dans la conversation.';
-    }).catch(montrer);
+    navigator.clipboard.writeText(txt).then(function(){ ta.value=txt; ta.hidden=false; m.style.color='#0E8B84'; m.textContent=ok; }).catch(montrer);
   } else montrer();
+}
+function copierResume(){
+  copier(resumeSemaine(), document.getElementById('prepmsg'), document.getElementById('preptxt'), 'Copié. Colle-le dans la conversation.');
 }
 
 function bindRecs(){
@@ -1882,13 +2043,30 @@ function bindRecs(){
 }
 
 /* --- comparaison portion du repas / cible du bloc --- */
+/* Rewrites the carbs portion of a recipe to today's target when the recipe has a
+   single carbs line: "1 main en coupe de riz" becomes "2 mains en coupe de riz" on
+   a sport day. Protein and vegetables never change. */
+function adaptPortions(r){
+  var cible=parseFloat(targetFor(modeJour()).v[2][0]);
+  var carbs=(r.portions||[]).filter(function(p){ return p.indexOf('main en coupe')!==-1; });
+  return (r.portions||[]).map(function(p){
+    var m=p.match(/^([0-9½]+(?:,5)?)\s+mains? en coupe(.*)$/);
+    if(m && carbs.length===1){
+      var n = m[1]==='½' ? 0.5 : parseFloat(m[1].replace(',','.'));
+      if(n!==cible) return {t:cible+' '+(cible>1?'mains':'main')+' en coupe'+m[2], adj:true, de:m[1]};
+    }
+    return {t:p, adj:false};
+  });
+}
 function cmpPortions(r){
-  var cible=targetFor('normal').v;
+  var cible=targetFor(modeJour()).v;
+  var portions=adaptPortions(r).map(function(x){return x.t;});
   function compte(mot){
     var n=0;
-    (r.portions||[]).forEach(function(p){
+    portions.forEach(function(p){
       var m=p.match(/^([0-9½]+(?:,5)?)\s/);
-      if(p.indexOf(mot)!==-1){ n += m ? (m[1]==='½'?0.5:parseFloat(m[1].replace(',','.'))) : 1; }
+      var re=new RegExp(mot.replace('main en coupe','mains? en coupe'));   // "2 mains en coupe" counts as carbs too
+      if(re.test(p)){ n += m ? (m[1]==='½'?0.5:parseFloat(m[1].replace(',','.'))) : 1; }
     });
     return n;
   }
@@ -1897,92 +2075,126 @@ function cmpPortions(r){
     var a=compte(x[0]), b=parseFloat(cible[x[1]][0]);
     if(a===0) out.push({t:'manque', l:'Pas de '+x[2]+' dans ce repas'});
     else if(a < b-0.4) out.push({t:'sous', l:x[2].charAt(0).toUpperCase()+x[2].slice(1)+' un peu justes : '+num(a)+' au lieu de '+b});
-    else if(a > b+0.4 && x[1]===2) out.push({t:'sur', l:'Féculents au-dessus de la cible du bloc : '+num(a)+' au lieu de '+b});
+    else if(a > b+0.4 && x[1]===2) out.push({t:'sur', l:'Féculents au-dessus de ta cible du jour : '+num(a)+' au lieu de '+b});
   });
   return out;
 }
 function refreshCmp(){
+  var sport=estJourSport(), bi=blocIdx(), def=bi>=0&&BLOCS[bi][3];
   document.querySelectorAll('.porcmp').forEach(function(el){
-    var r=(SEM.repas||[])[parseInt(el.dataset.r,10)];
+    var i=parseInt(el.dataset.r,10), r=(SEM.repas||[])[i];
     if(!r) return;
-    var d=cmpPortions(r);
-    el.innerHTML = d.length
+    var ap=adaptPortions(r), por=el.parentNode.querySelector('.por');
+    if(por) por.innerHTML=ap.map(function(x){ return '<span'+(x.adj?' class="adj"':'')+'>'+esc(x.t)+'</span>'; }).join('');
+    var d=cmpPortions(r), h='';
+    ap.forEach(function(x){ if(x.adj) h+='<div class="cmp adj">Féculents ajustés : '+esc(x.t.split(' en coupe')[0])+' en coupe au lieu de '+esc(x.de)+
+      (sport?', jour de sport':(def?', bloc en déficit':', bloc à l\'équilibre'))+'</div>'; });
+    h += d.length
       ? d.map(function(x){ return '<div class="cmp '+x.t+'">'+x.l+'</div>'; }).join('')
-      : '<div class="cmp ok">Aligné sur les portions du bloc en cours</div>';
+      : (h ? '' : '<div class="cmp ok">Aligné sur tes portions du jour</div>');
+    el.innerHTML=h;
   });
 }
 
-/* --- page frigo et courses --- */
-function ouvrirCourses(){
-  var d=SEM; if(!d) return;
-  var h='';
-  if(d.frigo && d.frigo.length){
-    h+='<div class="wkh" style="margin-top:4px">Le frigo</div>'+
-       '<p class="sm mut">Un produit se grise quand tous les repas qui l\'utilisent sont cochés.</p>'+
-       '<div class="chips">'+d.frigo.map(function(x){
-         return '<span data-p="'+esc(x)+'">'+esc(x)+'</span>'; }).join('')+'</div>';
-  }
-  h+='<div class="wkh" style="margin-top:18px">Ajouté à la main</div>'+
-     '<p class="sm mut">Courses imprévues, restes, un panier de légumes : note-les ici, ils apparaîtront dans le résumé de la semaine suivante. Touche un produit quand il est consommé ; la croix le retire.</p>'+
-     '<div class="chips" id="xchips"></div>'+
-     '<div class="addrow"><input type="text" id="xin" placeholder="Courgettes" autocomplete="off" enterkeyhint="done">'+
+/* --- Frigo tab: one list — the file's fridge, what was bought, what was added by hand.
+   Tap = consumed (or not), cross = removed after confirmation. Consumed items are
+   hidden unless FRIGO_ALL is on; the flag is not persisted. --- */
+var FRIGO_ALL=false;
+function frigoItems(){
+  var d=SEM||{}, out=[], seen={};
+  function add(x,s){ if(seen[x]) return; seen[x]=1; out.push({l:x, s:s}); }
+  (d.frigo||[]).forEach(function(x){ if(!W.gone[x]) add(x,'f'); });
+  achats().forEach(function(x){ if(!W.gone[x]) add(x,'b'); });
+  W.extra.forEach(function(x){ add(x,'x'); });
+  return out;
+}
+function frigoGrise(l, used){ return !!used[l] || !!W.xdone[l]; }
+function renderFrigo(){
+  var box=document.getElementById('frigowrap'); if(!box) return;
+  var d=SEM||{}, used=SEM?usedSet():{}, items=frigoItems();
+  var grises=items.filter(function(i){ return frigoGrise(i.l,used); });
+  var visibles=FRIGO_ALL ? items : items.filter(function(i){ return !frigoGrise(i.l,used); });
+  var h='<div class="wkh" style="margin-top:4px">Le frigo</div>'+
+    '<p class="sm mut">Le fichier de la semaine, ce que tu as acheté, ce que tu as ajouté. Un produit se grise quand les repas qui l\'utilisent sont cochés, ou quand tu le touches. La croix le retire.</p>'+
+    '<div class="chips" id="fchips">'+(visibles.length
+      ? visibles.map(function(i){ return '<span class="xt'+(frigoGrise(i.l,used)?' used':'')+'" data-p="'+esc(i.l)+'">'+esc(i.l)+'<i aria-label="retirer">×</i></span>'; }).join('')
+      : '<span class="used" style="text-decoration:none">'+(items.length?'Tout est consommé':'Frigo vide')+'</span>')+'</div>';
+  if(grises.length) h+='<button type="button" class="lnk" id="ftoggle" style="margin-top:10px">'+
+    (FRIGO_ALL ? 'Masquer les produits consommés' : 'Afficher les '+grises.length+' produit'+(grises.length>1?'s':'')+' consommé'+(grises.length>1?'s':''))+'</button>';
+  h+='<div class="addrow"><input type="text" id="xin" placeholder="Ajouter un produit" autocomplete="off" enterkeyhint="done">'+
      '<button type="button" id="xadd">Ajouter</button></div>';
   if(d.congelo && d.congelo.length)
     h+='<div class="card tl" style="margin-top:16px"><h3>À congeler dès ce soir</h3>'+
        '<p style="margin:0 0 8px">'+esc(d.congeloNote||'')+'</p>'+
        '<div class="chips">'+d.congelo.map(function(x){return '<span>'+esc(x)+'</span>';}).join('')+'</div></div>';
-  if(d.courses && d.courses.length){
-    h+='<h2>La liste de courses</h2>';
-    if(d.coursesNote) h+='<p class="sm mut">'+esc(d.coursesNote)+'</p>';
-    d.courses.forEach(function(g,gi){
-      h+='<div class="card surf" style="padding:12px 16px"><h3>'+esc(g.rayon)+'</h3>'+
-         '<div class="shop">'+g.items.map(function(it,ii){
-           return '<button type="button" class="shopit" data-c="c'+gi+'_'+ii+'">'+
-                  '<span class="box">'+chkSvg()+'</span><span>'+esc(it)+'</span></button>';
-         }).join('')+'</div></div>';
-    });
-  }
-  h+='<div style="height:20px"></div>';
-  document.getElementById('coursesbody').innerHTML=h;
-  document.querySelectorAll('#coursesbody .shopit').forEach(function(b){
-    var k=b.dataset.c;
-    if(W.done[k]) b.classList.add('got');
-    b.addEventListener('click', function(){
-      b.classList.toggle('got'); W.done[k]=b.classList.contains('got'); svW();
-    });
-  });
-  renderExtras();
-  document.getElementById('xadd').addEventListener('click', ajouterExtra);
-  document.getElementById('xin').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); ajouterExtra(); } });
-  refreshSem();
-  document.getElementById('courses').classList.add('on');
-}
-document.getElementById('coursesclose').addEventListener('click', function(){
-  document.getElementById('courses').classList.remove('on');
-});
-function renderExtras(){
-  var box=document.getElementById('xchips'); if(!box) return;
-  box.innerHTML = W.extra.length
-    ? W.extra.map(function(x,i){
-        return '<span class="xt'+(W.xdone[x]?' used':'')+'" data-i="'+i+'">'+esc(x)+'<i aria-label="retirer">×</i></span>'; }).join('')
-    : '<span class="used" style="text-decoration:none">Rien pour l\'instant</span>';
-  box.querySelectorAll('span.xt').forEach(function(el){
-    var x=W.extra[parseInt(el.dataset.i,10)];
+  box.innerHTML=h;
+  box.querySelectorAll('#fchips span.xt').forEach(function(el){
+    var x=el.dataset.p;
     el.querySelector('i').addEventListener('click', function(e){
       e.stopPropagation();
-      W.extra=W.extra.filter(function(y){return y!==x;}); delete W.xdone[x]; svW(); renderExtras();
+      if(!confirm('Retirer « '+x+' » du frigo ?')) return;
+      if(W.extra.indexOf(x)!==-1) W.extra=W.extra.filter(function(y){return y!==x;}); else W.gone[x]=true;
+      delete W.xdone[x]; svW(); renderFrigo();
     });
-    el.addEventListener('click', function(){
-      if(W.xdone[x]) delete W.xdone[x]; else W.xdone[x]=true;
-      svW(); renderExtras();
-    });
+    el.addEventListener('click', function(){ if(W.xdone[x]) delete W.xdone[x]; else W.xdone[x]=true; svW(); renderFrigo(); });
   });
+  var tg=document.getElementById('ftoggle'); if(tg) tg.addEventListener('click', function(){ FRIGO_ALL=!FRIGO_ALL; renderFrigo(); });
+  document.getElementById('xadd').addEventListener('click', ajouterExtra);
+  document.getElementById('xin').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); ajouterExtra(); } });
+}
+function achats(){
+  var out=[]; if(!SEM) return out;
+  (SEM.courses||[]).forEach(function(g,gi){ g.items.forEach(function(it,ii){ var k='c'+gi+'_'+ii; if(W.done[k] && !W.hide[k]) out.push(it); }); });
+  return out;
+}
+/* Step 5 of Semaine prochaine: the file's shopping list, tick = bought (goes to the fridge), cross = removed. */
+function renderCourses(){
+  var box=document.getElementById('nxcourses'); if(!box) return;
+  var d=SEM;
+  if(!d || !d.courses || !d.courses.length){ box.innerHTML='<div class="empty">Le fichier de la semaine ne contient pas de liste de courses.</div>'; return; }
+  var h='';
+  if(d.coursesNote) h+='<p class="sm mut">'+esc(d.coursesNote)+'</p>';
+  var caches=0;
+  d.courses.forEach(function(g,gi){
+    var items=g.items.map(function(it,ii){ return {it:it, k:'c'+gi+'_'+ii}; }).filter(function(x){ if(W.hide[x.k]){ caches++; return false; } return true; });
+    if(!items.length) return;
+    h+='<div class="card surf" style="padding:12px 16px"><h3>'+esc(g.rayon)+'</h3><div class="shop">'+items.map(function(x){
+      return '<div class="shoprow"><button type="button" class="shopit'+(W.done[x.k]?' got':'')+'" data-c="'+x.k+'">'+
+             '<span class="box">'+chkSvg()+'</span><span>'+esc(x.it)+'</span></button>'+
+             '<button type="button" class="shopx" data-c="'+x.k+'" aria-label="retirer de la liste">×</button></div>'; }).join('')+'</div></div>';
+  });
+  if(caches) h+='<p class="sm mut">'+caches+' produit'+(caches>1?'s retirés':' retiré')+' de la liste. <button type="button" class="lnk" id="unhide">Tout rétablir</button></p>';
+  h+='<button type="button" class="wide" id="copycourses">Copier ce qui reste à acheter</button><div class="msg" id="coursesmsg"></div>'+
+     '<textarea id="coursestxt" hidden readonly style="width:100%;min-height:120px;font:inherit;font-size:calc(14px * var(--fsx));line-height:1.45;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);margin-bottom:10px"></textarea>';
+  box.innerHTML=h;
+  box.querySelectorAll('.shopit').forEach(function(b){ b.addEventListener('click', function(){
+    W.done[b.dataset.c]=!W.done[b.dataset.c]; svW(); renderCourses(); renderFrigo(); }); });
+  box.querySelectorAll('.shopx').forEach(function(b){ b.addEventListener('click', function(){
+    var lbl=b.parentNode.querySelector('.shopit span:last-child').textContent;
+    if(!confirm('Retirer « '+lbl+' » de la liste de courses ?')) return;
+    W.hide[b.dataset.c]=true; svW(); renderCourses(); renderFrigo(); }); });
+  var u=document.getElementById('unhide'); if(u) u.addEventListener('click', function(){ W.hide={}; svW(); renderCourses(); renderFrigo(); });
+  document.getElementById('copycourses').addEventListener('click', copierCourses);
+}
+/* What is still to buy, by aisle, for a notes app. */
+function texteCourses(){
+  var L=[]; if(!SEM) return '';
+  (SEM.courses||[]).forEach(function(g,gi){
+    var reste=g.items.filter(function(it,ii){ var k='c'+gi+'_'+ii; return !W.done[k] && !W.hide[k]; });
+    if(reste.length){ L.push(g.rayon); reste.forEach(function(it){ L.push('- '+it); }); L.push(''); }
+  });
+  return L.join('\n').trim();
+}
+function copierCourses(){
+  var txt=texteCourses(), m=document.getElementById('coursesmsg'), ta=document.getElementById('coursestxt');
+  if(!txt){ m.style.color='#5B6B75'; m.textContent='Tout est coché, rien à copier.'; return; }
+  copier(txt, m, ta, 'Copié. Colle-la dans tes notes.');
 }
 function ajouterExtra(){
   var inp=document.getElementById('xin'), v=String(inp.value||'').trim();
   if(!v) return;
   if(W.extra.indexOf(v)===-1){ W.extra.push(v); svW(); }
-  inp.value=''; renderExtras(); inp.focus();
+  inp.value=''; renderFrigo(); inp.focus();
 }
 
 var KR='plan.v1.repas';
@@ -2005,8 +2217,7 @@ function loadSemaine(){
     document.getElementById('semwrap').innerHTML =
       '<div class="wkh">Pas de repas cette semaine</div>'+
       '<div class="card am"><h3>Le fichier repas.json est absent</h3>'+
-      '<p style="margin:0">Dépose-le dans le dépôt, à côté de index.html. C\'est le seul fichier à remplacer chaque semaine — le reste de l\'appli ne bouge pas.</p></div>'+
-      '<p class="sm mut">En attendant, l\'onglet « Les repas de base » contient la liste permanente, qui ne dépend d\'aucun fichier.</p>';
+      '<p style="margin:0">Charge-le depuis « Semaine prochaine », étape 4, ou dépose-le dans le dépôt à côté de index.html.</p></div>';
   });
 }
 loadSemaine();
@@ -2058,7 +2269,27 @@ function renderSleep(){
   bindDel();
 }
 
+/* Eight weeks of drinks as bars against the ceiling of four. */
+function barresVerres(){
+  var box=document.getElementById('achart'); if(!box) return;
+  var l0=lundi(tdy()), weeks=[];
+  for(var i=7;i>=0;i--){ var d=new Date(l0+'T00:00:00Z'); d.setUTCDate(d.getUTCDate()-7*i); weeks.push(d.toISOString().slice(0,10)); }
+  var tot={}; V.a.forEach(function(x){ var l=lundi(x.d); tot[l]=(tot[l]||0)+x.v; });
+  if(!V.a.length){ box.innerHTML=''; return; }
+  var W=320,H=150,P=26,PB=22, mx=Math.max(6, Math.max.apply(null, weeks.map(function(w){return tot[w]||0;}))+1);
+  function Y(v){ return 8+(1-v/mx)*(H-8-PB); }
+  var bw=(W-P-8)/weeks.length, g='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">';
+  [0,2,4,6].forEach(function(v){ if(v>mx) return; g+='<line x1="'+P+'" y1="'+num(Y(v))+'" x2="'+(W-8)+'" y2="'+num(Y(v))+'" stroke="'+(v===4?'#C4503C':'#E4EBEF')+'" stroke-width="'+(v===4?'1.5':'1')+'"'+(v===4?' stroke-dasharray="4 3"':'')+'/>'+
+    '<text x="'+(P-5)+'" y="'+num(Y(v)+4)+'" font-size="10" fill="'+(v===4?'#C4503C':'#5B6B75')+'" text-anchor="end">'+v+'</text>'; });
+  weeks.forEach(function(w,i){ var v=tot[w]||0, x=P+i*bw+bw*0.18, y=Y(v);
+    g+='<rect x="'+num(x)+'" y="'+num(y)+'" width="'+num(bw*0.64)+'" height="'+num(Y(0)-y)+'" rx="4" fill="'+(v>4?'#C4503C':(v===4?'#C97416':'#0E8B84'))+'" opacity="'+(i===weeks.length-1?'1':'.75')+'"/>';
+    if(v) g+='<text x="'+num(x+bw*0.32)+'" y="'+num(y-3)+'" font-size="10" font-weight="700" fill="#16222B" text-anchor="middle">'+v+'</text>';
+    g+='<text x="'+num(x+bw*0.32)+'" y="'+(H-6)+'" font-size="9" fill="#5B6B75" text-anchor="middle">'+frd(w)+'</text>'; });
+  g+='</svg>';
+  box.innerHTML='<div class="chart">'+g+'<div class="legend"><span><i style="background:#0E8B84"></i>verres par semaine</span><span><i style="background:#C4503C"></i>plafond : 4</span></div></div>';
+}
 function renderDrink(){
+  barresVerres();
   var t=verresSemaine(), reste=4-t;
   var el=document.getElementById('acount');
   if(el){
@@ -2280,16 +2511,6 @@ function renderCoach(){
   var html='<div class="coach '+(t.c||'')+'"><div class="ch">'+t.h+'</div><div class="cb">'+t.b+'</div></div>';
   var b1=document.getElementById('coachwrap'); if(b1) b1.innerHTML=html;
   var b2=document.getElementById('coachfull'); if(b2) b2.innerHTML=html;
-
-  var p=document.getElementById('proj'); if(!p) return;
-  if(A.etat==='debut'){ p.innerHTML=''; return; }
-  var fin=new Date(finPlan()), sem=Math.max(0,(fin-new Date())/86400000/7);
-  var proj = (A.rythme4!==null) ? A.cur + A.rythme4*sem : null;
-  var perdu = A.debut - A.cur;
-  p.innerHTML=
-    '<div><div class="n">'+(perdu>0?'−':'+')+num(Math.abs(perdu))+' kg</div><div class="l">depuis le début</div></div>'+
-    '<div><div class="n">'+(A.rythme4!==null?(A.rythme4>0?'+':'')+num(A.rythme4)+' kg':'—')+'</div><div class="l">par semaine, sur 4 semaines</div></div>'+
-    (proj!==null?'<div><div class="n">'+num(proj)+' kg</div><div class="l">projection au '+frm(finPlan())+'</div></div>':'');
 }
 function renderBilan(){
   var box=document.getElementById('coachwrap'); if(!box) return;
@@ -2308,36 +2529,36 @@ function renderBilan(){
     '<p style="margin:0">Alcool : '+sem+' verre'+(sem>1?'s':'')+(sem>4?', au-dessus du plafond':', dans le plafond')+'.</p></div>');
 }
 
+/* Loads a week from JSON text: pasted from a Claude answer (code fences tolerated) or read from a file. */
+function chargerRepas(txt){
+  var m=document.getElementById('rpmsg');
+  try{
+    var s=String(txt||'').trim().replace(/^```[a-z]*\s*/i,'').replace(/```\s*$/,'');
+    var a=s.indexOf('{'), b=s.lastIndexOf('}'); if(a<0||b<a) throw 0;
+    var d=JSON.parse(s.slice(a,b+1));
+    if(!d.repas || !d.repas.length) throw 0;
+    st(KR,{at:tdy(), data:d});
+    W.done={}; W.hide={}; W.gone={}; W.sem=null; W.next={}; svW();
+    renderSemaine(d); renderRepasInfo(); renderProchaine();
+    var ta=document.getElementById('pastejson'); if(ta) ta.value='';
+    m.style.color='#0E8B84';
+    m.textContent='Chargé : '+(d.semaine||'nouvelle semaine')+', '+d.repas.length+' repas. Elle t\'attend dans « Cette semaine ».';
+    return true;
+  }catch(err){
+    m.style.color='#C4503C';
+    m.textContent='Ce texte n\'est pas un fichier de repas valide. Il faut le JSON complet, avec sa liste « repas ».';
+    return false;
+  }
+}
+document.getElementById('pasteb').addEventListener('click', function(){ chargerRepas(document.getElementById('pastejson').value); });
 document.getElementById('impr').addEventListener('click', function(){ document.getElementById('imprf').click(); });
 document.getElementById('imprf').addEventListener('change', function(e){
   var f=e.target.files[0]; if(!f) return;
-  var r=new FileReader(), m=document.getElementById('rpmsg');
-  r.onload=function(){
-    try{
-      var d=JSON.parse(r.result);
-      if(!d.repas || !d.repas.length) throw 0;
-      st(KR,{at:tdy(), data:d});
-      W.done={}; W.sem=null; svW();
-      renderSemaine(d); renderRepasInfo();
-      m.style.color='#0E8B84';
-      m.textContent='Chargé : '+(d.semaine||'nouvelle semaine')+', '+d.repas.length+' repas.';
-    }catch(err){
-      m.style.color='#C4503C';
-      m.textContent="Ce fichier n'est pas un repas.json valide.";
-    }
-  };
+  var r=new FileReader();
+  r.onload=function(){ chargerRepas(r.result); };
   r.readAsText(f);
   e.target.value='';
 });
-document.getElementById('relr').addEventListener('click', function(){
-  try{ localStorage.removeItem(KR); }catch(e){}
-  var m=document.getElementById('rpmsg');
-  fetch('repas.json',{cache:'no-cache'}).then(function(r){ if(!r.ok) throw 0; return r.json(); })
-    .then(function(d){ renderSemaine(d); renderRepasInfo();
-      m.style.color='#0E8B84'; m.textContent='Repas rechargés depuis le site.'; })
-    .catch(function(){ m.style.color='#C4503C'; m.textContent='Le site est injoignable ou le fichier est absent.'; });
-});
-
 /* ---------- réglages ---------- */
 var FSOPTS=[[0.78,'Compact','Aa'],[0.85,'Normal','Aa'],[0.93,'Confortable','Aa'],[1.05,'Grand','Aa']];
 function renderFs(){
@@ -2482,9 +2703,11 @@ document.getElementById('tdate').value=tdy();
 renderW(); renderT();
 renderQuick(); renderWaist(); renderSleepQuick(); renderDrinkQuick(); renderSeanceQuick();
 renderSleep(); renderDrink(); renderCoach(); renderBilan(); renderBackup();
+document.getElementById('prepsem').addEventListener('click', copierResume);
+renderProchaine();
 /* Test hook: test.js freezes the date and checks that the blocks drive the
    portion targets and the coach in the right direction. Harmless in the app. */
-if(typeof window!=='undefined') window.__plan={BLOCS:BLOCS, buildBlocs:buildBlocs, DEBUT_DEFAUT:DEBUT_DEFAUT, EX:EX,
+if(typeof window!=='undefined') window.__plan={BLOCS:BLOCS, buildBlocs:buildBlocs, DEBUT_DEFAUT:DEBUT_DEFAUT, EX:EX, MEALS:MEALS, adaptPortions:adaptPortions, texteCourses:texteCourses, achats:achats, resumeSemaine:resumeSemaine, chargerRepas:chargerRepas, VIEWS:VIEWS,
   blocIdx:blocIdx, enDeficit:enDeficit, targetFor:targetFor, analyse:analyse, coachTexte:coachTexte, V:V, S:S, U:U};
 document.getElementById('sdate').value=tdy();
 (function(){

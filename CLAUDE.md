@@ -52,10 +52,35 @@ Read it in this order; the script is one long IIFE-free block and order matters.
 
 ```
 <style>          tokens, then components in rough page order
-<header>         dynamic: title + mark, colour set per view
-<div id=pills>   sub-tab bar, rebuilt by goView
-<div id=ctxbar>  portion strip, only on the Assiette view
-<main>           one .view per tab, one .sub per sub-tab
+<div id=top>     sticky: header (title + mark, colour set per view) and
+                 the sub-tab pills, rebuilt by goView. Pills share the width
+                 and wrap rather than scroll sideways: keep them to five per
+                 view with one-word labels.
+<div id=ctxbar>  portion strip, only on the Assiette view, scrolls with content
+<main>           one .view per tab, one .sub per sub-tab:
+                 accueil  Aujourd'hui (actions only) | Le plan | Repères
+                          the last two are .acc.grp accordions holding all the
+                          explanatory content (rules, calendar, family,
+                          sandwich, recipe sources, session guide, chart guide)
+                 assiette Cette semaine | Frigo | Semaine prochaine
+                          Cette semaine: the file's meals to tick, carbs adapted
+                          to the day; the #ctxbar strip (today's portions and
+                          the "Jour de sport" toggle) shows only here.
+                          Frigo: one list of chips — the file's fridge, items
+                          bought (ticked in the shopping list), hand-added
+                          items. Tap = consumed, cross = removed (confirmed),
+                          consumed items hidden behind a toggle.
+                          Semaine prochaine: the five-step ritual (counts,
+                          catalogue of base meals with quantities, copy the
+                          request, paste Claude's answer or pick a file,
+                          shopping list with tick = bought and cross = removed,
+                          plus copy-to-clipboard). The portions guide lives in
+                          Plan > Repères.
+                 seances  Séance A | Séance B
+                 suivi    Poids | Taille | Sommeil | Alcool | Séances (calendar
+                          of completed sessions + per-exercise evolution).
+                          Every sub-tab opens with its chart.
+                 reglages single page
 <footer>
 .tabbar          five bottom tabs
 #courses, #run   full-screen overlays (shopping page, guided workout)
@@ -65,15 +90,22 @@ Read it in this order; the script is one long IIFE-free block and order matters.
   3. router: VIEWS, TABLABELS, goView, goSub
   4. accueil: BLOCS_DEF, buildBlocs, BLOCS, finPlan, blocIdx, enDeficit,
      renderProg (progress bar + block-change card), renderObj, renderPhases
-  5. assiette: targetFor, renderTarget, favourites, base meal list
+  5. assiette: targetFor, estJourSport / setJourSport (per-day flag in
+     A.sportDay), renderCtx (portion strip), renderTarget, renderProchaine
+     (counts in W.nb, picks with quantities in W.next, catalogue from MEALS)
   6. séances: runStart… guided mode, renderSeance, checkComplete,
-     renderHist, renderEvo, spark
+     renderHist (stats), renderCal (month calendar, CAL state), renderEvo, spark
   7. suivi: avg7, chart, renderW, renderT, addVal;
      backup: exporter (share sheet, download fallback), renderBackup, import, wipe
   8. semaine: esc, usedSet, refreshSem, renderSemaine, resumeSemaine /
-     copierResume (next-week summary to clipboard), bindRecs, cmpPortions,
-     refreshCmp, ouvrirCourses, renderExtras / ajouterExtra (hand-added fridge
-     items), KR, renderRepasInfo, loadSemaine
+     copierResume (next-week summary to clipboard), bindRecs, adaptPortions
+     (rewrites a recipe's single carbs line to today's target), cmpPortions,
+     refreshCmp, frigoItems / renderFrigo (Frigo tab, FRIGO_ALL toggle), achats
+     (bought items), renderCourses (step 5 shopping list), texteCourses /
+     copierCourses, ajouterExtra, etatSemaine (state lines) / resumeSemaine
+     (the full request for Claude), copier (clipboard helper with textarea
+     fallback), KR, renderRepasInfo, loadSemaine, chargerRepas (pasted text or
+     file, code fences tolerated)
   9. meal-file import handlers
  10. sommeil / alcool
  11. feedback loop: analyse, tailleTrend, coachTexte, renderQuick, renderWaist,
@@ -90,10 +122,10 @@ Read it in this order; the script is one long IIFE-free block and order matters.
 | Key | Holds |
 |---|---|
 | `plan.v1.seances` | `lvl` (level per exercise), `reps` (per exercise+level), `last`, `snap` (per-session snapshots), `log`, `done`, `day` |
-| `plan.v1.assiette` | `fav` (favourite meals), `mode` |
+| `plan.v1.assiette` | `fav` (legacy favourites, no longer used but kept), `mode` (legacy mirror of the sport flag), `sportDay` (ISO date: today is a sport day when it equals today) |
 | `plan.v1.suivi` | `w` weight, `t` waist, `s` sleep hours, `a` drinks — all `[{d:'YYYY-MM-DD', v:Number}]` |
 | `plan.v1.ui` | `fsx` text scale, `v` migration version, `bloc` last acknowledged plan block, `exp` date of the last backup, `debut` first day of the plan (default `2026-09-07`, editable in Settings) |
-| `plan.v1.semaine` | `sem` (week label), `done` (meal and shopping checkboxes), `extra` (fridge items added by hand), `xdone` (those consumed). `extra`/`xdone` survive a week change |
+| `plan.v1.semaine` | `sem` (week label), `done` (meal `r<i>`, aparté `a<i>` and shopping `c<g>_<i>` checkboxes), `hide` (shopping items removed from the list by hand), `gone` (file or bought fridge items removed by hand), `extra` (fridge items added by hand), `xdone` (fridge items marked consumed, keyed by label), `next` (meals picked for next week, `{title: count}`, emptied when a file is loaded), `nb` (`{pd, dej, din}` how many breakfasts, lunches, dinners to plan). `done`/`hide`/`gone` reset with the week; `extra`/`xdone`/`nb` survive it |
 | `plan.v1.repas` | `{at, data}` — a `repas.json` imported from the Settings tab, overrides the fetched file |
 
 Export/import in Settings serialises every `plan.v1.*` key, so any new key is
@@ -109,7 +141,9 @@ keeps the lengths. Never hardcode a plan date elsewhere: use `BLOCS`,
 `finPlan()` and the `frl` / `frm` / `frs` formatters.
 
 - Portion targets: `targetFor()` returns one cupped hand of carbs in a deficit
-  block, two otherwise.
+  block, two otherwise, plus one on a sport day. Recipes in the Semaine tab
+  show their carbs line rewritten to that target (`adaptPortions`); protein and
+  vegetables are never rewritten.
 - Coaching: during a non-deficit block a flat weight is reported as success, and
   losing more than 0.3 kg/week triggers a warning to eat more. Getting this
   backwards would tell the user to cut calories during the maintenance block,
@@ -120,13 +154,26 @@ keeps the lengths. Never hardcode a plan date elsewhere: use `BLOCS`,
 
 ## Weekly ritual
 
-The user describes what is in his fridge; the assistant returns a new
-`repas.json`. He can either commit it or load it from Settings on the phone.
-The Semaine sub-tab has a "Copier le résumé pour la semaine suivante" button
-that puts on the clipboard: the current block and its portions, meals done and
-not done, fridge items not yet used, hand-added items (unplanned shopping, from
-the Frigo page), favourites and the 7-day weight trend. Start the new file from
-that text.
+The "Semaine prochaine" sub-tab of Assiette drives it in five steps. The user
+sets how many breakfasts, lunches and dinners to plan, picks base meals with
+quantities (the same breakfast three times is normal), and copies a request.
+The user does this from a plain Claude conversation on the phone, not from
+this repo, so `resumeSemaine()` builds a self-contained prompt: the state (block
+and portions, meals done and not done, what is left in the fridge, counts,
+picks, weight and waist trend), the rules, the whole `MEALS` catalogue with
+portions, and the exact JSON format. Keep that prompt in sync when the format
+or the rules change; `test.js` checks it carries every section and every base
+meal.
+
+Claude's job from that text: keep every picked meal (repeated as asked),
+complete each category with other base meals up to the counts, prefer meals
+that use what is left in the fridge, and write `courses` as what is missing
+once the fridge is subtracted. `utilise` labels may come from `frigo` or from
+`courses` items, since bought items become fridge chips. The user pastes the
+answer in step 4 (`chargerRepas` strips code fences and prose) or picks a file;
+loading empties the picks. Step 5 is the shopping list: a ticked item counts
+as in the fridge, a removed one is ignored. Committing `repas.json` to the repo
+still works as the default when nothing was loaded.
 
 ```jsonc
 {
