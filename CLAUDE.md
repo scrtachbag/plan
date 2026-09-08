@@ -39,6 +39,12 @@ workouts, and daily measurement tracking. Installed on Android as a standalone a
    months of the user's data with no server backup. Migrate in place if a shape
    must change, as `FSMIGR` does for the text-size scale.
 7. **UI copy is French.** Code, comments and this document are English.
+8. **Exercise levels are only ever appended.** `S.lvl`, `S.reps` keys
+   (`"A0:3"`) and `S.snap` store level indices, so removing, reordering or
+   rewording an existing entry of `lvls` silently changes what the user has
+   already done. Add harder variants at the end of the list; `test.js` pins the
+   original levels. New variants must stay equipment-free and elbow-safe: tempo,
+   pauses, lever length and support, never grip or dips.
 
 ## Layout of `index.html`
 

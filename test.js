@@ -231,6 +231,36 @@ if (!P) {
   global.Date = RealDate;
 }
 
+/* ---------- 7. exercise levels ---------- */
+/* Levels are only ever appended: saved data holds level indices (S.lvl, S.reps
+   keys "A0:3"), so removing or reordering one would silently change what the
+   user has already done. The first four levels of every exercise are pinned. */
+console.log('\nExercise levels');
+if (P && P.EX) {
+  const PINNED = {
+    A0: ['Mains contre un mur', 'Mains sur un plan de travail', 'Mains sur une chaise ou une table basse', 'Mains au sol', 'Pieds surélevés sur une chaise'],
+    A1: ["S'asseoir sur une chaise et se relever", 'Squat au poids du corps', 'Squat avec 3 secondes de descente', 'Squat bulgare, pied arrière sur une chaise'],
+    A2: ['Sur les genoux', 'Planche complète, 20 secondes', 'Planche complète, 45 secondes', 'Planche complète, une jambe décollée'],
+    A3: ['Bras seuls, jambes immobiles', 'Jambes seules, bras immobiles', 'Bras et jambe opposés, amplitude courte', 'Bras et jambe opposés, amplitude complète'],
+    A4: ['Deux pieds au sol', 'Deux pieds, 3 secondes de maintien en haut', 'Pieds surélevés sur une chaise', 'Une jambe tendue'],
+    B0: ['Sans décoller, juste serrer les omoplates', 'Décoller les bras de quelques centimètres', 'Décoller bras et haut de la poitrine', 'Avec 2 secondes de maintien en haut'],
+    B1: ["Amplitude courte, jusqu'aux épaules", 'Amplitude complète', 'Amplitude complète, très lente'],
+    B2: ['Deux pieds au sol, bassin au sol', 'Deux pieds, épaules sur le canapé', "Une jambe, l'autre pied posé au sol", "Une jambe, l'autre jambe tendue en l'air"],
+    B3: ['Fente statique en se tenant à un mur', 'Fente statique sans appui', 'Fente marchée', 'Fente marchée avec 2 secondes en bas'],
+    B4: ['Bras seul', 'Jambe seule', 'Bras et jambe opposés', 'Bras et jambe opposés, 3 secondes de maintien'],
+    B5: ['Genoux fléchis', 'Jambes tendues', 'Jambes tendues, jambe du dessus levée']
+  };
+  ['A', 'B'].forEach(k => P.EX[k].ex.forEach((e, i) => {
+    const id = k + i, pinned = PINNED[id] || [];
+    const kept = pinned.every((l, j) => e.lvls[j] === l);
+    kept ? pass(id + ' ' + e.n + ': original levels untouched, ' + e.lvls.length + ' levels')
+         : fail(id + ' ' + e.n + ': an original level was changed or reordered — saved level indices would drift');
+    if (new Set(e.lvls).size !== e.lvls.length) fail(id + ': duplicate level label');
+    if (!(e.start < e.lvls.length)) fail(id + ': start level out of range');
+    if (e.lvls.length < 6) fail(id + ': fewer than six levels, the ceiling comes too soon');
+  }));
+} else fail('EX not exposed on window.__plan');
+
 /* containers that must receive content, checked after the fetch promise settles */
 realSetTimeout(() => {
   console.log('\nRendered containers');
