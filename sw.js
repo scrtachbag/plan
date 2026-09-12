@@ -2,7 +2,7 @@
    Coquille en cache d'abord pour un démarrage instantané et hors ligne.
    repas.json toujours demandé au réseau d'abord, pour ne jamais servir
    un menu périmé après une mise à jour hebdomadaire. */
-var VERSION = 'plan-v6';
+var VERSION = 'plan-v7';
 var SHELL = [
   './',
   './index.html',

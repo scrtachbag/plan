@@ -63,9 +63,11 @@ Read it in this order; the script is one long IIFE-free block and order matters.
                           explanatory content (rules, calendar, family,
                           sandwich, recipe sources, session guide, chart guide)
                  assiette Cette semaine | Frigo | Semaine prochaine
-                          Cette semaine: the file's meals to tick, carbs adapted
-                          to the day; the #ctxbar strip (today's portions and
-                          the "Jour de sport" toggle) shows only here.
+                          Cette semaine: the file's meals to tick, grouped by
+                          `type` (pd / dej / din, guessed by `typeRepas` when
+                          absent) in file order, carbs adapted to the day; the
+                          #ctxbar strip (today's portions and the "Jour de
+                          sport" toggle) shows only here.
                           Frigo: one list of chips — the file's fridge, items
                           bought (ticked in the shopping list), hand-added
                           items. Tap = consumed, cross = removed (confirmed),
@@ -182,7 +184,8 @@ still works as the default when nothing was loaded.
   "frigo": ["Gaspacho", "Taboulé"],            // exact labels
   "congelo": ["Lardons"], "congeloNote": "…",
   "repas": [{
-    "titre": "…", "quand": "Ce soir",
+    "titre": "…", "type": "din",                // pd | dej | din; groups the list, file order = recommended order
+    "quand": "Ce soir",
     "portions": ["2 paumes de poulet", "1 main en coupe de riz", "2 poings de légumes"],
     "prot": "35 g de protéines",
     "note": "…",

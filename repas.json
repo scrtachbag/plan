@@ -40,7 +40,8 @@
         "Gaspacho",
         "Galettes de sarrasin",
         "Jambon blanc"
-      ]
+      ],
+      "type": "din"
     },
     {
       "titre": "Rôti froid sur taboulé",
@@ -56,7 +57,8 @@
         "Rôti cuit",
         "Taboulé",
         "Tomates cerises"
-      ]
+      ],
+      "type": "din"
     },
     {
       "titre": "Saucisses de Toulouse et lentilles",
@@ -70,7 +72,8 @@
       "note": "Une saucisse, pas deux : elle est là pour parfumer, ce sont les lentilles qui font le volume et une bonne part des protéines. Fais-en le double, ça se réchauffe très bien.",
       "utilise": [
         "Saucisses de Toulouse"
-      ]
+      ],
+      "type": "din"
     },
     {
       "titre": "Cordon bleu au four, poêlée de légumes",
@@ -84,7 +87,8 @@
       "note": "Au four, pas à la poêle dans l'huile. Et pas de riz ni de pâtes à côté : la panure joue déjà le rôle du féculent, c'est l'erreur classique sur ce plat.",
       "utilise": [
         "Cordons bleus"
-      ]
+      ],
+      "type": "din"
     },
     {
       "titre": "Tarte feuilletée aux légumes, lardons en accent",
@@ -100,7 +104,8 @@
         "Pâte feuilletée",
         "Lardons",
         "Tomates cerises"
-      ]
+      ],
+      "type": "din"
     }
   ],
   "aparte": [

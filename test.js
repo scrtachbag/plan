@@ -86,6 +86,11 @@ if (repas) {
     ? console.log('  note  fridge items used by no meal: ' + orphans.join(', '))
     : pass('every fridge item is used by at least one meal');
 
+  const badTypes = (repas.repas || []).filter(r => r.type !== undefined && !['pd', 'dej', 'din'].includes(r.type)).map(r => r.titre);
+  badTypes.length ? fail('meal type must be pd, dej or din: ' + badTypes.join(', ')) : pass('meal types are pd / dej / din');
+  const noType = (repas.repas || []).filter(r => !r.type).map(r => r.titre);
+  if (noType.length) console.log('  note  meals without a type (grouped by guess): ' + noType.join(', '));
+
   const badPortions = [];
   (repas.repas || []).forEach(r => (r.portions || []).forEach(p => {
     const hasUnit = /paume|poing|main en coupe|pouce/.test(p);
@@ -331,6 +336,10 @@ if (P && P.MEALS) {
   ['## Où j\'en suis', '## Règles', '## Repas de base', '## Format exact du JSON', '"utilise"', 'main en coupe']
     .forEach(s => req.includes(s) ? pass('request carries ' + s) : fail('request lacks ' + s));
   P.MEALS.forEach(g => g.items.forEach(m => { if (!req.includes(m.n)) fail('request lacks base meal ' + m.n); }));
+  /* meals without a type are grouped from their wording */
+  [[{ quand: 'Ce soir' }, 'din'], [{ quand: 'Déjeuner, mardi' }, 'dej'], [{ titre: 'Omelette', quand: 'Petit-déjeuner' }, 'pd'],
+   [{ type: 'pd', quand: 'Ce soir' }, 'pd'], [{ quand: 'Sans aucune cuisson' }, 'autre']]
+    .forEach(([r, want]) => P.typeRepas(r) === want ? pass('typeRepas ' + JSON.stringify(r) + ' → ' + want) : fail('typeRepas ' + JSON.stringify(r) + ' got ' + P.typeRepas(r)));
   /* pasted answers come with code fences and prose around them */
   const sample = 'Voici le fichier :\n```json\n' + JSON.stringify({ semaine: 'Semaine test', repas: [{ titre: 'T', portions: ['2 paumes de x'] }] }) + '\n```\nBon appétit.';
   P.chargerRepas(sample) ? pass('chargerRepas accepts a fenced JSON answer') : fail('chargerRepas rejected a fenced JSON answer');

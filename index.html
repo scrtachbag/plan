@@ -352,6 +352,7 @@ table.t td.x button{font:inherit;font-size:calc(20px * var(--fsx));background:no
 .rec.done .chk svg{opacity:1;}
 .rec .ttl{flex:1;min-width:0;font:inherit;text-align:left;background:none;border:0;padding:0;cursor:pointer;}
 .rec .nm{font-size:calc(17px * var(--fsx));font-weight:700;line-height:1.25;}
+.rec .nm,.rec .qd{display:block;}
 .rec .qd{font-size:calc(13.5px * var(--fsx));color:var(--mut);margin-top:1px;}
 .rec .chev{font-size:calc(22px * var(--fsx));color:var(--mut);transition:transform .15s;}
 .rec.open .chev{transform:rotate(90deg);}
@@ -1909,6 +1910,11 @@ function refreshSem(){
   var faits=0, total=(SEM.repas||[]).length;
   for(var i=0;i<total;i++){ if(W.done['r'+i]) faits++; }
   refreshCmp();
+  document.querySelectorAll('#semwrap h2 span.mut').forEach(function(sp){
+    var h2=sp.parentNode, cards=[], el=h2.nextElementSibling;
+    while(el && el.classList.contains('rec')){ cards.push(el); el=el.nextElementSibling; }
+    sp.textContent=cards.filter(function(c){return W.done[c.dataset.k];}).length+' / '+cards.length;
+  });
   var t=document.getElementById('tally');
   if(t) t.innerHTML =
     '<div><div class="n">'+faits+' / '+total+'</div><div class="l">repas faits</div></div>'+
@@ -1916,6 +1922,15 @@ function refreshSem(){
 }
 function chkSvg(){
   return '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>';
+}
+/* pd / dej / din from the file's `type`, else guessed from `quand` and the title. */
+function typeRepas(r){
+  if(r.type==='pd'||r.type==='dej'||r.type==='din') return r.type;
+  var s=String((r.quand||'')+' '+(r.titre||'')).toLowerCase();
+  if(/petit[- ]?d[ée]j|matin|brunch/.test(s)) return 'pd';
+  if(/d[ée]jeuner|midi|sandwich|bo[îi]te/.test(s)) return 'dej';
+  if(/d[îi]ner|soir/.test(s)) return 'din';
+  return 'autre';
 }
 function renderSemaine(d){
   SEM=d;
@@ -1927,19 +1942,30 @@ function renderSemaine(d){
   if(d.note) h+='<p class="sm mut">'+esc(d.note)+'</p>';
   h+='<div class="tally" id="tally"></div><div style="height:14px"></div>';
 
-  (d.repas||[]).forEach(function(r,i){
-    h+='<div class="rec" data-k="r'+i+'"><div class="top">'+
-       '<button type="button" class="chk" aria-label="fait">'+chkSvg()+'</button>'+
-       '<button type="button" class="ttl"><span class="nm">'+esc(r.titre)+'</span>'+
-       (r.quand?'<span class="qd">'+esc(r.quand)+'</span>':'')+'</button>'+
-       '<span class="chev">›</span></div><div class="body">'+
-       '<div class="porhead">Ce que ça fait dans l\'assiette</div>'+
-       '<div class="por">'+(r.portions||[]).map(function(p){return '<span>'+esc(p)+'</span>';}).join('')+'</div>'+
-       (r.prot?'<div class="prot">'+esc(r.prot)+'</div>':'')+
-       '<div class="porcmp" data-r="'+i+'"></div>'+
-       (r.note?'<p style="margin:10px 0 0">'+esc(r.note)+'</p>':'')+
-       ((r.utilise&&r.utilise.length)?'<div class="use">Utilise : '+esc(r.utilise.join(', '))+'</div>':'')+
-       '</div></div>';
+  /* meals grouped by type, each group in the file order: the recommended order of consumption */
+  function carte(r,i){
+    return '<div class="rec" data-k="r'+i+'"><div class="top">'+
+         '<button type="button" class="chk" aria-label="fait">'+chkSvg()+'</button>'+
+         '<button type="button" class="ttl"><span class="nm">'+esc(r.titre)+'</span>'+
+         (r.quand?'<span class="qd">'+esc(r.quand)+'</span>':'')+'</button>'+
+         '<span class="chev">›</span></div><div class="body">'+
+         '<div class="porhead">Ce que ça fait dans l\'assiette</div>'+
+         '<div class="por">'+(r.portions||[]).map(function(p){return '<span>'+esc(p)+'</span>';}).join('')+'</div>'+
+         (r.prot?'<div class="prot">'+esc(r.prot)+'</div>':'')+
+         '<div class="porcmp" data-r="'+i+'"></div>'+
+         (r.note?'<p style="margin:10px 0 0">'+esc(r.note)+'</p>':'')+
+         ((r.utilise&&r.utilise.length)?'<div class="use">Utilise : '+esc(r.utilise.join(', '))+'</div>':'')+
+         '</div></div>';;
+  }
+  var groupes={pd:[],dej:[],din:[],autre:[]};
+  (d.repas||[]).forEach(function(r,i){ groupes[typeRepas(r)].push(i); });
+  var plusieurs = ['pd','dej','din','autre'].filter(function(k){return groupes[k].length;}).length>1;
+  if(plusieurs) h+='<p class="sm mut" style="margin:0 0 4px">Dans l\'ordre conseillé ; coche dans l\'ordre que tu veux.</p>';
+  [['pd','Petits-déjeuners'],['dej','Déjeuners'],['din','Dîners'],['autre','Autres repas']].forEach(function(g){
+    var idx=groupes[g[0]]; if(!idx.length) return;
+    if(plusieurs) h+='<h2>'+g[1]+' <span class="mut" style="font-weight:400;font-size:calc(15px * var(--fsx))">'+
+      idx.filter(function(i){return W.done['r'+i];}).length+' / '+idx.length+'</span></h2>';
+    idx.forEach(function(i){ h+=carte(d.repas[i],i); });
   });
 
   if(d.aparte && d.aparte.length){
@@ -2007,13 +2033,13 @@ function resumeSemaine(){
     '- Les repas sont partagés avec deux enfants : des plats normaux, c\'est la portion qui change, jamais le plat.',
     '- « frigo » : reprends exactement les libellés de « Reste dans le frigo ». « courses » : ce qu\'il manque une fois le frigo soustrait, par rayon, libellés courts.',
     '- « utilise » : uniquement des libellés copiés caractère pour caractère depuis « frigo » ou depuis les articles de « courses ». C\'est ce lien qui grise un produit dans l\'appli.',
-    '- « quand » : Petit-déjeuner, Déjeuner ou Dîner, éventuellement suivi du jour. « prot » : une estimation comme « 35 g de protéines ». « note » : une ou deux phrases, pratiques.',
+    '- « type » : pd, dej ou din. Dans chaque type, range les repas dans l\'ordre conseillé de consommation, le plus fragile d\'abord : l\'appli les affiche dans cet ordre. « quand » : Petit-déjeuner, Déjeuner ou Dîner, éventuellement suivi du jour. « prot » : une estimation comme « 35 g de protéines ». « note » : une ou deux phrases, pratiques.',
     '- Une « semaine » du lundi au dimanche qui suit, au format « Semaine du 14 au 20 septembre ».');
   L.push('', '## Repas de base à réutiliser ou compléter');
   MEALS.forEach(function(g){ L.push(g.g+' : '+g.items.map(function(m){ return m.n+' ('+m.p.join(', ')+')'; }).join(' ; ')); });
   L.push('', '## Format exact du JSON',
     JSON.stringify({semaine:'Semaine du 14 au 20 septembre', note:'Une ligne de contexte.', frigo:['Libellé exact 1','Libellé exact 2'], congelo:['Ce qui se congèle'], congeloNote:'Pourquoi.',
-      repas:[{titre:'Nom du plat', quand:'Dîner, lundi', portions:['2 paumes de poulet','1 main en coupe de riz','2 poings de légumes'], prot:'40 g de protéines', note:'Comment faire, en deux phrases.', utilise:['Libellé exact 1']}],
+      repas:[{titre:'Nom du plat', type:'din', quand:'Dîner, lundi', portions:['2 paumes de poulet','1 main en coupe de riz','2 poings de légumes'], prot:'40 g de protéines', note:'Comment faire, en deux phrases.', utilise:['Libellé exact 1']}],
       aparte:[{titre:'Un produit à finir', texte:'Comment le caser.', utilise:['Libellé exact 2']}],
       courses:[{rayon:'Légumes', items:['Courgettes','Salade verte']},{rayon:'Frais', items:['Œufs']}], coursesNote:'Ce qui manque et rien d\'autre.'}, null, 1));
   return L.join('\n');
@@ -2707,7 +2733,7 @@ document.getElementById('prepsem').addEventListener('click', copierResume);
 renderProchaine();
 /* Test hook: test.js freezes the date and checks that the blocks drive the
    portion targets and the coach in the right direction. Harmless in the app. */
-if(typeof window!=='undefined') window.__plan={BLOCS:BLOCS, buildBlocs:buildBlocs, DEBUT_DEFAUT:DEBUT_DEFAUT, EX:EX, MEALS:MEALS, adaptPortions:adaptPortions, texteCourses:texteCourses, achats:achats, resumeSemaine:resumeSemaine, chargerRepas:chargerRepas, VIEWS:VIEWS,
+if(typeof window!=='undefined') window.__plan={BLOCS:BLOCS, buildBlocs:buildBlocs, DEBUT_DEFAUT:DEBUT_DEFAUT, EX:EX, MEALS:MEALS, adaptPortions:adaptPortions, texteCourses:texteCourses, achats:achats, typeRepas:typeRepas, resumeSemaine:resumeSemaine, chargerRepas:chargerRepas, VIEWS:VIEWS,
   blocIdx:blocIdx, enDeficit:enDeficit, targetFor:targetFor, analyse:analyse, coachTexte:coachTexte, V:V, S:S, U:U};
 document.getElementById('sdate').value=tdy();
 (function(){
